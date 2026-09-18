@@ -1,0 +1,86 @@
+/* ==========================================================================
+   VIKAS UDHYOG ERP - Responsive Stylesheet
+   ========================================================================== */
+
+/* Laptop & Small Desktop */
+@media (max-width: 1200px) {
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
+    .kpi-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Tablet Layout */
+@media (max-width: 992px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+    
+    .sidebar.mobile-open {
+        transform: translateX(0);
+    }
+
+    .main-wrapper {
+        margin-left: 0;
+    }
+
+    .sidebar-overlay {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 95;
+        display: none;
+    }
+
+    .sidebar-overlay.active {
+        display: block;
+    }
+
+    .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .search-box-wrapper {
+        width: 200px;
+    }
+}
+
+/* Mobile Devices */
+@media (max-width: 640px) {
+    .top-navbar {
+        padding: 0 1rem;
+    }
+
+    .search-box-wrapper {
+        display: none;
+    }
+
+    .content-body {
+        padding: 1rem;
+    }
+
+    .kpi-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-grid, .form-grid-3 {
+        grid-template-columns: 1fr;
+    }
+
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .page-actions {
+        width: 100%;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .modal-card {
+        max-height: 95vh;
+    }
+}

@@ -1,0 +1,1731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIKAS UDHYOG - Herbal Products ERP & Business Management</title>
+    <!-- Google Fonts & Font Awesome Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+
+    <!-- Chart.js for Executive Dashboard -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Sidebar Navigation Drawer -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <img src="assets/images/logo.png" alt="Vikas Udhyog Logo" class="sidebar-logo">
+                <div class="sidebar-brand">
+                    <span class="sidebar-brand-title">VIKAS UDHYOG</span>
+                    <span class="sidebar-brand-subtitle">HERBAL ERP v2.4</span>
+                </div>
+            </div>
+
+            <ul class="sidebar-menu">
+                <li class="nav-item active">
+                    <a href="#" class="nav-link" data-view="dashboard">
+                        <i class="fa-solid fa-chart-line"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+
+                <!-- Masters Submenu -->
+                <li class="nav-item has-submenu">
+                    <a href="#" class="nav-link">
+                        <i class="fa-solid fa-folder-tree"></i>
+                        <span>Masters</span>
+                        <i class="fa-solid fa-chevron-right nav-arrow"></i>
+                    </a>
+                    <ul class="submenu">
+                        <li><a class="submenu-link" data-view="master-company">Company Master</a></li>
+                        <li><a class="submenu-link" data-view="master-user">User Master</a></li>
+                        <li><a class="submenu-link" data-view="master-access">Access Level</a></li>
+                        <li><a class="submenu-link" data-view="master-vendor">Vendor Master</a></li>
+                        <li><a class="submenu-link" data-view="master-customer">Customer Master</a></li>
+                        <li><a class="submenu-link" data-view="master-broker">Broker Master</a></li>
+                        <li><a class="submenu-link" data-view="master-item">Item Master</a></li>
+                        <li><a class="submenu-link" data-view="master-unit">Unit Master</a></li>
+                        <li><a class="submenu-link" data-view="master-account">Account Master</a></li>
+                    </ul>
+                </li>
+
+                <!-- Transactions Submenu -->
+                <li class="nav-item has-submenu">
+                    <a href="#" class="nav-link">
+                        <i class="fa-solid fa-right-left"></i>
+                        <span>Transactions</span>
+                        <i class="fa-solid fa-chevron-right nav-arrow"></i>
+                    </a>
+                    <ul class="submenu">
+                        <li><a class="submenu-link" data-view="txn-purchase">Purchase Entry</a></li>
+                        <li><a class="submenu-link" data-view="txn-wb-purchase">WB Purchase Entry</a></li>
+                        <li><a class="submenu-link" data-view="txn-sales-order">Sales Entry</a></li>
+                        <li><a class="submenu-link" data-view="txn-wb-sales">WB Sales Entry</a></li>
+                        <li><a class="submenu-link" data-view="txn-order-dispatch">Order Dispatch</a></li>
+                        <li><a class="submenu-link" data-view="txn-sales-invoice">Sales / Purchase Order</a></li>
+                        <li><a class="submenu-link" data-view="txn-receipt">Receipt Voucher</a></li>
+                        <li><a class="submenu-link" data-view="txn-payment">Payment Voucher</a></li>
+                    </ul>
+                </li>
+
+                <!-- Inventory Submenu -->
+                <li class="nav-item has-submenu">
+                    <a href="#" class="nav-link">
+                        <i class="fa-solid fa-boxes-stacked"></i>
+                        <span>Inventory</span>
+                        <i class="fa-solid fa-chevron-right nav-arrow"></i>
+                    </a>
+                    <ul class="submenu">
+                        <li><a class="submenu-link" data-view="inv-overview">Stock Overview</a></li>
+                        <li><a class="submenu-link" data-view="inv-ledger">Item Ledger</a></li>
+                        <li><a class="submenu-link" data-view="inv-adjustment">Stock Adjustment</a></li>
+                        <li><a class="submenu-link" data-view="inv-low-stock">Low Stock Alert</a></li>
+                    </ul>
+                </li>
+
+                <!-- Reports Submenu -->
+                <li class="nav-item has-submenu">
+                    <a href="#" class="nav-link">
+                        <i class="fa-solid fa-file-contract"></i>
+                        <span>Reports</span>
+                        <i class="fa-solid fa-chevron-right nav-arrow"></i>
+                    </a>
+                    <ul class="submenu">
+                        <li><a class="submenu-link" data-view="rpt-purchase">Purchase Report</a></li>
+                        <li><a class="submenu-link" data-view="rpt-sales">Sales Report</a></li>
+                        <li><a class="submenu-link" data-view="rpt-order">Order Report</a></li>
+                        <li><a class="submenu-link" data-view="rpt-cash-reg">Cash & Bank Register</a></li>
+                    </ul>
+                </li>
+
+                <!-- Settings Submenu -->
+                <li class="nav-item has-submenu">
+                    <a href="#" class="nav-link">
+                        <i class="fa-solid fa-gears"></i>
+                        <span>Settings</span>
+                        <i class="fa-solid fa-chevron-right nav-arrow"></i>
+                    </a>
+                    <ul class="submenu">
+                        <li><a class="submenu-link" data-view="set-company">Company Information</a></li>
+                        <li><a class="submenu-link" data-view="set-whatsapp">WhatsApp Business API</a></li>
+                        <li><a class="submenu-link" data-view="set-backup">Backup / Restore</a></li>
+                    </ul>
+                </li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <span class="sidebar-footer-badge">ISO 9001:2015</span>
+                <span style="font-size: 0.72rem; color: rgba(255,255,255,0.6);">Herbal Manufacturing</span>
+            </div>
+        </aside>
+
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+        <!-- Main Wrapper -->
+        <main class="main-wrapper">
+            <!-- Top Navbar -->
+            <header class="top-navbar">
+                <div class="navbar-left">
+                    <button class="btn-icon" id="sidebar-toggle"><i class="fa-solid fa-bars"></i></button>
+
+                    <div class="company-selector">
+                        <i class="fa-solid fa-building"></i>
+                        <select id="company-selector-dropdown">
+                            <option value="Vikas Udhyog">Vikas Udhyog (Sojat)</option>
+                            <option value="Vikas Herbal Products">Vikas Herbal Products</option>
+                            <option value="Vikas Trading">Vikas Trading</option>
+                        </select>
+                    </div>
+
+                    <div class="search-box-wrapper">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="global-search-input" placeholder="Search anything (Mehndi, Invoices, Customers)..." autocomplete="off">
+                        <div class="search-results-dropdown" id="global-search-dropdown"></div>
+                    </div>
+                </div>
+
+                <div class="navbar-right">
+                    <div class="notification-btn" id="notification-btn">
+                        <button class="btn-icon"><i class="fa-solid fa-bell"></i></button>
+                        <span class="notification-badge">3</span>
+
+                        <div class="notification-drawer" id="notification-drawer">
+                            <div class="notification-header">
+                                <span class="notification-title">Notifications</span>
+                                <span style="font-size: 0.75rem; color: var(--primary); cursor: pointer;">Mark all as read</span>
+                            </div>
+                            <div class="notification-list">
+                                <div class="notification-item">
+                                    <div class="notification-icon-wrap"><i class="fa-solid fa-triangle-exclamation" style="color: var(--status-warning);"></i></div>
+                                    <div>
+                                        <div class="notification-text"><strong>Neem Powder</strong> is below minimum stock level (18 KG).</div>
+                                        <div class="notification-time">10 mins ago</div>
+                                    </div>
+                                </div>
+                                <div class="notification-item">
+                                    <div class="notification-icon-wrap"><i class="fa-solid fa-circle-check" style="color: var(--status-success);"></i></div>
+                                    <div>
+                                        <div class="notification-text">₹24,500 receipt recorded from <strong>Raj Traders</strong>.</div>
+                                        <div class="notification-time">1 hour ago</div>
+                                    </div>
+                                </div>
+                                <div class="notification-item">
+                                    <div class="notification-icon-wrap"><i class="fa-solid fa-truck-fast"></i></div>
+                                    <div>
+                                        <div class="notification-text">Order <strong>SO-1024</strong> dispatched via Vikas Logistics.</div>
+                                        <div class="notification-time">3 hours ago</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="user-profile-menu" id="user-profile-btn">
+                        <div class="avatar">A</div>
+                        <div class="user-info">
+                            <span class="user-name">Admin</span>
+                            <span class="user-role">Super Administrator</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-down" style="font-size: 0.75rem; color: var(--text-muted);"></i>
+
+                        <div class="user-dropdown" id="user-dropdown">
+                            <div class="user-dropdown-item" onclick="App.navigateTo('set-company')"><i class="fa-solid fa-user-gear"></i> Profile & Settings</div>
+                            <div class="user-dropdown-item" onclick="App.navigateTo('master-access')"><i class="fa-solid fa-shield-halved"></i> Access Levels</div>
+                            <div class="user-dropdown-divider"></div>
+                            <div class="user-dropdown-item" onclick="App.logout()"><i class="fa-solid fa-right-from-bracket" style="color: var(--status-danger);"></i> Logout</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Page Content Body -->
+            <div class="content-body">
+                
+                <!-- VIEW 1: EXECUTIVE DASHBOARD -->
+                <section class="view-section active" id="view-dashboard">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title">Good Morning, Admin</h1>
+                            <p class="page-subtitle">Here's what's happening with Vikas Udhyog today.</p>
+                        </div>
+                        <div class="page-actions">
+                            <button class="btn btn-outline" onclick="App.navigateTo('inv-overview')"><i class="fa-solid fa-boxes-stacked"></i> Inventory Overview</button>
+                            <button class="btn btn-primary" onclick="App.openModal('modal-sales-invoice')"><i class="fa-solid fa-plus"></i> New Sales / Purchase Order</button>
+                        </div>
+                    </div>
+
+                    <!-- KPI Cards Grid -->
+                    <div class="kpi-grid">
+                        <div class="kpi-card kpi-sales">
+                            <div class="kpi-top">
+                                <span class="kpi-title">Today's Sales</span>
+                                <div class="kpi-icon"><i class="fa-solid fa-indian-rupee-sign"></i></div>
+                            </div>
+                            <div class="kpi-value" id="kpi-sales-val">₹1,28,450</div>
+                            <div class="kpi-bottom"><span class="trend-up"><i class="fa-solid fa-arrow-trend-up"></i> +14.2%</span> <span class="kpi-subtext">vs yesterday</span></div>
+                        </div>
+
+                        <div class="kpi-card kpi-purchase">
+                            <div class="kpi-top">
+                                <span class="kpi-title">Today's Purchase</span>
+                                <div class="kpi-icon"><i class="fa-solid fa-cart-shopping"></i></div>
+                            </div>
+                            <div class="kpi-value" id="kpi-purchase-val">₹84,200</div>
+                            <div class="kpi-bottom"><span class="trend-up"><i class="fa-solid fa-arrow-trend-up"></i> +8.5%</span> <span class="kpi-subtext">vs last week</span></div>
+                        </div>
+
+                        <div class="kpi-card kpi-receivable">
+                            <div class="kpi-top">
+                                <span class="kpi-title">Total Receivable</span>
+                                <div class="kpi-icon"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+                            </div>
+                            <div class="kpi-value" id="kpi-receivable-val">₹4,82,600</div>
+                            <div class="kpi-bottom"><span class="kpi-subtext">From 5 Customers</span></div>
+                        </div>
+
+                        <div class="kpi-card kpi-payable">
+                            <div class="kpi-top">
+                                <span class="kpi-title">Total Payable</span>
+                                <div class="kpi-icon"><i class="fa-solid fa-credit-card"></i></div>
+                            </div>
+                            <div class="kpi-value" id="kpi-payable-val">₹2,74,350</div>
+                            <div class="kpi-bottom"><span class="kpi-subtext">To 4 Vendors</span></div>
+                        </div>
+
+                        <div class="kpi-card kpi-stock">
+                            <div class="kpi-top">
+                                <span class="kpi-title">Current Stock Value</span>
+                                <div class="kpi-icon"><i class="fa-solid fa-warehouse"></i></div>
+                            </div>
+                            <div class="kpi-value" id="kpi-stock-val">₹12,45,800</div>
+                            <div class="kpi-bottom"><span class="kpi-subtext">8 Product Categories</span></div>
+                        </div>
+
+                        <div class="kpi-card kpi-orders">
+                            <div class="kpi-top">
+                                <span class="kpi-title">Pending Orders</span>
+                                <div class="kpi-icon"><i class="fa-solid fa-clock"></i></div>
+                            </div>
+                            <div class="kpi-value" id="kpi-orders-val">24</div>
+                            <div class="kpi-bottom"><span class="kpi-subtext">Needs Dispatch</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Grid -->
+                    <div class="charts-grid">
+                        <div class="card chart-card">
+                            <div class="card-header">
+                                <h3 class="card-title">Sales vs Purchase</h3>
+                                <span style="font-size: 0.8rem; color: var(--text-muted);">Monthly Comparison</span>
+                            </div>
+                            <div class="chart-container"><canvas id="chart-sales-vs-purchase"></canvas></div>
+                        </div>
+
+                        <div class="card chart-card">
+                            <div class="card-header">
+                                <h3 class="card-title">Sales Trend</h3>
+                                <span style="font-size: 0.8rem; color: var(--text-muted);">Current Month</span>
+                            </div>
+                            <div class="chart-container"><canvas id="chart-sales-trend"></canvas></div>
+                        </div>
+
+                        <div class="card chart-card">
+                            <div class="card-header">
+                                <h3 class="card-title">Top Selling Products</h3>
+                                <span style="font-size: 0.8rem; color: var(--text-muted);">Volume (KG)</span>
+                            </div>
+                            <div class="chart-container"><canvas id="chart-top-products"></canvas></div>
+                        </div>
+
+                        <div class="card chart-card">
+                            <div class="card-header">
+                                <h3 class="card-title">Stock Category Distribution</h3>
+                                <span style="font-size: 0.8rem; color: var(--text-muted);">Share %</span>
+                            </div>
+                            <div class="chart-container"><canvas id="chart-stock-distribution"></canvas></div>
+                        </div>
+                    </div>
+
+                    <!-- Lower Dashboard Tables Grid -->
+                    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem;">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Recent Transactions</h3>
+                                <button class="btn btn-sm btn-outline" onclick="App.navigateTo('txn-sales-invoice')">View All</button>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="custom-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Invoice No</th>
+                                            <th>Date</th>
+                                            <th>Party Name</th>
+                                            <th>Type</th>
+                                            <th>Amount</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="recent-transactions-list"></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title" style="color: var(--status-danger);"><i class="fa-solid fa-triangle-exclamation"></i> Low Stock Alerts</h3>
+                                <button class="btn btn-sm btn-outline" onclick="App.navigateTo('inv-low-stock')">Manage</button>
+                            </div>
+                            <div id="low-stock-alert-list"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW: COMPANY MASTER -->
+                <section class="view-section" id="view-master-company">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title">Company Master</h1>
+                            <p class="page-subtitle">Manage multi-company business profiles</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="document.getElementById('company-form').reset(); document.getElementById('comp-id').value=''; App.openModal('modal-company');">+ Add Company</button>
+                    </div>
+
+                    <div class="card">
+                        <div class="table-responsive">
+                            <table class="custom-table">
+                                <thead>
+                                    <tr>
+                                        <th>Company Name</th>
+                                        <th>GSTIN</th>
+                                        <th>PAN</th>
+                                        <th>Phone</th>
+                                        <th>Email</th>
+                                        <th>City</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="company-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW: USER MASTER -->
+                <section class="view-section" id="view-master-user">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title">User Master</h1>
+                            <p class="page-subtitle">Manage system users and login credentials</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="document.getElementById('user-form').reset(); document.getElementById('usr-id').value=''; Masters.populateUserCompanyDropdown(); App.openModal('modal-user');">+ Add User</button>
+                    </div>
+
+                    <div class="card">
+                        <div class="table-responsive">
+                            <table class="custom-table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Username</th>
+                                        <th>Password</th>
+                                        <th>Email</th>
+                                        <th>Mobile</th>
+                                        <th>Role</th>
+                                        <th>Company</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="user-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW: ACCESS LEVEL MATRIX -->
+                <section class="view-section" id="view-master-access">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title">Access Level & Role Management</h1>
+                            <p class="page-subtitle">Configure module permissions for employee roles</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="Masters.savePermissions()"><i class="fa-solid fa-floppy-disk"></i> Save Permissions</button>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 260px 1fr; gap: 1.5rem;">
+                        <div class="card">
+                            <div class="card-header"><h3 class="card-title">Roles</h3></div>
+                            <div id="role-list-container"></div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header"><h3 class="card-title" id="selected-role-title">Permissions</h3></div>
+                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem;">
+                                <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+                                    <span>Dashboard View</span>
+                                    <label class="switch"><input type="checkbox" id="perm-dashboard" checked><span class="slider"></span></label>
+                                </div>
+                                <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+                                    <span>Company Master</span>
+                                    <label class="switch"><input type="checkbox" id="perm-company" checked><span class="slider"></span></label>
+                                </div>
+                                <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+                                    <span>User Master</span>
+                                    <label class="switch"><input type="checkbox" id="perm-users" checked><span class="slider"></span></label>
+                                </div>
+                                <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+                                    <span>Vendor Master</span>
+                                    <label class="switch"><input type="checkbox" id="perm-vendors" checked><span class="slider"></span></label>
+                                </div>
+                                <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+                                    <span>Customer Master</span>
+                                    <label class="switch"><input type="checkbox" id="perm-customers" checked><span class="slider"></span></label>
+                                </div>
+                                <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+                                    <span>Broker Master</span>
+                                    <label class="switch"><input type="checkbox" id="perm-brokers" checked><span class="slider"></span></label>
+                                </div>
+                                <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+                                    <span>Item / Product Master</span>
+                                    <label class="switch"><input type="checkbox" id="perm-items" checked><span class="slider"></span></label>
+                                </div>
+                                <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+                                    <span>Purchase Transactions</span>
+                                    <label class="switch"><input type="checkbox" id="perm-purchase" checked><span class="slider"></span></label>
+                                </div>
+                                <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+                                    <span>Sales Transactions</span>
+                                    <label class="switch"><input type="checkbox" id="perm-sales" checked><span class="slider"></span></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW: VENDOR MASTER -->
+                <section class="view-section" id="view-master-vendor">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title">Vendor Master</h1>
+                            <p class="page-subtitle">Supplier accounts & raw material vendors</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="document.getElementById('vendor-form').reset(); document.getElementById('vnd-id').value=''; App.openModal('modal-vendor');">+ Add Vendor</button>
+                    </div>
+
+                    <div class="card">
+                        <div class="table-responsive">
+                            <table class="custom-table">
+                                <thead>
+                                    <tr>
+                                        <th>Code</th>
+                                        <th>Vendor Firm</th>
+                                        <th>Contact Person</th>
+                                        <th>Phone</th>
+                                        <th>GSTIN</th>
+                                        <th>City</th>
+                                        <th>Outstanding</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="vendor-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW: CUSTOMER MASTER -->
+                <section class="view-section" id="view-master-customer">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title">Customer Master</h1>
+                            <p class="page-subtitle">Client accounts, distributors & retailers</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="document.getElementById('customer-form').reset(); document.getElementById('cst-id').value=''; App.openModal('modal-customer');">+ Add Customer</button>
+                    </div>
+
+                    <div class="card">
+                        <div class="table-responsive">
+                            <table class="custom-table">
+                                <thead>
+                                    <tr>
+                                        <th>Customer Name</th>
+                                        <th>Contact Person</th>
+                                        <th>Phone</th>
+                                        <th>GSTIN</th>
+                                        <th>City</th>
+                                        <th>Credit Limit</th>
+                                        <th>Outstanding</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="customer-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW: BROKER MASTER -->
+                <section class="view-section" id="view-master-broker">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title">Broker Master</h1>
+                            <p class="page-subtitle">Broker & mandi commission agent profiles</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="document.getElementById('broker-form').reset(); document.getElementById('brk-id').value=''; document.getElementById('brk-code').value=''; App.openModal('modal-broker');">+ Add Broker</button>
+                    </div>
+
+                    <div class="card">
+                        <div class="table-responsive">
+                            <table class="custom-table">
+                                <thead>
+                                    <tr>
+                                        <th>Code</th>
+                                        <th>Broker Name</th>
+                                        <th>Contact Person</th>
+                                        <th>Phone</th>
+                                        <th>Email</th>
+                                        <th>City</th>
+                                        <th>Commission (%)</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="broker-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW: ITEM MASTER -->
+                <section class="view-section" id="view-master-item">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title">Item Master (Products & Raw Materials)</h1>
+                            <p class="page-subtitle">Mehndi, Henna Powder, Herbal Powders & Raw Ingredients</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="document.getElementById('item-form').reset(); document.getElementById('itm-id').value=''; App.openModal('modal-item');">+ Add Product Item</button>
+                    </div>
+
+                    <div class="card">
+                        <div class="table-responsive">
+                            <table class="custom-table">
+                                <thead>
+                                    <tr>
+                                        <th>Item Code</th>
+                                        <th>Product Name</th>
+                                        <th>Category</th>
+                                        <th>Unit</th>
+                                        <th>Pur. Rate</th>
+                                        <th>Sale Price</th>
+                                        <th>GST %</th>
+                                        <th>Stock</th>
+                                        <th>Min. Stock</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="item-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW: UNIT MASTER -->
+                <section class="view-section" id="view-master-unit">
+                    <div class="page-header">
+                        <div><h1 class="page-title">Unit Master</h1><p class="page-subtitle">Measurement units (KG, BOX, BAG)</p></div>
+                        <button class="btn btn-primary" onclick="document.getElementById('unit-form').reset(); App.openModal('modal-unit');">+ Add Unit</button>
+                    </div>
+                    <div class="card">
+                        <div class="table-responsive">
+                            <table class="custom-table">
+                                <thead><tr><th>Unit Name</th><th>Description</th><th>Actions</th></tr></thead>
+                                <tbody id="unit-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW: ACCOUNT MASTER -->
+                <section class="view-section" id="view-master-account">
+                    <div class="page-header">
+                        <div><h1 class="page-title">Account Master</h1><p class="page-subtitle">Chart of Accounts (Bank, Cash, Income, Expense)</p></div>
+                        <button class="btn btn-primary" onclick="document.getElementById('account-form').reset(); App.openModal('modal-account');">+ Add Account</button>
+                    </div>
+                    <div class="card">
+                        <div class="table-responsive">
+                            <table class="custom-table">
+                                <thead><tr><th>Account Name</th><th>Type</th><th>Opening Balance</th><th>Current Balance</th><th>Status</th><th>Actions</th></tr></thead>
+                                <tbody id="account-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW: PURCHASE ENTRY -->
+                <section class="view-section" id="view-txn-purchase">
+                    <div class="page-header">
+                        <div><h1 class="page-title">Purchase Entry</h1><p class="page-subtitle">Record raw material & bulk product purchases</p></div>
+                        <button class="btn btn-primary" onclick="App.openModal('modal-purchase');">+ New Purchase Entry</button>
+                    </div>
+                    <div class="card">
+                        <div class="table-responsive">
+                            <table class="custom-table">
+                                <thead><tr><th>Inv No</th><th>Date</th><th>Vendor Firm</th><th>Bill Subtotal</th><th>GST Tax</th><th>U_B Total</th><th>Grand Total</th><th>Status</th><th>Action</th></tr></thead>
+                                <tbody id="purchase-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW: WB PURCHASE ENTRY -->
+                <section class="view-section" id="view-txn-wb-purchase">
+                    <div class="page-header">
+                        <div><h1 class="page-title">WB Purchase Entry (Without Bill)</h1><p class="page-subtitle">Manage Without-Bill (WB) / Mandi Cash Purchase Stock Receipts</p></div>
+                        <button class="btn btn-primary" onclick="App.openModal('modal-wb-purchase')">+ New WB Purchase Entry</button>
+                    </div>
+                    <div class="card">
+                        <div class="table-responsive">
+                            <table class="custom-table">
+                                <thead><tr><th>WB Slip No</th><th>Date</th><th>Vendor / Supplier</th><th>Net Weight</th><th>WB Amount</th><th>Status</th><th>Action</th></tr></thead>
+                                <tbody id="wb-purchase-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW: SALES ENTRY -->
+                <section class="view-section" id="view-txn-sales-order">
+                    <div class="page-header">
+                        <div><h1 class="page-title">Sales Entry</h1><p class="page-subtitle">Manage customer wholesale sales entries</p></div>
+                        <button class="btn btn-primary" onclick="App.openModal('modal-sales-order')">+ Create Sales Entry</button>
+                    </div>
+                    <div class="card">
+                        <div class="table-responsive">
+                            <table class="custom-table">
+                                <thead><tr><th>Order No</th><th>Order Date</th><th>Customer</th><th>Delivery Date</th><th>Bill Amt</th><th>Under Bill Amt</th><th>Grand Total</th><th>Status</th><th>Action</th></tr></thead>
+                                <tbody id="so-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW: WB SALES ENTRY -->
+                <section class="view-section" id="view-txn-wb-sales">
+                    <div class="page-header">
+                        <div><h1 class="page-title">WB Sales Entry (Without Bill)</h1><p class="page-subtitle">Manage Without-Bill (WB) / Mandi Cash Wholesale Sales Entries</p></div>
+                        <button class="btn btn-primary" onclick="App.openModal('modal-wb-sales')">+ New WB Sales Entry</button>
+                    </div>
+                    <div class="card">
+                        <div class="table-responsive">
+                            <table class="custom-table">
+                                <thead><tr><th>WB Slip No</th><th>Date</th><th>Customer</th><th>Net Weight</th><th>WB Amount</th><th>Status</th><th>Action</th></tr></thead>
+                                <tbody id="wb-sales-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW: ORDER DISPATCH -->
+                <section class="view-section" id="view-txn-order-dispatch">
+                    <div class="page-header">
+                        <div><h1 class="page-title">Order Dispatch Management</h1><p class="page-subtitle">Track order shipments, vehicles, and driver dispatches</p></div>
+                    </div>
+                    <div class="card">
+                        <div class="table-responsive">
+                            <table class="custom-table">
+                                <thead><tr><th>Order No</th><th>Customer</th><th>Dispatch Date</th><th>Vehicle No</th><th>Driver</th><th>Transporter</th><th>Status</th></tr></thead>
+                                <tbody id="dispatch-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW: SALES / PURCHASE ORDER -->
+                <section class="view-section" id="view-txn-sales-invoice">
+                    <div class="page-header">
+                        <div><h1 class="page-title">Sales / Purchase Order</h1><p class="page-subtitle">Manage customer sales orders and vendor purchase orders</p></div>
+                        <button class="btn btn-primary" onclick="App.openModal('modal-sales-invoice');">+ New Sales / Purchase Order</button>
+                    </div>
+                    <div class="card">
+                        <div class="table-responsive">
+                            <table class="custom-table">
+                                <thead><tr><th>Invoice No</th><th>Date</th><th>Customer Name</th><th>Taxable Amount</th><th>GST</th><th>Grand Total</th><th>Payment</th><th>Action</th></tr></thead>
+                                <tbody id="sales-invoice-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW: RECEIPT VOUCHER -->
+                <section class="view-section" id="view-txn-receipt">
+                    <div class="page-header">
+                        <div><h1 class="page-title">Receipt Voucher</h1><p class="page-subtitle">Customer payment collections</p></div>
+                        <button class="btn btn-primary" onclick="Transactions.initReceiptModal(); App.openModal('modal-receipt');">+ Add Receipt</button>
+                    </div>
+                    <div class="card">
+                        <div class="table-responsive">
+                            <table class="custom-table">
+                                <thead><tr><th>Receipt No</th><th>Date</th><th>Customer</th><th>Amount</th><th>Mode</th><th>Against Inv</th><th>Action</th></tr></thead>
+                                <tbody id="receipt-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW: PAYMENT VOUCHER -->
+                <section class="view-section" id="view-txn-payment">
+                    <div class="page-header">
+                        <div><h1 class="page-title">Payment Voucher</h1><p class="page-subtitle">Vendor bill payments</p></div>
+                        <button class="btn btn-primary" onclick="Transactions.initPaymentModal(); App.openModal('modal-payment');">+ Add Payment</button>
+                    </div>
+                    <div class="card">
+                        <div class="table-responsive">
+                            <table class="custom-table">
+                                <thead><tr><th>Payment No</th><th>Date</th><th>Vendor</th><th>Amount</th><th>Mode</th><th>Against Pur</th><th>Action</th></tr></thead>
+                                <tbody id="payment-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW: STOCK OVERVIEW -->
+                <section class="view-section" id="view-inv-overview">
+                    <div class="page-header">
+                        <div><h1 class="page-title">Stock Overview</h1><p class="page-subtitle">Current stock levels & valuation</p></div>
+                        <button class="btn btn-primary" onclick="Inventory.renderAdjustment(); App.openModal('modal-stock-adj');">Adjust Stock</button>
+                    </div>
+
+                    <div class="kpi-grid">
+                        <div class="kpi-card"><span class="kpi-title">Total Product Items</span><div class="kpi-value" id="inv-card-items">0</div></div>
+                        <div class="kpi-card"><span class="kpi-title">Low Stock Alert Items</span><div class="kpi-value" id="inv-card-low" style="color: var(--status-danger);">0</div></div>
+                    </div>
+
+                    <div class="card">
+                        <div class="table-responsive">
+                            <table class="custom-table">
+                                <thead><tr><th>Product Name</th><th>Category</th><th>Batch</th><th>Unit</th><th>Current Stock</th><th>Min Stock</th><th>Pur. Rate</th><th>Stock Value</th><th>Status</th></tr></thead>
+                                <tbody id="inv-overview-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW: ITEM LEDGER -->
+                <section class="view-section" id="view-inv-ledger">
+                    <div class="page-header">
+                        <div><h1 class="page-title">Item Stock Ledger</h1><p class="page-subtitle">Item-wise movement log (In / Out timeline)</p></div>
+                    </div>
+                    <div class="card" style="margin-bottom: 1rem;">
+                        <div class="form-grid" style="grid-template-columns: 2fr 1fr;">
+                            <div class="form-group">
+                                <label class="form-label">Select Herbal Product</label>
+                                <select id="ledger-item-select" class="form-control" onchange="Inventory.loadLedgerData()"></select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="table-responsive">
+                            <table class="custom-table">
+                                <thead><tr><th>Date</th><th>Transaction Type</th><th>Reference No</th><th>Stock In</th><th>Stock Out</th><th>Closing Balance</th></tr></thead>
+                                <tbody id="ledger-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW: LOW STOCK ALERT -->
+                <section class="view-section" id="view-inv-low-stock">
+                    <div class="page-header">
+                        <div><h1 class="page-title" style="color: var(--status-danger);">Low Stock Alert Center</h1><p class="page-subtitle">Items requiring immediate reorder</p></div>
+                    </div>
+                    <div class="card">
+                        <div class="table-responsive">
+                            <table class="custom-table">
+                                <thead><tr><th>Code</th><th>Product Name</th><th>Category</th><th>Current Stock</th><th>Min Level</th><th>Action</th></tr></thead>
+                                <tbody id="low-stock-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- REPORTS -->
+                <section class="view-section" id="view-rpt-purchase">
+                    <div class="page-header">
+                        <div><h1 class="page-title">Purchase Report</h1><p class="page-subtitle">Detailed vendor purchase summary</p></div>
+                    </div>
+                    <div class="card">
+                        <div class="table-responsive">
+                            <table class="custom-table">
+                                <thead><tr><th>Date</th><th>Invoice No</th><th>Vendor Firm</th><th>Subtotal</th><th>GST</th><th>Total Amount</th></tr></thead>
+                                <tbody id="rpt-purchase-body"></tbody>
+                            </table>
+                        </div>
+                        <div style="margin-top: 1rem; font-weight: 700; font-size: 1.1rem; color: var(--dark);" id="rpt-pur-total-val"></div>
+                    </div>
+                </section>
+
+                <section class="view-section" id="view-rpt-sales">
+                    <div class="page-header">
+                        <div><h1 class="page-title">Sales Report</h1><p class="page-subtitle">Customer sales & tax report</p></div>
+                    </div>
+                    <div class="card">
+                        <div class="table-responsive">
+                            <table class="custom-table">
+                                <thead><tr><th>Invoice No</th><th>Date</th><th>Customer</th><th>Taxable</th><th>GST</th><th>Grand Total</th><th>Status</th></tr></thead>
+                                <tbody id="rpt-sales-body"></tbody>
+                            </table>
+                        </div>
+                        <div style="margin-top: 1rem; font-weight: 700; font-size: 1.1rem; color: var(--dark);" id="rpt-sales-total-val"></div>
+                    </div>
+                </section>
+
+                <section class="view-section" id="view-rpt-order">
+                    <div class="page-header"><div><h1 class="page-title">Order Report</h1><p class="page-subtitle">Sales order log</p></div></div>
+                    <div class="card">
+                        <div class="table-responsive">
+                            <table class="custom-table">
+                                <thead><tr><th>Order No</th><th>Date</th><th>Customer</th><th>Delivery Date</th><th>Total</th><th>Status</th></tr></thead>
+                                <tbody id="rpt-order-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW: CASH & BANK REGISTER (COMBINED RECEIPT & PAYMENT REGISTER) -->
+                <section class="view-section" id="view-rpt-cash-reg">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title">Cash & Bank Register</h1>
+                            <p class="page-subtitle">Combined daybook register for all receipts (Dr) and payments (Cr)</p>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <button class="btn btn-sm btn-outline cash-filter-btn active" onclick="Reports.filterCashRegister('all', this)">All Transactions</button>
+                            <button class="btn btn-sm btn-outline cash-filter-btn" onclick="Reports.filterCashRegister('receipt', this)"><i class="fa-solid fa-arrow-down-left" style="color:var(--status-success);"></i> Receipts (Dr) Only</button>
+                            <button class="btn btn-sm btn-outline cash-filter-btn" onclick="Reports.filterCashRegister('payment', this)"><i class="fa-solid fa-arrow-up-right" style="color:var(--status-danger);"></i> Payments (Cr) Only</button>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="table-responsive">
+                            <table class="custom-table">
+                                <thead>
+                                    <tr>
+                                        <th>Voucher No</th>
+                                        <th>Date</th>
+                                        <th>Type</th>
+                                        <th>Party Name</th>
+                                        <th>Mode</th>
+                                        <th style="color: var(--status-success);">Debit (Dr) ₹</th>
+                                        <th style="color: var(--status-danger);">Credit (Cr) ₹</th>
+                                        <th>Ref Bill/Inv</th>
+                                        <th>Voucher</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="rpt-cash-body"></tbody>
+                            </table>
+                        </div>
+                        <div style="margin-top: 1rem;" id="rpt-cash-total-val"></div>
+                    </div>
+                </section>
+
+                <!-- VIEW: SETTINGS COMPANY -->
+                <section class="view-section" id="view-set-company">
+                    <div class="page-header"><div><h1 class="page-title">Company Settings</h1></div></div>
+                    <div class="card" style="max-width: 600px;">
+                        <form onsubmit="SettingsModule.saveCompanySettings(event)">
+                            <div class="form-group" style="margin-bottom:1rem;"><label class="form-label">Company Name</label><input type="text" id="set-comp-name" class="form-control"></div>
+                            <div class="form-group" style="margin-bottom:1rem;"><label class="form-label">GSTIN</label><input type="text" id="set-comp-gstin" class="form-control"></div>
+                            <div class="form-group" style="margin-bottom:1rem;"><label class="form-label">Phone</label><input type="text" id="set-comp-phone" class="form-control"></div>
+                            <div class="form-group" style="margin-bottom:1rem;"><label class="form-label">Email</label><input type="email" id="set-comp-email" class="form-control"></div>
+                            <div class="form-group" style="margin-bottom:1rem;"><label class="form-label">Factory Address</label><textarea id="set-comp-address" class="form-control"></textarea></div>
+                            <button type="submit" class="btn btn-primary">Save Settings</button>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- VIEW: SETTINGS WHATSAPP -->
+                <section class="view-section" id="view-set-whatsapp">
+                    <div class="page-header">
+                        <div><h1 class="page-title">WhatsApp Business API Integration</h1><p class="page-subtitle">Automated customer SMS & WhatsApp notifications</p></div>
+                        <button class="btn btn-secondary" onclick="SettingsModule.sendTestWhatsApp()"><i class="fa-brands fa-whatsapp"></i> Send Test Message</button>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1.5rem;">
+                        <div class="card">
+                            <div class="card-header"><h3 class="card-title">Connection Status</h3></div>
+                            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem;">
+                                <div style="width: 14px; height: 14px; border-radius: 50%; background: var(--status-success);"></div>
+                                <div><strong style="color: var(--dark);" id="wa-status">Connected</strong><br><span style="font-size: 0.8rem; color: var(--text-muted);">API Status Active</span></div>
+                            </div>
+                            <div style="margin-bottom: 1rem;">
+                                <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 0.4rem;"><span>Credits Used</span><strong id="wa-credits">4,825 / 5,000</strong></div>
+                                <div style="height: 8px; background: #E5E7EB; border-radius: 4px; overflow: hidden;"><div id="wa-credits-bar" style="height: 100%; background: var(--primary); width: 95%;"></div></div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header"><h3 class="card-title">Message Templates</h3></div>
+                            <form onsubmit="SettingsModule.saveWhatsAppTemplates(event)">
+                                <div class="form-group" style="margin-bottom: 1rem;">
+                                    <label class="form-label">Invoice Generated Template</label>
+                                    <textarea id="wa-tpl-invoice" class="form-control"></textarea>
+                                </div>
+                                <div class="form-group" style="margin-bottom: 1rem;">
+                                    <label class="form-label">Order Confirmation Template</label>
+                                    <textarea id="wa-tpl-order" class="form-control"></textarea>
+                                </div>
+                                <div class="form-group" style="margin-bottom: 1.5rem;">
+                                    <label class="form-label">Dispatch Notification Template</label>
+                                    <textarea id="wa-tpl-dispatch" class="form-control"></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Save Templates</button>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW: SETTINGS BACKUP -->
+                <section class="view-section" id="view-set-backup">
+                    <div class="page-header"><div><h1 class="page-title">Backup & Restore Database</h1></div></div>
+                    <div class="card" style="max-width: 500px;">
+                        <h3 style="margin-bottom: 1rem;">Data Backup</h3>
+                        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem;">Download complete JSON snapshot of products, customers, vendors, and transactions.</p>
+                        <button class="btn btn-primary" onclick="SettingsModule.exportDataJSON()"><i class="fa-solid fa-download"></i> Download Full Backup JSON</button>
+
+                        <hr style="margin: 2rem 0; border: none; border-top: 1px solid var(--border-color);">
+
+                        <h3 style="margin-bottom: 1rem;">Restore Backup</h3>
+                        <input type="file" accept=".json" class="form-control" onchange="SettingsModule.importDataJSON(this)">
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL DIALOGS -->
+
+    <!-- 1. Modal Company -->
+    <div class="modal-overlay" id="modal-company">
+        <div class="modal-card">
+            <div class="modal-header">
+                <span class="modal-title">Company Profile</span>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="company-form" onsubmit="Masters.saveCompany(event)">
+                    <input type="hidden" id="comp-id">
+                    <div class="form-grid">
+                        <div class="form-group full-width"><label class="form-label">Company Name *</label><input type="text" id="comp-name" class="form-control" required></div>
+                        <div class="form-group"><label class="form-label">GSTIN</label><input type="text" id="comp-gstin" class="form-control"></div>
+                        <div class="form-group"><label class="form-label">PAN</label><input type="text" id="comp-pan" class="form-control"></div>
+                        <div class="form-group"><label class="form-label">Phone</label><input type="text" id="comp-phone" class="form-control"></div>
+                        <div class="form-group"><label class="form-label">Email</label><input type="email" id="comp-email" class="form-control"></div>
+                        <div class="form-group full-width"><label class="form-label">Address</label><textarea id="comp-address" class="form-control"></textarea></div>
+                        <div class="form-group"><label class="form-label">City</label><input type="text" id="comp-city" class="form-control"></div>
+                        <div class="form-group"><label class="form-label">State</label><input type="text" id="comp-state" class="form-control" value="Rajasthan"></div>
+                        <div class="form-group"><label class="form-label">Pincode</label><input type="text" id="comp-pincode" class="form-control"></div>
+                        <div class="form-group"><label class="form-label">Financial Year</label><input type="text" id="comp-fy" class="form-control" value="2026-2027"></div>
+                    </div>
+                    <div class="modal-footer" style="padding-left:0; padding-right:0; margin-top:1.5rem;">
+                        <button type="button" class="btn btn-outline modal-close">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Company</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Modal User -->
+    <div class="modal-overlay" id="modal-user">
+        <div class="modal-card">
+            <div class="modal-header">
+                <span class="modal-title">User Account</span>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="user-form" onsubmit="Masters.saveUser(event)">
+                    <input type="hidden" id="usr-id">
+                    <div class="form-grid">
+                        <div class="form-group"><label class="form-label">Full Name *</label><input type="text" id="usr-name" class="form-control" required></div>
+                        <div class="form-group"><label class="form-label">Username *</label><input type="text" id="usr-username" class="form-control" required></div>
+                        <div class="form-group">
+                            <label class="form-label">Password *</label>
+                            <div style="position: relative; display: flex; align-items: center;">
+                                <input type="password" id="usr-password" class="form-control" style="padding-right: 2.5rem; width: 100%;" placeholder="Enter password" required>
+                                <button type="button" onclick="Masters.togglePasswordVisibility('usr-password', this)" style="position: absolute; right: 10px; background: none; border: none; color: #6b7280; cursor: pointer; padding: 4px;" title="Toggle Password Visibility">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group"><label class="form-label">Email</label><input type="email" id="usr-email" class="form-control"></div>
+                        <div class="form-group"><label class="form-label">Mobile</label><input type="text" id="usr-mobile" class="form-control"></div>
+                        <div class="form-group">
+                            <label class="form-label">Role</label>
+                            <select id="usr-role" class="form-control">
+                                <option value="Admin">Admin</option>
+                                <option value="Manager">Manager</option>
+                                <option value="Accountant">Accountant</option>
+                                <option value="Sales Manager">Sales Manager</option>
+                                <option value="Purchase Manager">Purchase Manager</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Company</label>
+                            <select id="usr-company" class="form-control">
+                                <option value="Vikas Udhyog">Vikas Udhyog</option>
+                                <option value="Vikas Herbal Products">Vikas Herbal Products</option>
+                                <option value="Vikas Trading">Vikas Trading</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="padding-left:0; padding-right:0; margin-top:1.5rem;">
+                        <button type="button" class="btn btn-outline modal-close">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save User</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Modal Vendor -->
+    <div class="modal-overlay" id="modal-vendor">
+        <div class="modal-card">
+            <div class="modal-header">
+                <span class="modal-title">Vendor Account</span>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="vendor-form" onsubmit="Masters.saveVendor(event)">
+                    <input type="hidden" id="vnd-id">
+                    <input type="hidden" id="vnd-code">
+                    <div class="form-grid">
+                        <div class="form-group full-width"><label class="form-label">Vendor Firm *</label><input type="text" id="vnd-name" class="form-control" placeholder="Enter Vendor Firm Name" required></div>
+                        <div class="form-group"><label class="form-label">Contact Person</label><input type="text" id="vnd-contact" class="form-control"></div>
+                        <div class="form-group"><label class="form-label">Mobile</label><input type="text" id="vnd-phone" class="form-control"></div>
+                        <div class="form-group"><label class="form-label">Email</label><input type="email" id="vnd-email" class="form-control"></div>
+                        <div class="form-group"><label class="form-label">GSTIN</label><input type="text" id="vnd-gstin" class="form-control"></div>
+                        <div class="form-group"><label class="form-label">City</label><input type="text" id="vnd-city" class="form-control"></div>
+                        <div class="form-group"><label class="form-label">State</label><input type="text" id="vnd-state" class="form-control" value="Rajasthan"></div>
+                        <div class="form-group"><label class="form-label">Opening Balance (₹)</label><input type="number" id="vnd-balance" class="form-control" value="0"></div>
+                        <div class="form-group"><label class="form-label">Payment Terms</label><input type="text" id="vnd-terms" class="form-control" value="30 Days"></div>
+                    </div>
+                    <div class="modal-footer" style="padding-left:0; padding-right:0; margin-top:1.5rem;">
+                        <button type="button" class="btn btn-outline modal-close">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Vendor</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Modal Customer -->
+    <div class="modal-overlay" id="modal-customer">
+        <div class="modal-card">
+            <div class="modal-header">
+                <span class="modal-title">Customer Account</span>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="customer-form" onsubmit="Masters.saveCustomer(event)">
+                    <input type="hidden" id="cst-id">
+                    <div class="form-grid">
+                        <div class="form-group full-width"><label class="form-label">Customer Name *</label><input type="text" id="cst-name" class="form-control" required></div>
+                        <div class="form-group"><label class="form-label">Contact Person</label><input type="text" id="cst-contact" class="form-control"></div>
+                        <div class="form-group"><label class="form-label">Mobile</label><input type="text" id="cst-phone" class="form-control"></div>
+                        <div class="form-group"><label class="form-label">Email</label><input type="email" id="cst-email" class="form-control"></div>
+                        <div class="form-group"><label class="form-label">GSTIN</label><input type="text" id="cst-gstin" class="form-control"></div>
+                        <div class="form-group"><label class="form-label">City</label><input type="text" id="cst-city" class="form-control"></div>
+                        <div class="form-group"><label class="form-label">Credit Limit (₹)</label><input type="number" id="cst-limit" class="form-control" value="300000"></div>
+                        <div class="form-group"><label class="form-label">Opening Balance (₹)</label><input type="number" id="cst-balance" class="form-control" value="0"></div>
+                    </div>
+                    <div class="modal-footer" style="padding-left:0; padding-right:0; margin-top:1.5rem;">
+                        <button type="button" class="btn btn-outline modal-close">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Customer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Broker -->
+    <div class="modal-overlay" id="modal-broker">
+        <div class="modal-card">
+            <div class="modal-header">
+                <span class="modal-title">Broker Account Details</span>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="broker-form" onsubmit="Masters.saveBroker(event)">
+                    <input type="hidden" id="brk-id">
+                    <input type="hidden" id="brk-code">
+                    <div class="form-grid">
+                        <div class="form-group full-width"><label class="form-label">Broker / Agency Name *</label><input type="text" id="brk-name" class="form-control" placeholder="e.g. Rameshwar Brokerage" required></div>
+                        <div class="form-group"><label class="form-label">Contact Person</label><input type="text" id="brk-contact" class="form-control" placeholder="Primary contact"></div>
+                        <div class="form-group"><label class="form-label">Mobile Number</label><input type="text" id="brk-phone" class="form-control" placeholder="10-digit mobile"></div>
+                        <div class="form-group"><label class="form-label">Email</label><input type="email" id="brk-email" class="form-control" placeholder="broker@gmail.com"></div>
+                        <div class="form-group"><label class="form-label">GSTIN / PAN</label><input type="text" id="brk-gstin" class="form-control" placeholder="08AAAAA1234A1Z1"></div>
+                        <div class="form-group"><label class="form-label">City</label><input type="text" id="brk-city" class="form-control" placeholder="Sojat / Jodhpur"></div>
+                        <div class="form-group"><label class="form-label">Commission Rate (%)</label><input type="number" step="0.1" id="brk-commission" class="form-control" value="1.5"></div>
+                        <div class="form-group"><label class="form-label">Status</label><select id="brk-status" class="form-control"><option value="Active">Active</option><option value="Inactive">Inactive</option></select></div>
+                        <div class="form-group full-width"><label class="form-label">Remarks / Description</label><input type="text" id="brk-remarks" class="form-control" placeholder="Mandi agent details or notes"></div>
+                    </div>
+                    <div class="modal-footer" style="padding-left:0; padding-right:0; margin-top:1.5rem;">
+                        <button type="button" class="btn btn-outline modal-close">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Broker</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. Modal Product Item -->
+    <div class="modal-overlay" id="modal-item">
+        <div class="modal-card modal-lg">
+            <div class="modal-header">
+                <span class="modal-title">Product Item (Herbal Powder / Raw Material)</span>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="item-form" onsubmit="Masters.saveItemMaster(event)">
+                    <input type="hidden" id="itm-id">
+                    <div class="form-grid-3">
+                        <div class="form-group"><label class="form-label">Item Code</label><input type="text" id="itm-code" class="form-control" placeholder="Auto-generated"></div>
+                        <div class="form-group"><label class="form-label">Product Name *</label><input type="text" id="itm-name" class="form-control" required></div>
+                        <div class="form-group">
+                            <label class="form-label">Category</label>
+                            <select id="itm-category" class="form-control">
+                                <option value="Mehndi">Mehndi / Henna</option>
+                                <option value="Herbal Powder">Herbal Powder</option>
+                                <option value="Raw Material">Ayurvedic Raw Material</option>
+                                <option value="Finished Product">Finished Product</option>
+                                <option value="Packaging Material">Packaging Material</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Unit</label>
+                            <select id="itm-unit" class="form-control">
+                                <option value="KG">KG</option>
+                                <option value="GRAM">GRAM</option>
+                                <option value="BOX">BOX</option>
+                                <option value="PACKET">PACKET</option>
+                                <option value="BAG">BAG</option>
+                            </select>
+                        </div>
+                        <div class="form-group"><label class="form-label">Purchase Rate (₹)</label><input type="number" id="itm-purchase-rate" class="form-control" value="100"></div>
+                        <div class="form-group"><label class="form-label">Selling Price (₹)</label><input type="number" id="itm-sale-rate" class="form-control" value="150"></div>
+                        <div class="form-group"><label class="form-label">GST Tax (%)</label><input type="number" id="itm-gst" class="form-control" value="18"></div>
+                        <div class="form-group"><label class="form-label">HSN Code</label><input type="text" id="itm-hsn" class="form-control" value="1404" placeholder="e.g. 1404"></div>
+                        <div class="form-group"><label class="form-label">Opening Stock</label><input type="number" id="itm-stock" class="form-control" value="100"></div>
+                        <div class="form-group"><label class="form-label">Minimum Stock Alert</label><input type="number" id="itm-min-stock" class="form-control" value="30"></div>
+                        <div class="form-group"><label class="form-label">Batch No</label><input type="text" id="itm-batch" class="form-control" value="B-2026-08"></div>
+                        <div class="form-group"><label class="form-label">Expiry Date</label><input type="date" id="itm-exp" class="form-control" value="2028-12-31"></div>
+                    </div>
+                    <div class="modal-footer" style="padding-left:0; padding-right:0; margin-top:1.5rem;">
+                        <button type="button" class="btn btn-outline modal-close">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Product</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. Modal Purchase Entry -->
+    <div class="modal-overlay" id="modal-purchase">
+        <div class="modal-card modal-xl">
+            <div class="modal-header">
+                <span class="modal-title">New Purchase Entry (Stock Receipt)</span>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid-4" style="margin-bottom: 1.25rem;">
+                    <div class="form-group">
+                        <label class="form-label">Vendor / Supplier *</label>
+                        <select id="pur-vendor" class="form-control"></select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Broker / Agent (Optional)</label>
+                        <select id="pur-broker" class="form-control"></select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Order Type</label>
+                        <select id="pur-order-type" class="form-control">
+                            <option value="Urgent">Urgent</option>
+                            <option value="Fast">Fast</option>
+                            <option value="Ready Delivery">Ready Delivery</option>
+                            <option value="Medium" selected>Medium</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label class="form-label">Invoice No</label><input type="text" id="pur-inv-no" class="form-control" value="INV-NH-405"></div>
+                    <div class="form-group"><label class="form-label">Invoice Date</label><input type="date" id="pur-date" class="form-control"></div>
+                </div>
+
+                <div class="table-responsive" style="margin-bottom: 1rem;">
+                    <table class="custom-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 45px; text-align: center;">S.No</th>
+                                <th style="min-width: 170px;">Item</th>
+                                <th style="width: 100px;">Batch No</th>
+                                <th style="width: 85px;">HSN</th>
+                                <th style="width: 75px;">GST %</th>
+                                <th style="width: 90px;">Unit Type</th>
+                                <th style="width: 95px;">Net Weight</th>
+                                <th style="width: 100px;">Actual Rate (₹)</th>
+                                <th style="width: 100px;">Bill Rate (₹)</th>
+                                <th style="width: 100px;">U_B Rate (₹)</th>
+                                <th style="width: 110px;">Bill Amt</th>
+                                <th style="width: 110px;">U_B Amt</th>
+                                <th style="width: 50px;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="purchase-items-body"></tbody>
+                    </table>
+                </div>
+
+                <button type="button" class="btn btn-sm btn-secondary" onclick="Transactions.addPurchaseRow()"><i class="fa-solid fa-plus"></i> Add Item Line</button>
+
+                <div style="display: flex; justify-content: flex-end; margin-top: 1.5rem;">
+                    <div style="width: 340px; background: var(--bg); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;"><span>Official Subtotal:</span><strong id="pur-summary-subtotal">₹0</strong></div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;"><span>GST Tax:</span><strong id="pur-summary-gst">₹0</strong></div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;"><span>Official Billing Total:</span><strong id="pur-summary-billtotal" style="color: var(--primary);">₹0</strong></div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;"><span>U_B Total:</span><strong id="pur-summary-underbilling" style="color: #d97706;">₹0</strong></div>
+                        <hr style="margin: 0.5rem 0;">
+                        <div style="display: flex; justify-content: space-between; font-size: 1.15rem; color: var(--dark);"><span>Grand Total:</span><strong id="pur-summary-grandtotal">₹0</strong></div>
+                    </div>
+                </div>
+
+                <div class="modal-footer" style="padding-left:0; padding-right:0; margin-top:1.5rem;">
+                    <button type="button" class="btn btn-outline modal-close">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="Transactions.savePurchase()">Save & Increase Stock</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 7. Modal Sales / Purchase Order -->
+    <div class="modal-overlay" id="modal-sales-invoice">
+        <div class="modal-card modal-xl">
+            <div class="modal-header">
+                <span class="modal-title">New Sales / Purchase Order</span>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid-4" style="margin-bottom: 1.25rem;">
+                    <div class="form-group">
+                        <label class="form-label">Customer *</label>
+                        <select id="si-customer" class="form-control"></select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Broker / Agent (Optional)</label>
+                        <select id="si-broker" class="form-control"></select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Order Type</label>
+                        <select id="si-order-type" class="form-control">
+                            <option value="Urgent">Urgent</option>
+                            <option value="Fast">Fast</option>
+                            <option value="Ready Delivery">Ready Delivery</option>
+                            <option value="Medium" selected>Medium</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label class="form-label">Invoice No</label><input type="text" id="si-inv-no" class="form-control" value="INV-1026"></div>
+                    <div class="form-group"><label class="form-label">Invoice Date</label><input type="date" id="si-date" class="form-control"></div>
+                </div>
+
+                <div class="table-responsive" style="margin-bottom: 1rem;">
+                    <table class="custom-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 45px; text-align: center;">S.No</th>
+                                <th style="min-width: 170px;">Item</th>
+                                <th style="width: 100px;">Batch No</th>
+                                <th style="width: 85px;">HSN</th>
+                                <th style="width: 75px;">GST %</th>
+                                <th style="width: 90px;">Unit Type</th>
+                                <th style="width: 95px;">Net Weight</th>
+                                <th style="width: 100px;">Actual Rate (₹)</th>
+                                <th style="width: 100px;">Bill Rate (₹)</th>
+                                <th style="width: 100px;">U_B Rate (₹)</th>
+                                <th style="width: 110px;">Bill Amt</th>
+                                <th style="width: 110px;">U_B Amt</th>
+                                <th style="width: 50px;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="sales-items-body"></tbody>
+                    </table>
+                </div>
+
+                <button type="button" class="btn btn-sm btn-secondary" onclick="Transactions.addSalesRow()"><i class="fa-solid fa-plus"></i> Add Product Line</button>
+
+                <div style="display: flex; justify-content: flex-end; margin-top: 1.5rem;">
+                    <div style="width: 340px; background: var(--bg); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;"><span>Taxable Amount:</span><strong id="si-summary-subtotal">₹0</strong></div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;"><span>CGST (9%):</span><strong id="si-summary-cgst">₹0</strong></div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;"><span>SGST (9%):</span><strong id="si-summary-sgst">₹0</strong></div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;"><span>Official Billing Total:</span><strong id="si-summary-billtotal" style="color: var(--primary);">₹0</strong></div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;"><span>U_B Total:</span><strong id="si-summary-underbilling" style="color: #d97706;">₹0</strong></div>
+                        <hr style="margin: 0.5rem 0;">
+                        <div style="display: flex; justify-content: space-between; font-size: 1.15rem; color: var(--dark);"><span>Grand Total:</span><strong id="si-summary-grandtotal">₹0</strong></div>
+                    </div>
+                </div>
+
+                <div class="modal-footer" style="padding-left:0; padding-right:0; margin-top:1.5rem;">
+                    <button type="button" class="btn btn-outline modal-close">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="Transactions.saveSalesInvoice()">Save & Deduct Stock</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 7b. Modal Sales Entry -->
+    <div class="modal-overlay" id="modal-sales-order">
+        <div class="modal-card modal-xl">
+            <div class="modal-header">
+                <span class="modal-title">New Sales Entry</span>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="so-form" onsubmit="Transactions.saveSalesOrder(event)">
+                    <div class="form-grid-4" style="margin-bottom: 1.25rem;">
+                        <div class="form-group">
+                            <label class="form-label">Customer *</label>
+                            <select id="so-customer" class="form-control" required></select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Broker / Agent (Optional)</label>
+                            <select id="so-broker" class="form-control"></select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Order Type</label>
+                            <select id="so-order-type" class="form-control">
+                                <option value="Urgent">Urgent</option>
+                                <option value="Fast">Fast</option>
+                                <option value="Ready Delivery">Ready Delivery</option>
+                                <option value="Medium" selected>Medium</option>
+                            </select>
+                        </div>
+                        <div class="form-group"><label class="form-label">Order Number</label><input type="text" id="so-no" class="form-control" value="SO-1026"></div>
+                        <div class="form-group"><label class="form-label">Order Date</label><input type="date" id="so-date" class="form-control"></div>
+                        <div class="form-group"><label class="form-label">Expected Delivery Date</label><input type="date" id="so-del-date" class="form-control"></div>
+                    </div>
+
+                    <div class="table-responsive" style="margin-bottom: 1rem;">
+                        <table class="custom-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 45px; text-align: center;">S.No</th>
+                                    <th style="min-width: 170px;">Item</th>
+                                    <th style="width: 100px;">Batch No</th>
+                                    <th style="width: 85px;">HSN</th>
+                                    <th style="width: 75px;">GST %</th>
+                                    <th style="width: 90px;">Unit Type</th>
+                                    <th style="width: 95px;">Net Weight</th>
+                                    <th style="width: 100px;">Actual Rate (₹)</th>
+                                    <th style="width: 100px;">Bill Rate (₹)</th>
+                                    <th style="width: 100px;">U_B Rate (₹)</th>
+                                    <th style="width: 110px;">Bill Amt</th>
+                                    <th style="width: 110px;">U_B Amt</th>
+                                    <th style="width: 50px;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="so-items-body"></tbody>
+                        </table>
+                    </div>
+
+                    <button type="button" class="btn btn-sm btn-secondary" onclick="Transactions.addSORow()"><i class="fa-solid fa-plus"></i> Add Item Line</button>
+
+                    <div style="display: flex; justify-content: flex-end; margin-top: 1.5rem;">
+                        <div style="width: 340px; background: var(--bg); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;"><span>Official Billing Total:</span><strong id="so-summary-billing" style="color: var(--primary);">₹0</strong></div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;"><span>U_B Total:</span><strong id="so-summary-underbilling" style="color: #d97706;">₹0</strong></div>
+                            <hr style="margin: 0.5rem 0;">
+                            <div style="display: flex; justify-content: space-between; font-size: 1.15rem; color: var(--dark);"><span>Grand Total:</span><strong id="so-summary-total">₹0</strong></div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer" style="padding-left:0; padding-right:0; margin-top:1.5rem;">
+                        <button type="button" class="btn btn-outline modal-close">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Create Sales Entry</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 7c. Modal WB Purchase Entry -->
+    <div class="modal-overlay" id="modal-wb-purchase">
+        <div class="modal-card modal-xl">
+            <div class="modal-header">
+                <span class="modal-title">New WB Purchase Entry (Without Bill)</span>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid-4" style="margin-bottom: 1.25rem;">
+                    <div class="form-group">
+                        <label class="form-label">Vendor / Supplier *</label>
+                        <select id="wbp-vendor" class="form-control"></select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Broker / Agent (Optional)</label>
+                        <select id="wbp-broker" class="form-control"></select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Order Type</label>
+                        <select id="wbp-order-type" class="form-control">
+                            <option value="Urgent">Urgent</option>
+                            <option value="Fast">Fast</option>
+                            <option value="Ready Delivery">Ready Delivery</option>
+                            <option value="Medium" selected>Medium</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label class="form-label">WB Slip No</label><input type="text" id="wbp-slip-no" class="form-control" value="WBP-803"></div>
+                    <div class="form-group"><label class="form-label">Entry Date</label><input type="date" id="wbp-date" class="form-control"></div>
+                </div>
+
+                <div class="table-responsive" style="margin-bottom: 1rem;">
+                    <table class="custom-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 45px; text-align: center;">SNo</th>
+                                <th style="min-width: 170px;">Item</th>
+                                <th style="width: 100px;">Batch no</th>
+                                <th style="width: 110px;">W-B rate</th>
+                                <th style="width: 90px;">unit</th>
+                                <th style="width: 95px;">weight</th>
+                                <th style="width: 110px;">amt</th>
+                                <th style="width: 50px;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="wbp-items-body"></tbody>
+                    </table>
+                </div>
+
+                <button type="button" class="btn btn-sm btn-secondary" onclick="Transactions.addWBPurchaseRow()"><i class="fa-solid fa-plus"></i> Add Item Line</button>
+
+                <div style="display: flex; justify-content: flex-end; margin-top: 1.5rem;">
+                    <div style="width: 340px; background: var(--bg); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                        <div style="display: flex; justify-content: space-between; font-size: 1.15rem; color: #d97706;"><span>Total WB Amount:</span><strong id="wbp-summary-total">₹0</strong></div>
+                    </div>
+                </div>
+
+                <div class="modal-footer" style="padding-left:0; padding-right:0; margin-top:1.5rem;">
+                    <button type="button" class="btn btn-outline modal-close">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="Transactions.saveWBPurchase()">Save & Increase Stock (WB)</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 7d. Modal WB Sales Entry -->
+    <div class="modal-overlay" id="modal-wb-sales">
+        <div class="modal-card modal-xl">
+            <div class="modal-header">
+                <span class="modal-title">New WB Sales Entry (Without Bill)</span>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid-4" style="margin-bottom: 1.25rem;">
+                    <div class="form-group">
+                        <label class="form-label">Customer *</label>
+                        <select id="wbs-customer" class="form-control"></select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Broker / Agent (Optional)</label>
+                        <select id="wbs-broker" class="form-control"></select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Order Type</label>
+                        <select id="wbs-order-type" class="form-control">
+                            <option value="Urgent">Urgent</option>
+                            <option value="Fast">Fast</option>
+                            <option value="Ready Delivery">Ready Delivery</option>
+                            <option value="Medium" selected>Medium</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label class="form-label">WB Slip No</label><input type="text" id="wbs-slip-no" class="form-control" value="WBS-903"></div>
+                    <div class="form-group"><label class="form-label">Entry Date</label><input type="date" id="wbs-date" class="form-control"></div>
+                </div>
+
+                <div class="table-responsive" style="margin-bottom: 1rem;">
+                    <table class="custom-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 45px; text-align: center;">SNo</th>
+                                <th style="min-width: 170px;">Item</th>
+                                <th style="width: 100px;">Batch no</th>
+                                <th style="width: 110px;">W-B rate</th>
+                                <th style="width: 90px;">unit</th>
+                                <th style="width: 95px;">weight</th>
+                                <th style="width: 110px;">amt</th>
+                                <th style="width: 50px;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="wbs-items-body"></tbody>
+                    </table>
+                </div>
+
+                <button type="button" class="btn btn-sm btn-secondary" onclick="Transactions.addWBSalesRow()"><i class="fa-solid fa-plus"></i> Add Item Line</button>
+
+                <div style="display: flex; justify-content: flex-end; margin-top: 1.5rem;">
+                    <div style="width: 340px; background: var(--bg); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                        <div style="display: flex; justify-content: space-between; font-size: 1.15rem; color: #d97706;"><span>Total WB Amount:</span><strong id="wbs-summary-total">₹0</strong></div>
+                    </div>
+                </div>
+
+                <div class="modal-footer" style="padding-left:0; padding-right:0; margin-top:1.5rem;">
+                    <button type="button" class="btn btn-outline modal-close">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="Transactions.saveWBSales()">Save & Deduct Stock (WB)</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 8. Modal Dispatch -->
+    <div class="modal-overlay" id="modal-dispatch">
+        <div class="modal-card">
+            <div class="modal-header">
+                <span class="modal-title">Order Dispatch & Logistics</span>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-group"><label class="form-label">Order Number</label><input type="text" id="dsp-order-no" class="form-control" readonly></div>
+                    <div class="form-group"><label class="form-label">Customer</label><input type="text" id="dsp-customer" class="form-control" readonly></div>
+                    <div class="form-group"><label class="form-label">Vehicle Number</label><input type="text" id="dsp-vehicle" class="form-control" placeholder="RJ-19-GA-1234"></div>
+                    <div class="form-group"><label class="form-label">Driver Name</label><input type="text" id="dsp-driver" class="form-control" placeholder="Driver name"></div>
+                    <div class="form-group full-width"><label class="form-label">Transporter / Courier</label><input type="text" id="dsp-transporter" class="form-control" placeholder="Vikas Logistics / VRL Logistics"></div>
+                </div>
+                <div class="modal-footer" style="padding-left:0; padding-right:0; margin-top:1.5rem;">
+                    <button type="button" class="btn btn-outline modal-close">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="Transactions.confirmDispatch()">Confirm Dispatch</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 9. Modal Receipt -->
+    <div class="modal-overlay" id="modal-receipt">
+        <div class="modal-card">
+            <div class="modal-header"><span class="modal-title">Receipt Voucher</span><button class="modal-close">&times;</button></div>
+            <div class="modal-body">
+                <form onsubmit="Transactions.saveReceipt(event)">
+                    <div class="form-grid">
+                        <div class="form-group"><label class="form-label">Receipt No</label><input type="text" id="rcp-no" class="form-control" value="RCP-802"></div>
+                        <div class="form-group"><label class="form-label">Date</label><input type="date" id="rcp-date" class="form-control"></div>
+                        <div class="form-group full-width">
+                            <label class="form-label">Receipt Type *</label>
+                            <select id="rcp-type" class="form-control" onchange="Transactions.onReceiptTypeChange(this)">
+                                <option value="Customer">Customer Payment (Through Customer)</option>
+                                <option value="Income">Direct Income (Other Income)</option>
+                            </select>
+                        </div>
+                        <div class="form-group full-width">
+                            <label class="form-label" id="rcp-party-label">Customer *</label>
+                            <select id="rcp-customer" class="form-control" required></select>
+                        </div>
+                        <div class="form-group"><label class="form-label">Amount (₹) *</label><input type="number" id="rcp-amount" class="form-control" required></div>
+                        <div class="form-group">
+                            <label class="form-label">Payment Mode</label>
+                            <select id="rcp-mode" class="form-control">
+                                <option value="HDFC Bank (UPI)">HDFC Bank (UPI)</option>
+                                <option value="SBI Bank (NEFT)">SBI Bank (NEFT)</option>
+                                <option value="Cash">Cash</option>
+                                <option value="Cheque">Cheque</option>
+                            </select>
+                        </div>
+                        <div class="form-group"><label class="form-label">Against Invoice / Ref</label><input type="text" id="rcp-inv" class="form-control" value="INV-1025"></div>
+                        <div class="form-group full-width"><label class="form-label">Remarks</label><input type="text" id="rcp-remarks" class="form-control"></div>
+                    </div>
+                    <div class="modal-footer" style="padding-left:0; padding-right:0; margin-top:1.5rem;">
+                        <button type="button" class="btn btn-outline modal-close">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Receipt Voucher</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 10. Modal Payment -->
+    <div class="modal-overlay" id="modal-payment">
+        <div class="modal-card">
+            <div class="modal-header"><span class="modal-title">Payment Voucher</span><button class="modal-close">&times;</button></div>
+            <div class="modal-body">
+                <form onsubmit="Transactions.savePayment(event)">
+                    <div class="form-grid">
+                        <div class="form-group"><label class="form-label">Payment No</label><input type="text" id="pay-no" class="form-control" value="PAY-902"></div>
+                        <div class="form-group"><label class="form-label">Date</label><input type="date" id="pay-date" class="form-control"></div>
+                        <div class="form-group full-width">
+                            <label class="form-label">Payment Type *</label>
+                            <select id="pay-type" class="form-control" onchange="Transactions.onPaymentTypeChange(this)">
+                                <option value="Vendor">Vendor Payment (To Supplier / Vendor)</option>
+                                <option value="Expense">Direct Expense (Office / Factory Expense)</option>
+                            </select>
+                        </div>
+                        <div class="form-group full-width">
+                            <label class="form-label" id="pay-party-label">Vendor / Firm *</label>
+                            <select id="pay-vendor" class="form-control" required></select>
+                        </div>
+                        <div class="form-group"><label class="form-label">Amount (₹) *</label><input type="number" id="pay-amount" class="form-control" required></div>
+                        <div class="form-group">
+                            <label class="form-label">Payment Mode</label>
+                            <select id="pay-mode" class="form-control">
+                                <option value="HDFC Bank (NEFT)">HDFC Bank (NEFT)</option>
+                                <option value="Cash">Cash</option>
+                                <option value="Cheque">Cheque</option>
+                            </select>
+                        </div>
+                        <div class="form-group"><label class="form-label">Against Purchase / Ref</label><input type="text" id="pay-pur" class="form-control" value="INV-NH-402"></div>
+                        <div class="form-group full-width"><label class="form-label">Remarks</label><input type="text" id="pay-remarks" class="form-control"></div>
+                    </div>
+                    <div class="modal-footer" style="padding-left:0; padding-right:0; margin-top:1.5rem;">
+                        <button type="button" class="btn btn-outline modal-close">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Payment Voucher</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 11. Modal Stock Adjustment -->
+    <div class="modal-overlay" id="modal-stock-adj">
+        <div class="modal-card">
+            <div class="modal-header"><span class="modal-title">Manual Stock Adjustment</span><button class="modal-close">&times;</button></div>
+            <div class="modal-body">
+                <form onsubmit="Inventory.saveAdjustment(event)">
+                    <div class="form-group" style="margin-bottom: 1rem;"><label class="form-label">Select Item</label><select id="adj-item-select" class="form-control"></select></div>
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                        <label class="form-label">Adjustment Type</label>
+                        <select id="adj-type" class="form-control">
+                            <option value="Add">Add Stock (+)</option>
+                            <option value="Reduce">Reduce / Damage Stock (-)</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 1.5rem;"><label class="form-label">Quantity</label><input type="number" id="adj-qty" class="form-control" value="10"></div>
+                    <div class="modal-footer" style="padding-left:0; padding-right:0;">
+                        <button type="button" class="btn btn-outline modal-close">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Adjust Stock</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 12. Modal Unit / Account -->
+    <div class="modal-overlay" id="modal-unit">
+        <div class="modal-card">
+            <div class="modal-header"><span class="modal-title">Unit Master</span><button class="modal-close">&times;</button></div>
+            <div class="modal-body">
+                <form id="unit-form" onsubmit="Masters.saveUnit(event)">
+                    <input type="hidden" id="unt-id">
+                    <div class="form-group" style="margin-bottom:1rem;"><label class="form-label">Unit Name *</label><input type="text" id="unt-name" class="form-control" required></div>
+                    <div class="form-group" style="margin-bottom:1.5rem;"><label class="form-label">Description</label><input type="text" id="unt-desc" class="form-control"></div>
+                    <div class="modal-footer" style="padding-left:0; padding-right:0;"><button type="button" class="btn btn-outline modal-close">Cancel</button><button type="submit" class="btn btn-primary">Save Unit</button></div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-account">
+        <div class="modal-card">
+            <div class="modal-header"><span class="modal-title">Account Master</span><button class="modal-close">&times;</button></div>
+            <div class="modal-body">
+                <form id="account-form" onsubmit="Masters.saveAccount(event)">
+                    <input type="hidden" id="acc-id">
+                    <div class="form-group" style="margin-bottom:1rem;"><label class="form-label">Account Name *</label><input type="text" id="acc-name" class="form-control" required></div>
+                    <div class="form-group" style="margin-bottom:1rem;"><label class="form-label">Type</label><select id="acc-type" class="form-control"><option value="Bank">Bank</option><option value="Cash">Cash</option><option value="Income">Income</option><option value="Expense">Expense</option></select></div>
+                    <div class="form-group" style="margin-bottom:1.5rem;"><label class="form-label">Opening Balance (₹)</label><input type="number" id="acc-opening" class="form-control" value="0"></div>
+                    <div class="modal-footer" style="padding-left:0; padding-right:0;"><button type="button" class="btn btn-outline modal-close">Cancel</button><button type="submit" class="btn btn-primary">Save Account</button></div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Application JavaScript Modules -->
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/masters.js"></script>
+    <script src="js/purchase.js"></script>
+    <script src="js/sales.js"></script>
+    <script src="js/inventory.js"></script>
+    <script src="js/reports.js"></script>
+    <script src="js/settings.js"></script>
+</body>
+</html>
