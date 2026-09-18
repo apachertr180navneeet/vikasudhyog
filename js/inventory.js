@@ -99,22 +99,28 @@ const Inventory = {
         container.innerHTML = html;
     },
 
-    // 3. Stock Adjustment Modal
+    // 3. Stock Adjustment
     renderAdjustment() {
         const items = db.getAll('ITEMS');
-        const select = document.getElementById('adj-item-select');
-        if (select) {
-            let options = `<option value="">Select Item to Adjust...</option>`;
-            items.forEach(i => options += `<option value="${i.id}">${i.name} (Current: ${i.stock} ${i.unit})</option>`);
-            select.innerHTML = options;
-        }
+        ['adj-item-select', 'adj-item-select-page'].forEach(selectId => {
+            const select = document.getElementById(selectId);
+            if (select) {
+                let options = `<option value="">Select Item to Adjust...</option>`;
+                items.forEach(i => options += `<option value="${i.id}">${i.name} (Current: ${i.stock} ${i.unit})</option>`);
+                select.innerHTML = options;
+            }
+        });
     },
 
     saveAdjustment(e) {
         if (e) e.preventDefault();
-        const itemId = document.getElementById('adj-item-select').value;
-        const type = document.getElementById('adj-type').value; // Add or Reduce
-        const qty = parseFloat(document.getElementById('adj-qty').value) || 0;
+        const itemId = (document.getElementById('adj-item-select-page') && document.getElementById('adj-item-select-page').value) ||
+                       (document.getElementById('adj-item-select') && document.getElementById('adj-item-select').value);
+        const type = (document.getElementById('adj-type-page') && document.getElementById('adj-type-page').value) ||
+                     (document.getElementById('adj-type') && document.getElementById('adj-type').value) || 'Add';
+        const qtyVal = (document.getElementById('adj-qty-page') && document.getElementById('adj-qty-page').value) ||
+                       (document.getElementById('adj-qty') && document.getElementById('adj-qty').value);
+        const qty = parseFloat(qtyVal) || 0;
 
         if (!itemId || qty <= 0) return App.showToast('Please select Item and enter valid Quantity', 'danger');
 
@@ -123,6 +129,7 @@ const Inventory = {
 
         App.showToast('Stock adjusted successfully!', 'success');
         App.closeModal('modal-stock-adj');
+        this.renderAdjustment();
         this.renderOverview();
     },
 

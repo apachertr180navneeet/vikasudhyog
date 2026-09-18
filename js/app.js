@@ -13,6 +13,38 @@ document.addEventListener('DOMContentLoaded', () => {
     App.init();
 });
 
+const VIEW_ROUTES = {
+    'dashboard': 'index.html',
+    'master-company': 'company-master.html',
+    'master-user': 'user-master.html',
+    'master-access': 'access-level.html',
+    'master-vendor': 'vendor-master.html',
+    'master-customer': 'customer-master.html',
+    'master-broker': 'broker-master.html',
+    'master-item': 'item-master.html',
+    'master-unit': 'unit-master.html',
+    'master-account': 'account-master.html',
+    'txn-purchase': 'purchase-entry.html',
+    'txn-wb-purchase': 'wb-purchase-entry.html',
+    'txn-sales-order': 'sales-entry.html',
+    'txn-wb-sales': 'wb-sales-entry.html',
+    'txn-order-dispatch': 'order-dispatch.html',
+    'txn-sales-invoice': 'sales-purchase-order.html',
+    'txn-receipt': 'receipt-voucher.html',
+    'txn-payment': 'payment-voucher.html',
+    'inv-overview': 'stock-overview.html',
+    'inv-ledger': 'item-ledger.html',
+    'inv-adjustment': 'stock-adjustment.html',
+    'inv-low-stock': 'low-stock-alert.html',
+    'rpt-purchase': 'purchase-report.html',
+    'rpt-sales': 'sales-report.html',
+    'rpt-order': 'order-report.html',
+    'rpt-cash-reg': 'cash-bank-register.html',
+    'set-company': 'company-settings.html',
+    'set-whatsapp': 'whatsapp-settings.html',
+    'set-backup': 'backup-restore.html'
+};
+
 const App = {
     currentView: 'dashboard',
 
@@ -24,8 +56,9 @@ const App = {
         this.bindUserProfile();
         this.bindModals();
         
-        // Initial view render
-        this.navigateTo('dashboard');
+        // Initial view render based on current page
+        const currentPage = document.body.getAttribute('data-page') || 'dashboard';
+        this.navigateTo(currentPage);
     },
 
     bindNavigation() {
@@ -64,6 +97,11 @@ const App = {
         // View Navigation clicks
         document.querySelectorAll('[data-view]').forEach(btn => {
             btn.addEventListener('click', (e) => {
+                const href = btn.getAttribute('href');
+                if (href && href !== '#' && !href.startsWith('javascript:')) {
+                    // Allow normal browser navigation to the target HTML page
+                    return;
+                }
                 e.preventDefault();
                 const viewName = btn.getAttribute('data-view');
                 if (viewName) {
@@ -86,14 +124,12 @@ const App = {
     navigateTo(viewId) {
         this.currentView = viewId;
 
-        // Hide all view sections
-        document.querySelectorAll('.view-section').forEach(section => {
-            section.classList.remove('active');
-        });
-
-        // Show target view section
         const targetSection = document.getElementById(`view-${viewId}`);
         if (targetSection) {
+            // Hide all view sections
+            document.querySelectorAll('.view-section').forEach(section => {
+                section.classList.remove('active');
+            });
             targetSection.classList.add('active');
             
             // Trigger view-specific renderers
@@ -103,9 +139,12 @@ const App = {
             else if (viewId.startsWith('inv-') && window.Inventory) Inventory.render(viewId);
             else if (viewId.startsWith('rpt-') && window.Reports) Reports.render(viewId);
             else if (viewId.startsWith('set-') && window.SettingsModule) SettingsModule.render(viewId);
-        }
 
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else if (VIEW_ROUTES[viewId]) {
+            // Navigate to the corresponding HTML file
+            window.location.href = VIEW_ROUTES[viewId];
+        }
     },
 
     bindGlobalSearch() {

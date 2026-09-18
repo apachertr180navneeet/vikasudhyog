@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - VIKAS UDHYOG ERP</title>
+    <title>User Master - VIKAS UDHYOG ERP</title>
     <!-- Google Fonts & Font Awesome Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,7 +17,7 @@
     <!-- Chart.js for Executive Dashboard -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body data-page="dashboard">
+<body data-page="master-user">
 
     <div class="app-container">
         <!-- Sidebar Navigation Drawer -->
@@ -33,7 +33,7 @@
             </div>
 
             <ul class="sidebar-menu">
-                <li class="nav-item active">
+                <li class="nav-item ">
                     <a href="index.html" class="nav-link" data-view="dashboard">
                         <i class="fa-solid fa-chart-line"></i>
                         <span>Dashboard</span>
@@ -41,7 +41,7 @@
                 </li>
 
                 <!-- Masters Submenu -->
-                <li class="nav-item has-submenu ">
+                <li class="nav-item has-submenu open active">
                     <a href="#" class="nav-link">
                         <i class="fa-solid fa-folder-tree"></i>
                         <span>Masters</span>
@@ -49,7 +49,7 @@
                     </a>
                     <ul class="submenu">
                         <li><a href="company-master.html" class="submenu-link " data-view="master-company">Company Master</a></li>
-                        <li><a href="user-master.html" class="submenu-link " data-view="master-user">User Master</a></li>
+                        <li><a href="user-master.html" class="submenu-link active" data-view="master-user">User Master</a></li>
                         <li><a href="access-level.html" class="submenu-link " data-view="master-access">Access Level</a></li>
                         <li><a href="vendor-master.html" class="submenu-link " data-view="master-vendor">Vendor Master</a></li>
                         <li><a href="customer-master.html" class="submenu-link " data-view="master-customer">Customer Master</a></li>
@@ -211,140 +211,33 @@
 
             <!-- Page Content Body -->
             <div class="content-body">
-<section class="view-section active" id="view-dashboard">
+<section class="view-section active" id="view-master-user">
                     <div class="page-header">
                         <div>
-                            <h1 class="page-title">Good Morning, Admin</h1>
-                            <p class="page-subtitle">Here's what's happening with Vikas Udhyog today.</p>
+                            <h1 class="page-title">User Master</h1>
+                            <p class="page-subtitle">Manage system users and login credentials</p>
                         </div>
-                        <div class="page-actions">
-                            <button class="btn btn-outline" onclick="App.navigateTo('inv-overview')"><i class="fa-solid fa-boxes-stacked"></i> Inventory Overview</button>
-                            <button class="btn btn-primary" onclick="App.openModal('modal-sales-invoice')"><i class="fa-solid fa-plus"></i> New Sales / Purchase Order</button>
-                        </div>
+                        <button class="btn btn-primary" onclick="document.getElementById('user-form').reset(); document.getElementById('usr-id').value=''; Masters.populateUserCompanyDropdown(); App.openModal('modal-user');">+ Add User</button>
                     </div>
 
-                    <!-- KPI Cards Grid -->
-                    <div class="kpi-grid">
-                        <div class="kpi-card kpi-sales">
-                            <div class="kpi-top">
-                                <span class="kpi-title">Today's Sales</span>
-                                <div class="kpi-icon"><i class="fa-solid fa-indian-rupee-sign"></i></div>
-                            </div>
-                            <div class="kpi-value" id="kpi-sales-val">₹1,28,450</div>
-                            <div class="kpi-bottom"><span class="trend-up"><i class="fa-solid fa-arrow-trend-up"></i> +14.2%</span> <span class="kpi-subtext">vs yesterday</span></div>
-                        </div>
-
-                        <div class="kpi-card kpi-purchase">
-                            <div class="kpi-top">
-                                <span class="kpi-title">Today's Purchase</span>
-                                <div class="kpi-icon"><i class="fa-solid fa-cart-shopping"></i></div>
-                            </div>
-                            <div class="kpi-value" id="kpi-purchase-val">₹84,200</div>
-                            <div class="kpi-bottom"><span class="trend-up"><i class="fa-solid fa-arrow-trend-up"></i> +8.5%</span> <span class="kpi-subtext">vs last week</span></div>
-                        </div>
-
-                        <div class="kpi-card kpi-receivable">
-                            <div class="kpi-top">
-                                <span class="kpi-title">Total Receivable</span>
-                                <div class="kpi-icon"><i class="fa-solid fa-hand-holding-dollar"></i></div>
-                            </div>
-                            <div class="kpi-value" id="kpi-receivable-val">₹4,82,600</div>
-                            <div class="kpi-bottom"><span class="kpi-subtext">From 5 Customers</span></div>
-                        </div>
-
-                        <div class="kpi-card kpi-payable">
-                            <div class="kpi-top">
-                                <span class="kpi-title">Total Payable</span>
-                                <div class="kpi-icon"><i class="fa-solid fa-credit-card"></i></div>
-                            </div>
-                            <div class="kpi-value" id="kpi-payable-val">₹2,74,350</div>
-                            <div class="kpi-bottom"><span class="kpi-subtext">To 4 Vendors</span></div>
-                        </div>
-
-                        <div class="kpi-card kpi-stock">
-                            <div class="kpi-top">
-                                <span class="kpi-title">Current Stock Value</span>
-                                <div class="kpi-icon"><i class="fa-solid fa-warehouse"></i></div>
-                            </div>
-                            <div class="kpi-value" id="kpi-stock-val">₹12,45,800</div>
-                            <div class="kpi-bottom"><span class="kpi-subtext">8 Product Categories</span></div>
-                        </div>
-
-                        <div class="kpi-card kpi-orders">
-                            <div class="kpi-top">
-                                <span class="kpi-title">Pending Orders</span>
-                                <div class="kpi-icon"><i class="fa-solid fa-clock"></i></div>
-                            </div>
-                            <div class="kpi-value" id="kpi-orders-val">24</div>
-                            <div class="kpi-bottom"><span class="kpi-subtext">Needs Dispatch</span></div>
-                        </div>
-                    </div>
-
-                    <!-- Charts Grid -->
-                    <div class="charts-grid">
-                        <div class="card chart-card">
-                            <div class="card-header">
-                                <h3 class="card-title">Sales vs Purchase</h3>
-                                <span style="font-size: 0.8rem; color: var(--text-muted);">Monthly Comparison</span>
-                            </div>
-                            <div class="chart-container"><canvas id="chart-sales-vs-purchase"></canvas></div>
-                        </div>
-
-                        <div class="card chart-card">
-                            <div class="card-header">
-                                <h3 class="card-title">Sales Trend</h3>
-                                <span style="font-size: 0.8rem; color: var(--text-muted);">Current Month</span>
-                            </div>
-                            <div class="chart-container"><canvas id="chart-sales-trend"></canvas></div>
-                        </div>
-
-                        <div class="card chart-card">
-                            <div class="card-header">
-                                <h3 class="card-title">Top Selling Products</h3>
-                                <span style="font-size: 0.8rem; color: var(--text-muted);">Volume (KG)</span>
-                            </div>
-                            <div class="chart-container"><canvas id="chart-top-products"></canvas></div>
-                        </div>
-
-                        <div class="card chart-card">
-                            <div class="card-header">
-                                <h3 class="card-title">Stock Category Distribution</h3>
-                                <span style="font-size: 0.8rem; color: var(--text-muted);">Share %</span>
-                            </div>
-                            <div class="chart-container"><canvas id="chart-stock-distribution"></canvas></div>
-                        </div>
-                    </div>
-
-                    <!-- Lower Dashboard Tables Grid -->
-                    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem;">
-                        <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">Recent Transactions</h3>
-                                <button class="btn btn-sm btn-outline" onclick="App.navigateTo('txn-sales-invoice')">View All</button>
-                            </div>
-                            <div class="table-responsive">
-                                <table class="custom-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Invoice No</th>
-                                            <th>Date</th>
-                                            <th>Party Name</th>
-                                            <th>Type</th>
-                                            <th>Amount</th>
-                                            <th>Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="recent-transactions-list"></tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title" style="color: var(--status-danger);"><i class="fa-solid fa-triangle-exclamation"></i> Low Stock Alerts</h3>
-                                <button class="btn btn-sm btn-outline" onclick="App.navigateTo('inv-low-stock')">Manage</button>
-                            </div>
-                            <div id="low-stock-alert-list"></div>
+                    <div class="card">
+                        <div class="table-responsive">
+                            <table class="custom-table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Username</th>
+                                        <th>Password</th>
+                                        <th>Email</th>
+                                        <th>Mobile</th>
+                                        <th>Role</th>
+                                        <th>Company</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="user-table-body"></tbody>
+                            </table>
                         </div>
                     </div>
                 </section>
