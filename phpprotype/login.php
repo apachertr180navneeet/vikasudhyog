@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Vikas Udhyog Herbal Products ERP</title>
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+
+    <style>
+        body {
+            background-color: #183A1D;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 1rem;
+        }
+
+        .login-wrapper {
+            display: flex;
+            width: 100%;
+            max-width: 1050px;
+            min-height: 600px;
+            background: #FFFFFF;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+        }
+
+        .login-left {
+            flex: 1.1;
+            background: linear-gradient(135deg, rgba(24, 58, 29, 0.92) 0%, rgba(107, 142, 35, 0.88) 100%), url('assets/images/herbal_bg.jpg') center/cover;
+            padding: 3.5rem 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            color: #FFFFFF;
+            position: relative;
+        }
+
+        .login-brand-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .login-brand-logo {
+            width: 54px;
+            height: 54px;
+            border-radius: 12px;
+            background: #FFFFFF;
+            padding: 3px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .login-brand-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: #FFFFFF;
+        }
+
+        .login-brand-sub {
+            font-size: 0.85rem;
+            color: #8FBF26;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .login-hero-content h2 {
+            font-size: 2.2rem;
+            color: #FFFFFF;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .login-hero-content p {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .herbal-features {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.95rem;
+            color: #FFFFFF;
+        }
+
+        .feature-item i {
+            color: #8FBF26;
+            font-size: 1.1rem;
+        }
+
+        .login-iso-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(8px);
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            width: fit-content;
+        }
+
+        .login-right {
+            flex: 1;
+            padding: 3.5rem 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: #FFFFFF;
+        }
+
+        .login-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1F2937;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-subtitle {
+            color: #6B7280;
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+        }
+
+        .demo-credentials-box {
+            background: #F7F9F4;
+            border: 1px solid #EBF7D4;
+            border-left: 4px solid #8FBF26;
+            padding: 0.85rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: #183A1D;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (max-width: 850px) {
+            .login-wrapper {
+                flex-direction: column;
+            }
+            .login-left {
+                padding: 2rem;
+            }
+            .login-right {
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-wrapper">
+        <!-- Left Side Branding -->
+        <div class="login-left">
+            <div class="login-brand-header">
+                <img src="assets/images/logo.png" alt="Vikas Udhyog Logo" class="login-brand-logo">
+                <div>
+                    <div class="login-brand-title">VIKAS UDHYOG</div>
+                    <div class="login-brand-sub">Herbal Products & Business Management</div>
+                </div>
+            </div>
+
+            <div class="login-hero-content">
+                <h2>Empowering Herbal & Ayurvedic Manufacturing</h2>
+                <p>Comprehensive enterprise ERP for Mehndi, Henna Powder, Herbal Powders, Raw Material Sourcing, and Wholesale Distribution.</p>
+
+                <div class="herbal-features">
+                    <div class="feature-item"><i class="fa-solid fa-circle-check"></i> Complete Inventory & Batch Level Expiry Tracking</div>
+                    <div class="feature-item"><i class="fa-solid fa-circle-check"></i> GST Compliant Invoicing & Automated Tax Filing</div>
+                    <div class="feature-item"><i class="fa-solid fa-circle-check"></i> Real-time Sales, Purchase & Executive Dashboard</div>
+                    <div class="feature-item"><i class="fa-solid fa-circle-check"></i> WhatsApp Business API Notification Integration</div>
+                </div>
+            </div>
+
+            <div class="login-iso-badge">
+                <i class="fa-solid fa-award"></i> ISO Certified - ISO 9001:2015
+            </div>
+        </div>
+
+        <!-- Right Side Login Form -->
+        <div class="login-right">
+            <h1 class="login-title">Sign In</h1>
+            <p class="login-subtitle">Enter your credentials to access the ERP dashboard</p>
+
+            <div class="demo-credentials-box">
+                <i class="fa-solid fa-key" style="color: #6B8E23; margin-right: 0.4rem;"></i> <strong>Demo Access:</strong><br>
+                Username: <code>admin</code> &nbsp;|&nbsp; Password: <code>admin123</code>
+            </div>
+
+            <form id="login-form">
+                <div class="form-group" style="margin-bottom: 1.25rem;">
+                    <label class="form-label" for="username">Username</label>
+                    <div style="position: relative;">
+                        <input type="text" id="username" class="form-control" placeholder="Enter username" value="admin" required style="padding-left: 2.5rem;">
+                        <i class="fa-solid fa-user" style="position: absolute; left: 0.9rem; top: 50%; transform: translateY(-50%); color: #9CA3AF;"></i>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 1.25rem;">
+                    <label class="form-label" for="password">Password</label>
+                    <div style="position: relative;">
+                        <input type="password" id="password" class="form-control" placeholder="Enter password" value="admin123" required style="padding-left: 2.5rem;">
+                        <i class="fa-solid fa-lock" style="position: absolute; left: 0.9rem; top: 50%; transform: translateY(-50%); color: #9CA3AF;"></i>
+                    </div>
+                </div>
+
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.75rem; font-size: 0.85rem;">
+                    <label style="display: flex; align-items: center; gap: 0.4rem; cursor: pointer; color: #4B5563;">
+                        <input type="checkbox" checked style="accent-color: #6B8E23;"> Remember Me
+                    </label>
+                    <a href="#" onclick="alert('Demo reset code: admin / admin123')" style="color: #6B8E23; font-weight: 600;">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.75rem; font-size: 1rem; border-radius: 10px; background: #6B8E23; color: white;">
+                    LOGIN <i class="fa-solid fa-arrow-right-to-bracket" style="margin-left: 0.5rem;"></i>
+                </button>
+            </form>
+
+            <div style="margin-top: 2.5rem; text-align: center; font-size: 0.8rem; color: #9CA3AF;">
+                &copy; 2026 VIKAS UDHYOG. All Rights Reserved.<br>Sojat City, Rajasthan, India.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const u = document.getElementById('username').value.trim();
+            const p = document.getElementById('password').value.trim();
+
+            let users = [];
+            try {
+                const stored = localStorage.getItem('vu_users');
+                if (stored) users = JSON.parse(stored);
+            } catch (err) {}
+
+            let foundUser = users.find(usr => usr.username && usr.username.toLowerCase() === u.toLowerCase() && (usr.password || 'admin123') === p);
+
+            // Fallback for demo admin
+            if (!foundUser && u.toLowerCase() === 'admin' && p === 'admin123') {
+                foundUser = { name: 'Administrator', role: 'Admin' };
+            }
+
+            if (foundUser) {
+                sessionStorage.setItem('vu_logged_in', 'true');
+                sessionStorage.setItem('vu_user_role', foundUser.role || 'Admin');
+                sessionStorage.setItem('vu_user_name', foundUser.name || 'Administrator');
+                window.location.href = 'index.php';
+            } else {
+                alert('Invalid credentials! Please check your Username and Password.');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,738 @@
+<!-- MODAL DIALOGS -->
+
+<!-- 1. Modal Company -->
+<div class="modal-overlay" id="modal-company">
+    <div class="modal-card">
+        <div class="modal-header">
+            <span class="modal-title">Company Profile</span>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="company-form" onsubmit="Masters.saveCompany(event)">
+                <input type="hidden" id="comp-id">
+                <div class="form-grid">
+                    <div class="form-group full-width"><label class="form-label">Company Name *</label><input type="text" id="comp-name" class="form-control" required></div>
+                    <div class="form-group"><label class="form-label">GSTIN</label><input type="text" id="comp-gstin" class="form-control"></div>
+                    <div class="form-group"><label class="form-label">PAN</label><input type="text" id="comp-pan" class="form-control"></div>
+                    <div class="form-group"><label class="form-label">Phone</label><input type="text" id="comp-phone" class="form-control"></div>
+                    <div class="form-group"><label class="form-label">Email</label><input type="email" id="comp-email" class="form-control"></div>
+                    <div class="form-group full-width"><label class="form-label">Address</label><textarea id="comp-address" class="form-control"></textarea></div>
+                    <div class="form-group"><label class="form-label">City</label><input type="text" id="comp-city" class="form-control"></div>
+                    <div class="form-group"><label class="form-label">State</label><input type="text" id="comp-state" class="form-control" value="Rajasthan"></div>
+                    <div class="form-group"><label class="form-label">Pincode</label><input type="text" id="comp-pincode" class="form-control"></div>
+                    <div class="form-group"><label class="form-label">Financial Year</label><input type="text" id="comp-fy" class="form-control" value="2026-2027"></div>
+                </div>
+                <div class="modal-footer" style="padding-left:0; padding-right:0; margin-top:1.5rem;">
+                    <button type="button" class="btn btn-outline modal-close">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Company</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 2. Modal User -->
+<div class="modal-overlay" id="modal-user">
+    <div class="modal-card">
+        <div class="modal-header">
+            <span class="modal-title">User Account</span>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="user-form" onsubmit="Masters.saveUser(event)">
+                <input type="hidden" id="usr-id">
+                <div class="form-grid">
+                    <div class="form-group"><label class="form-label">Full Name *</label><input type="text" id="usr-name" class="form-control" required></div>
+                    <div class="form-group"><label class="form-label">Username *</label><input type="text" id="usr-username" class="form-control" required></div>
+                    <div class="form-group">
+                        <label class="form-label">Password *</label>
+                        <div style="position: relative; display: flex; align-items: center;">
+                            <input type="password" id="usr-password" class="form-control" style="padding-right: 2.5rem; width: 100%;" placeholder="Enter password" required>
+                            <button type="button" onclick="Masters.togglePasswordVisibility('usr-password', this)" style="position: absolute; right: 10px; background: none; border: none; color: #6b7280; cursor: pointer; padding: 4px;" title="Toggle Password Visibility">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-group"><label class="form-label">Email</label><input type="email" id="usr-email" class="form-control"></div>
+                    <div class="form-group"><label class="form-label">Mobile</label><input type="text" id="usr-mobile" class="form-control"></div>
+                    <div class="form-group">
+                        <label class="form-label">Role</label>
+                        <select id="usr-role" class="form-control">
+                            <option value="Admin">Admin</option>
+                            <option value="Manager">Manager</option>
+                            <option value="Accountant">Accountant</option>
+                            <option value="Sales Manager">Sales Manager</option>
+                            <option value="Purchase Manager">Purchase Manager</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Company</label>
+                        <select id="usr-company" class="form-control">
+                            <option value="Vikas Udhyog">Vikas Udhyog</option>
+                            <option value="Vikas Herbal Products">Vikas Herbal Products</option>
+                            <option value="Vikas Trading">Vikas Trading</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer" style="padding-left:0; padding-right:0; margin-top:1.5rem;">
+                    <button type="button" class="btn btn-outline modal-close">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save User</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 3. Modal Vendor -->
+<div class="modal-overlay" id="modal-vendor">
+    <div class="modal-card">
+        <div class="modal-header">
+            <span class="modal-title">Vendor Account</span>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="vendor-form" onsubmit="Masters.saveVendor(event)">
+                <input type="hidden" id="vnd-id">
+                <input type="hidden" id="vnd-code">
+                <div class="form-grid">
+                    <div class="form-group full-width"><label class="form-label">Vendor Firm *</label><input type="text" id="vnd-name" class="form-control" placeholder="Enter Vendor Firm Name" required></div>
+                    <div class="form-group"><label class="form-label">Contact Person</label><input type="text" id="vnd-contact" class="form-control"></div>
+                    <div class="form-group"><label class="form-label">Mobile</label><input type="text" id="vnd-phone" class="form-control"></div>
+                    <div class="form-group"><label class="form-label">Email</label><input type="email" id="vnd-email" class="form-control"></div>
+                    <div class="form-group"><label class="form-label">GSTIN</label><input type="text" id="vnd-gstin" class="form-control"></div>
+                    <div class="form-group"><label class="form-label">City</label><input type="text" id="vnd-city" class="form-control"></div>
+                    <div class="form-group"><label class="form-label">State</label><input type="text" id="vnd-state" class="form-control" value="Rajasthan"></div>
+                    <div class="form-group"><label class="form-label">Opening Balance (₹)</label><input type="number" id="vnd-balance" class="form-control" value="0"></div>
+                    <div class="form-group"><label class="form-label">Payment Terms</label><input type="text" id="vnd-terms" class="form-control" value="30 Days"></div>
+                </div>
+                <div class="modal-footer" style="padding-left:0; padding-right:0; margin-top:1.5rem;">
+                    <button type="button" class="btn btn-outline modal-close">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Vendor</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 4. Modal Customer -->
+<div class="modal-overlay" id="modal-customer">
+    <div class="modal-card">
+        <div class="modal-header">
+            <span class="modal-title">Customer Account</span>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="customer-form" onsubmit="Masters.saveCustomer(event)">
+                <input type="hidden" id="cst-id">
+                <div class="form-grid">
+                    <div class="form-group full-width"><label class="form-label">Customer Name *</label><input type="text" id="cst-name" class="form-control" required></div>
+                    <div class="form-group"><label class="form-label">Contact Person</label><input type="text" id="cst-contact" class="form-control"></div>
+                    <div class="form-group"><label class="form-label">Mobile</label><input type="text" id="cst-phone" class="form-control"></div>
+                    <div class="form-group"><label class="form-label">Email</label><input type="email" id="cst-email" class="form-control"></div>
+                    <div class="form-group"><label class="form-label">GSTIN</label><input type="text" id="cst-gstin" class="form-control"></div>
+                    <div class="form-group"><label class="form-label">City</label><input type="text" id="cst-city" class="form-control"></div>
+                    <div class="form-group"><label class="form-label">Credit Limit (₹)</label><input type="number" id="cst-limit" class="form-control" value="300000"></div>
+                    <div class="form-group"><label class="form-label">Opening Balance (₹)</label><input type="number" id="cst-balance" class="form-control" value="0"></div>
+                </div>
+                <div class="modal-footer" style="padding-left:0; padding-right:0; margin-top:1.5rem;">
+                    <button type="button" class="btn btn-outline modal-close">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Customer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Broker -->
+<div class="modal-overlay" id="modal-broker">
+    <div class="modal-card">
+        <div class="modal-header">
+            <span class="modal-title">Broker Account Details</span>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="broker-form" onsubmit="Masters.saveBroker(event)">
+                <input type="hidden" id="brk-id">
+                <input type="hidden" id="brk-code">
+                <div class="form-grid">
+                    <div class="form-group full-width"><label class="form-label">Broker / Agency Name *</label><input type="text" id="brk-name" class="form-control" placeholder="e.g. Rameshwar Brokerage" required></div>
+                    <div class="form-group"><label class="form-label">Contact Person</label><input type="text" id="brk-contact" class="form-control" placeholder="Primary contact"></div>
+                    <div class="form-group"><label class="form-label">Mobile Number</label><input type="text" id="brk-phone" class="form-control" placeholder="10-digit mobile"></div>
+                    <div class="form-group"><label class="form-label">Email</label><input type="email" id="brk-email" class="form-control" placeholder="broker@gmail.com"></div>
+                    <div class="form-group"><label class="form-label">GSTIN / PAN</label><input type="text" id="brk-gstin" class="form-control" placeholder="08AAAAA1234A1Z1"></div>
+                    <div class="form-group"><label class="form-label">City</label><input type="text" id="brk-city" class="form-control" placeholder="Sojat / Jodhpur"></div>
+                    <div class="form-group"><label class="form-label">Commission Rate (%)</label><input type="number" step="0.1" id="brk-commission" class="form-control" value="1.5"></div>
+                    <div class="form-group"><label class="form-label">Status</label><select id="brk-status" class="form-control"><option value="Active">Active</option><option value="Inactive">Inactive</option></select></div>
+                    <div class="form-group full-width"><label class="form-label">Remarks / Description</label><input type="text" id="brk-remarks" class="form-control" placeholder="Mandi agent details or notes"></div>
+                </div>
+                <div class="modal-footer" style="padding-left:0; padding-right:0; margin-top:1.5rem;">
+                    <button type="button" class="btn btn-outline modal-close">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Broker</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 5. Modal Product Item -->
+<div class="modal-overlay" id="modal-item">
+    <div class="modal-card modal-lg">
+        <div class="modal-header">
+            <span class="modal-title">Product Item (Herbal Powder / Raw Material)</span>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="item-form" onsubmit="Masters.saveItemMaster(event)">
+                <input type="hidden" id="itm-id">
+                <div class="form-grid-3">
+                    <div class="form-group"><label class="form-label">Item Code</label><input type="text" id="itm-code" class="form-control" placeholder="Auto-generated"></div>
+                    <div class="form-group"><label class="form-label">Product Name *</label><input type="text" id="itm-name" class="form-control" required></div>
+                    <div class="form-group">
+                        <label class="form-label">Category</label>
+                        <select id="itm-category" class="form-control">
+                            <option value="Mehndi">Mehndi / Henna</option>
+                            <option value="Herbal Powder">Herbal Powder</option>
+                            <option value="Raw Material">Ayurvedic Raw Material</option>
+                            <option value="Finished Product">Finished Product</option>
+                            <option value="Packaging Material">Packaging Material</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Unit</label>
+                        <select id="itm-unit" class="form-control">
+                            <option value="KG">KG</option>
+                            <option value="GRAM">GRAM</option>
+                            <option value="BOX">BOX</option>
+                            <option value="PACKET">PACKET</option>
+                            <option value="BAG">BAG</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label class="form-label">Purchase Rate (₹)</label><input type="number" id="itm-purchase-rate" class="form-control" value="100"></div>
+                    <div class="form-group"><label class="form-label">Selling Price (₹)</label><input type="number" id="itm-sale-rate" class="form-control" value="150"></div>
+                    <div class="form-group"><label class="form-label">GST Tax (%)</label><input type="number" id="itm-gst" class="form-control" value="18"></div>
+                    <div class="form-group"><label class="form-label">HSN Code</label><input type="text" id="itm-hsn" class="form-control" value="1404" placeholder="e.g. 1404"></div>
+                    <div class="form-group"><label class="form-label">Opening Stock</label><input type="number" id="itm-stock" class="form-control" value="100"></div>
+                    <div class="form-group"><label class="form-label">Minimum Stock Alert</label><input type="number" id="itm-min-stock" class="form-control" value="30"></div>
+                    <div class="form-group"><label class="form-label">Batch No</label><input type="text" id="itm-batch" class="form-control" value="B-2026-08"></div>
+                    <div class="form-group"><label class="form-label">Expiry Date</label><input type="date" id="itm-exp" class="form-control" value="2028-12-31"></div>
+                </div>
+                <div class="modal-footer" style="padding-left:0; padding-right:0; margin-top:1.5rem;">
+                    <button type="button" class="btn btn-outline modal-close">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Product</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 6. Modal Purchase Entry -->
+<div class="modal-overlay" id="modal-purchase">
+    <div class="modal-card modal-xl">
+        <div class="modal-header">
+            <span class="modal-title">New Purchase Entry (Stock Receipt)</span>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-grid-4" style="margin-bottom: 1.25rem;">
+                <div class="form-group">
+                    <label class="form-label">Vendor / Supplier *</label>
+                    <select id="pur-vendor" class="form-control"></select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Broker / Agent (Optional)</label>
+                    <select id="pur-broker" class="form-control"></select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Order Type</label>
+                    <select id="pur-order-type" class="form-control">
+                        <option value="Urgent">Urgent</option>
+                        <option value="Fast">Fast</option>
+                        <option value="Ready Delivery">Ready Delivery</option>
+                        <option value="Medium" selected>Medium</option>
+                    </select>
+                </div>
+                <div class="form-group"><label class="form-label">Invoice No</label><input type="text" id="pur-inv-no" class="form-control" value="INV-NH-405"></div>
+                <div class="form-group"><label class="form-label">Invoice Date</label><input type="date" id="pur-date" class="form-control"></div>
+            </div>
+
+            <div class="table-responsive" style="margin-bottom: 1rem;">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 45px; text-align: center;">S.No</th>
+                            <th style="min-width: 170px;">Item</th>
+                            <th style="width: 100px;">Batch No</th>
+                            <th style="width: 85px;">HSN</th>
+                            <th style="width: 75px;">GST %</th>
+                            <th style="width: 90px;">Unit Type</th>
+                            <th style="width: 95px;">Net Weight</th>
+                            <th style="width: 100px;">Actual Rate (₹)</th>
+                            <th style="width: 100px;">Bill Rate (₹)</th>
+                            <th style="width: 100px;">U_B Rate (₹)</th>
+                            <th style="width: 110px;">Bill Amt</th>
+                            <th style="width: 110px;">U_B Amt</th>
+                            <th style="width: 50px;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="purchase-items-body"></tbody>
+                </table>
+            </div>
+
+            <button type="button" class="btn btn-sm btn-secondary" onclick="Transactions.addPurchaseRow()"><i class="fa-solid fa-plus"></i> Add Item Line</button>
+
+            <div style="display: flex; justify-content: flex-end; margin-top: 1.5rem;">
+                <div style="width: 340px; background: var(--bg); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;"><span>Official Subtotal:</span><strong id="pur-summary-subtotal">₹0</strong></div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;"><span>GST Tax:</span><strong id="pur-summary-gst">₹0</strong></div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;"><span>Official Billing Total:</span><strong id="pur-summary-billtotal" style="color: var(--primary);">₹0</strong></div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;"><span>U_B Total:</span><strong id="pur-summary-underbilling" style="color: #d97706;">₹0</strong></div>
+                    <hr style="margin: 0.5rem 0;">
+                    <div style="display: flex; justify-content: space-between; font-size: 1.15rem; color: var(--dark);"><span>Grand Total:</span><strong id="pur-summary-grandtotal">₹0</strong></div>
+                </div>
+            </div>
+
+            <div class="modal-footer" style="padding-left:0; padding-right:0; margin-top:1.5rem;">
+                <button type="button" class="btn btn-outline modal-close">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="Transactions.savePurchase()">Save & Increase Stock</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 7. Modal Sales / Purchase Order -->
+<div class="modal-overlay" id="modal-sales-invoice">
+    <div class="modal-card modal-xl">
+        <div class="modal-header">
+            <span class="modal-title">New Sales / Purchase Order</span>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-grid-4" style="margin-bottom: 1.25rem;">
+                <div class="form-group">
+                    <label class="form-label">Customer *</label>
+                    <select id="si-customer" class="form-control"></select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Broker / Agent (Optional)</label>
+                    <select id="si-broker" class="form-control"></select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Order Type</label>
+                    <select id="si-order-type" class="form-control">
+                        <option value="Urgent">Urgent</option>
+                        <option value="Fast">Fast</option>
+                        <option value="Ready Delivery">Ready Delivery</option>
+                        <option value="Medium" selected>Medium</option>
+                    </select>
+                </div>
+                <div class="form-group"><label class="form-label">Invoice No</label><input type="text" id="si-inv-no" class="form-control" value="INV-1026"></div>
+                <div class="form-group"><label class="form-label">Invoice Date</label><input type="date" id="si-date" class="form-control"></div>
+            </div>
+
+            <div class="table-responsive" style="margin-bottom: 1rem;">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 45px; text-align: center;">S.No</th>
+                            <th style="min-width: 170px;">Item</th>
+                            <th style="width: 100px;">Batch No</th>
+                            <th style="width: 85px;">HSN</th>
+                            <th style="width: 75px;">GST %</th>
+                            <th style="width: 90px;">Unit Type</th>
+                            <th style="width: 95px;">Net Weight</th>
+                            <th style="width: 100px;">Actual Rate (₹)</th>
+                            <th style="width: 100px;">Bill Rate (₹)</th>
+                            <th style="width: 100px;">U_B Rate (₹)</th>
+                            <th style="width: 110px;">Bill Amt</th>
+                            <th style="width: 110px;">U_B Amt</th>
+                            <th style="width: 50px;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sales-items-body"></tbody>
+                </table>
+            </div>
+
+            <button type="button" class="btn btn-sm btn-secondary" onclick="Transactions.addSalesRow()"><i class="fa-solid fa-plus"></i> Add Product Line</button>
+
+            <div style="display: flex; justify-content: flex-end; margin-top: 1.5rem;">
+                <div style="width: 340px; background: var(--bg); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;"><span>Taxable Amount:</span><strong id="si-summary-subtotal">₹0</strong></div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;"><span>CGST (9%):</span><strong id="si-summary-cgst">₹0</strong></div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;"><span>SGST (9%):</span><strong id="si-summary-sgst">₹0</strong></div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;"><span>Official Billing Total:</span><strong id="si-summary-billtotal" style="color: var(--primary);">₹0</strong></div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;"><span>U_B Total:</span><strong id="si-summary-underbilling" style="color: #d97706;">₹0</strong></div>
+                    <hr style="margin: 0.5rem 0;">
+                    <div style="display: flex; justify-content: space-between; font-size: 1.15rem; color: var(--dark);"><span>Grand Total:</span><strong id="si-summary-grandtotal">₹0</strong></div>
+                </div>
+            </div>
+
+            <div class="modal-footer" style="padding-left:0; padding-right:0; margin-top:1.5rem;">
+                <button type="button" class="btn btn-outline modal-close">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="Transactions.saveSalesInvoice()">Save & Deduct Stock</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 7b. Modal Sales Entry -->
+<div class="modal-overlay" id="modal-sales-order">
+    <div class="modal-card modal-xl">
+        <div class="modal-header">
+            <span class="modal-title">New Sales Entry</span>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="so-form" onsubmit="Transactions.saveSalesOrder(event)">
+                <div class="form-grid-4" style="margin-bottom: 1.25rem;">
+                    <div class="form-group">
+                        <label class="form-label">Customer *</label>
+                        <select id="so-customer" class="form-control" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Broker / Agent (Optional)</label>
+                        <select id="so-broker" class="form-control"></select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Order Type</label>
+                        <select id="so-order-type" class="form-control">
+                            <option value="Urgent">Urgent</option>
+                            <option value="Fast">Fast</option>
+                            <option value="Ready Delivery">Ready Delivery</option>
+                            <option value="Medium" selected>Medium</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label class="form-label">Order Number</label><input type="text" id="so-no" class="form-control" value="SO-1026"></div>
+                    <div class="form-group"><label class="form-label">Order Date</label><input type="date" id="so-date" class="form-control"></div>
+                    <div class="form-group"><label class="form-label">Expected Delivery Date</label><input type="date" id="so-del-date" class="form-control"></div>
+                </div>
+
+                <div class="table-responsive" style="margin-bottom: 1rem;">
+                    <table class="custom-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 45px; text-align: center;">S.No</th>
+                                <th style="min-width: 170px;">Item</th>
+                                <th style="width: 100px;">Batch No</th>
+                                <th style="width: 85px;">HSN</th>
+                                <th style="width: 75px;">GST %</th>
+                                <th style="width: 90px;">Unit Type</th>
+                                <th style="width: 95px;">Net Weight</th>
+                                <th style="width: 100px;">Actual Rate (₹)</th>
+                                <th style="width: 100px;">Bill Rate (₹)</th>
+                                <th style="width: 100px;">U_B Rate (₹)</th>
+                                <th style="width: 110px;">Bill Amt</th>
+                                <th style="width: 110px;">U_B Amt</th>
+                                <th style="width: 50px;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="so-items-body"></tbody>
+                    </table>
+                </div>
+
+                <button type="button" class="btn btn-sm btn-secondary" onclick="Transactions.addSORow()"><i class="fa-solid fa-plus"></i> Add Item Line</button>
+
+                <div style="display: flex; justify-content: flex-end; margin-top: 1.5rem;">
+                    <div style="width: 340px; background: var(--bg); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;"><span>Official Billing Total:</span><strong id="so-summary-billing" style="color: var(--primary);">₹0</strong></div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;"><span>U_B Total:</span><strong id="so-summary-underbilling" style="color: #d97706;">₹0</strong></div>
+                        <hr style="margin: 0.5rem 0;">
+                        <div style="display: flex; justify-content: space-between; font-size: 1.15rem; color: var(--dark);"><span>Grand Total:</span><strong id="so-summary-total">₹0</strong></div>
+                    </div>
+                </div>
+
+                <div class="modal-footer" style="padding-left:0; padding-right:0; margin-top:1.5rem;">
+                    <button type="button" class="btn btn-outline modal-close">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Sales Entry</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 7c. Modal WB Purchase Entry -->
+<div class="modal-overlay" id="modal-wb-purchase">
+    <div class="modal-card modal-xl">
+        <div class="modal-header">
+            <span class="modal-title">New WB Purchase Entry (Without Bill)</span>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-grid-4" style="margin-bottom: 1.25rem;">
+                <div class="form-group">
+                    <label class="form-label">Vendor / Supplier *</label>
+                    <select id="wbp-vendor" class="form-control"></select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Broker / Agent (Optional)</label>
+                    <select id="wbp-broker" class="form-control"></select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Order Type</label>
+                    <select id="wbp-order-type" class="form-control">
+                        <option value="Urgent">Urgent</option>
+                        <option value="Fast">Fast</option>
+                        <option value="Ready Delivery">Ready Delivery</option>
+                        <option value="Medium" selected>Medium</option>
+                    </select>
+                </div>
+                <div class="form-group"><label class="form-label">WB Slip No</label><input type="text" id="wbp-slip-no" class="form-control" value="WBP-803"></div>
+                <div class="form-group"><label class="form-label">Entry Date</label><input type="date" id="wbp-date" class="form-control"></div>
+            </div>
+
+            <div class="table-responsive" style="margin-bottom: 1rem;">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 45px; text-align: center;">SNo</th>
+                            <th style="min-width: 170px;">Item</th>
+                            <th style="width: 100px;">Batch no</th>
+                            <th style="width: 110px;">W-B rate</th>
+                            <th style="width: 90px;">unit</th>
+                            <th style="width: 95px;">weight</th>
+                            <th style="width: 110px;">amt</th>
+                            <th style="width: 50px;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="wbp-items-body"></tbody>
+                </table>
+            </div>
+
+            <button type="button" class="btn btn-sm btn-secondary" onclick="Transactions.addWBPurchaseRow()"><i class="fa-solid fa-plus"></i> Add Item Line</button>
+
+            <div style="display: flex; justify-content: flex-end; margin-top: 1.5rem;">
+                <div style="width: 340px; background: var(--bg); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                    <div style="display: flex; justify-content: space-between; font-size: 1.15rem; color: #d97706;"><span>Total WB Amount:</span><strong id="wbp-summary-total">₹0</strong></div>
+                </div>
+            </div>
+
+            <div class="modal-footer" style="padding-left:0; padding-right:0; margin-top:1.5rem;">
+                <button type="button" class="btn btn-outline modal-close">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="Transactions.saveWBPurchase()">Save & Increase Stock (WB)</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 7d. Modal WB Sales Entry -->
+<div class="modal-overlay" id="modal-wb-sales">
+    <div class="modal-card modal-xl">
+        <div class="modal-header">
+            <span class="modal-title">New WB Sales Entry (Without Bill)</span>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-grid-4" style="margin-bottom: 1.25rem;">
+                <div class="form-group">
+                    <label class="form-label">Customer *</label>
+                    <select id="wbs-customer" class="form-control"></select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Broker / Agent (Optional)</label>
+                    <select id="wbs-broker" class="form-control"></select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Order Type</label>
+                    <select id="wbs-order-type" class="form-control">
+                        <option value="Urgent">Urgent</option>
+                        <option value="Fast">Fast</option>
+                        <option value="Ready Delivery">Ready Delivery</option>
+                        <option value="Medium" selected>Medium</option>
+                    </select>
+                </div>
+                <div class="form-group"><label class="form-label">WB Slip No</label><input type="text" id="wbs-slip-no" class="form-control" value="WBS-903"></div>
+                <div class="form-group"><label class="form-label">Entry Date</label><input type="date" id="wbs-date" class="form-control"></div>
+            </div>
+
+            <div class="table-responsive" style="margin-bottom: 1rem;">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 45px; text-align: center;">SNo</th>
+                            <th style="min-width: 170px;">Item</th>
+                            <th style="width: 100px;">Batch no</th>
+                            <th style="width: 110px;">W-B rate</th>
+                            <th style="width: 90px;">unit</th>
+                            <th style="width: 95px;">weight</th>
+                            <th style="width: 110px;">amt</th>
+                            <th style="width: 50px;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="wbs-items-body"></tbody>
+                </table>
+            </div>
+
+            <button type="button" class="btn btn-sm btn-secondary" onclick="Transactions.addWBSalesRow()"><i class="fa-solid fa-plus"></i> Add Item Line</button>
+
+            <div style="display: flex; justify-content: flex-end; margin-top: 1.5rem;">
+                <div style="width: 340px; background: var(--bg); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                    <div style="display: flex; justify-content: space-between; font-size: 1.15rem; color: #d97706;"><span>Total WB Amount:</span><strong id="wbs-summary-total">₹0</strong></div>
+                </div>
+            </div>
+
+            <div class="modal-footer" style="padding-left:0; padding-right:0; margin-top:1.5rem;">
+                <button type="button" class="btn btn-outline modal-close">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="Transactions.saveWBSales()">Save & Deduct Stock (WB)</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 8. Modal Dispatch -->
+<div class="modal-overlay" id="modal-dispatch">
+    <div class="modal-card">
+        <div class="modal-header">
+            <span class="modal-title">Order Dispatch & Logistics</span>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-grid">
+                <div class="form-group"><label class="form-label">Order Number</label><input type="text" id="dsp-order-no" class="form-control" readonly></div>
+                <div class="form-group"><label class="form-label">Customer</label><input type="text" id="dsp-customer" class="form-control" readonly></div>
+                <div class="form-group"><label class="form-label">Vehicle Number</label><input type="text" id="dsp-vehicle" class="form-control" placeholder="RJ-19-GA-1234"></div>
+                <div class="form-group"><label class="form-label">Driver Name</label><input type="text" id="dsp-driver" class="form-control" placeholder="Driver name"></div>
+                <div class="form-group full-width"><label class="form-label">Transporter / Courier</label><input type="text" id="dsp-transporter" class="form-control" placeholder="Vikas Logistics / VRL Logistics"></div>
+            </div>
+            <div class="modal-footer" style="padding-left:0; padding-right:0; margin-top:1.5rem;">
+                <button type="button" class="btn btn-outline modal-close">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="Transactions.confirmDispatch()">Confirm Dispatch</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 9. Modal Receipt -->
+<div class="modal-overlay" id="modal-receipt">
+    <div class="modal-card">
+        <div class="modal-header"><span class="modal-title">Receipt Voucher</span><button class="modal-close">&times;</button></div>
+        <div class="modal-body">
+            <form onsubmit="Transactions.saveReceipt(event)">
+                <div class="form-grid">
+                    <div class="form-group"><label class="form-label">Receipt No</label><input type="text" id="rcp-no" class="form-control" value="RCP-802"></div>
+                    <div class="form-group"><label class="form-label">Date</label><input type="date" id="rcp-date" class="form-control"></div>
+                    <div class="form-group full-width">
+                        <label class="form-label">Receipt Type *</label>
+                        <select id="rcp-type" class="form-control" onchange="Transactions.onReceiptTypeChange(this)">
+                            <option value="Customer">Customer Payment (Through Customer)</option>
+                            <option value="Income">Direct Income (Other Income)</option>
+                        </select>
+                    </div>
+                    <div class="form-group full-width">
+                        <label class="form-label" id="rcp-party-label">Customer *</label>
+                        <select id="rcp-customer" class="form-control" required></select>
+                    </div>
+                    <div class="form-group"><label class="form-label">Amount (₹) *</label><input type="number" id="rcp-amount" class="form-control" required></div>
+                    <div class="form-group">
+                        <label class="form-label">Payment Mode</label>
+                        <select id="rcp-mode" class="form-control">
+                            <option value="HDFC Bank (UPI)">HDFC Bank (UPI)</option>
+                            <option value="SBI Bank (NEFT)">SBI Bank (NEFT)</option>
+                            <option value="Cash">Cash</option>
+                            <option value="Cheque">Cheque</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label class="form-label">Against Invoice / Ref</label><input type="text" id="rcp-inv" class="form-control" value="INV-1025"></div>
+                    <div class="form-group full-width"><label class="form-label">Remarks</label><input type="text" id="rcp-remarks" class="form-control"></div>
+                </div>
+                <div class="modal-footer" style="padding-left:0; padding-right:0; margin-top:1.5rem;">
+                    <button type="button" class="btn btn-outline modal-close">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Receipt Voucher</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 10. Modal Payment -->
+<div class="modal-overlay" id="modal-payment">
+    <div class="modal-card">
+        <div class="modal-header"><span class="modal-title">Payment Voucher</span><button class="modal-close">&times;</button></div>
+        <div class="modal-body">
+            <form onsubmit="Transactions.savePayment(event)">
+                <div class="form-grid">
+                    <div class="form-group"><label class="form-label">Payment No</label><input type="text" id="pay-no" class="form-control" value="PAY-902"></div>
+                    <div class="form-group"><label class="form-label">Date</label><input type="date" id="pay-date" class="form-control"></div>
+                    <div class="form-group full-width">
+                        <label class="form-label">Payment Type *</label>
+                        <select id="pay-type" class="form-control" onchange="Transactions.onPaymentTypeChange(this)">
+                            <option value="Vendor">Vendor Payment (To Supplier / Vendor)</option>
+                            <option value="Expense">Direct Expense (Office / Factory Expense)</option>
+                        </select>
+                    </div>
+                    <div class="form-group full-width">
+                        <label class="form-label" id="pay-party-label">Vendor / Firm *</label>
+                        <select id="pay-vendor" class="form-control" required></select>
+                    </div>
+                    <div class="form-group"><label class="form-label">Amount (₹) *</label><input type="number" id="pay-amount" class="form-control" required></div>
+                    <div class="form-group">
+                        <label class="form-label">Payment Mode</label>
+                        <select id="pay-mode" class="form-control">
+                            <option value="HDFC Bank (NEFT)">HDFC Bank (NEFT)</option>
+                            <option value="Cash">Cash</option>
+                            <option value="Cheque">Cheque</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label class="form-label">Against Purchase / Ref</label><input type="text" id="pay-pur" class="form-control" value="INV-NH-402"></div>
+                    <div class="form-group full-width"><label class="form-label">Remarks</label><input type="text" id="pay-remarks" class="form-control"></div>
+                </div>
+                <div class="modal-footer" style="padding-left:0; padding-right:0; margin-top:1.5rem;">
+                    <button type="button" class="btn btn-outline modal-close">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Payment Voucher</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 11. Modal Stock Adjustment -->
+<div class="modal-overlay" id="modal-stock-adj">
+    <div class="modal-card">
+        <div class="modal-header"><span class="modal-title">Manual Stock Adjustment</span><button class="modal-close">&times;</button></div>
+        <div class="modal-body">
+            <form onsubmit="Inventory.saveAdjustment(event)">
+                <div class="form-group" style="margin-bottom: 1rem;"><label class="form-label">Select Item</label><select id="adj-item-select" class="form-control"></select></div>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label class="form-label">Adjustment Type</label>
+                    <select id="adj-type" class="form-control">
+                        <option value="Add">Add Stock (+)</option>
+                        <option value="Reduce">Reduce / Damage Stock (-)</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom: 1.5rem;"><label class="form-label">Quantity</label><input type="number" id="adj-qty" class="form-control" value="10"></div>
+                <div class="modal-footer" style="padding-left:0; padding-right:0;">
+                    <button type="button" class="btn btn-outline modal-close">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Adjust Stock</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 12. Modal Unit / Account -->
+<div class="modal-overlay" id="modal-unit">
+    <div class="modal-card">
+        <div class="modal-header"><span class="modal-title">Unit Master</span><button class="modal-close">&times;</button></div>
+        <div class="modal-body">
+            <form id="unit-form" onsubmit="Masters.saveUnit(event)">
+                <input type="hidden" id="unt-id">
+                <div class="form-group" style="margin-bottom:1rem;"><label class="form-label">Unit Name *</label><input type="text" id="unt-name" class="form-control" required></div>
+                <div class="form-group" style="margin-bottom:1.5rem;"><label class="form-label">Description</label><input type="text" id="unt-desc" class="form-control"></div>
+                <div class="modal-footer" style="padding-left:0; padding-right:0;"><button type="button" class="btn btn-outline modal-close">Cancel</button><button type="submit" class="btn btn-primary">Save Unit</button></div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="modal-account">
+    <div class="modal-card">
+        <div class="modal-header"><span class="modal-title">Account Master</span><button class="modal-close">&times;</button></div>
+        <div class="modal-body">
+            <form id="account-form" onsubmit="Masters.saveAccount(event)">
+                <input type="hidden" id="acc-id">
+                <div class="form-group" style="margin-bottom:1rem;"><label class="form-label">Account Name *</label><input type="text" id="acc-name" class="form-control" required></div>
+                <div class="form-group" style="margin-bottom:1rem;"><label class="form-label">Type</label><select id="acc-type" class="form-control"><option value="Bank">Bank</option><option value="Cash">Cash</option><option value="Income">Income</option><option value="Expense">Expense</option></select></div>
+                <div class="form-group" style="margin-bottom:1.5rem;"><label class="form-label">Opening Balance (₹)</label><input type="number" id="acc-opening" class="form-control" value="0"></div>
+                <div class="modal-footer" style="padding-left:0; padding-right:0;"><button type="button" class="btn btn-outline modal-close">Cancel</button><button type="submit" class="btn btn-primary">Save Account</button></div>
+            </form>
+        </div>
+    </div>
+</div>
