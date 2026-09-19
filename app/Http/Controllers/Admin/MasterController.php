@@ -25,9 +25,15 @@ class MasterController extends Controller
 
     public function accessLevel()
     {
+        $userCounts = \App\Models\User::select('role', \Illuminate\Support\Facades\DB::raw('count(*) as total'))
+            ->groupBy('role')
+            ->pluck('total', 'role')
+            ->toArray();
+
         return view('admin.masters.access-level', [
-            'pageTitle' => 'Access Level - VIKAS UDHYOG ERP',
-            'pageCode'  => 'master-access'
+            'pageTitle'  => 'Access Level & Role Management - VIKAS UDHYOG ERP',
+            'pageCode'   => 'master-access',
+            'userCounts' => $userCounts,
         ]);
     }
 
