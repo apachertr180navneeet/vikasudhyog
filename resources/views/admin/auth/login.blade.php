@@ -755,7 +755,7 @@
                             <input type="checkbox" name="remember" class="remember-checkbox" checked>
                             <span>Remember this device</span>
                         </label>
-                        <a href="javascript:void(0)" onclick="alert('Quick Reset: Please use the default credentials admin / admin123 to log in.')" class="forgot-link">Forgot password?</a>
+                        <a href="javascript:void(0)" onclick="alert('Please contact the system administrator to reset your credentials.')" class="forgot-link">Forgot password?</a>
                     </div>
 
                     <button type="submit" class="btn-submit-login" id="submit-btn">

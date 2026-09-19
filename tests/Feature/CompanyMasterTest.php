@@ -5,10 +5,12 @@ namespace Tests\Feature;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Company;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 
 class CompanyMasterTest extends TestCase
 {
+    use RefreshDatabase;
     protected function getAdminUser(): User
     {
         return User::firstOrCreate(
