@@ -1,36 +1,5 @@
 <!-- MODAL DIALOGS -->
 
-<!-- 1. Modal Company -->
-<div class="modal-overlay" id="modal-company">
-    <div class="modal-card">
-        <div class="modal-header">
-            <span class="modal-title">Company Profile</span>
-            <button class="modal-close">&times;</button>
-        </div>
-        <div class="modal-body">
-            <form id="company-form" onsubmit="Masters.saveCompany(event)">
-                <input type="hidden" id="comp-id">
-                <div class="form-grid">
-                    <div class="form-group full-width"><label class="form-label">Company Name *</label><input type="text" id="comp-name" class="form-control" required></div>
-                    <div class="form-group"><label class="form-label">GSTIN</label><input type="text" id="comp-gstin" class="form-control"></div>
-                    <div class="form-group"><label class="form-label">PAN</label><input type="text" id="comp-pan" class="form-control"></div>
-                    <div class="form-group"><label class="form-label">Phone</label><input type="text" id="comp-phone" class="form-control"></div>
-                    <div class="form-group"><label class="form-label">Email</label><input type="email" id="comp-email" class="form-control"></div>
-                    <div class="form-group full-width"><label class="form-label">Address</label><textarea id="comp-address" class="form-control"></textarea></div>
-                    <div class="form-group"><label class="form-label">City</label><input type="text" id="comp-city" class="form-control"></div>
-                    <div class="form-group"><label class="form-label">State</label><input type="text" id="comp-state" class="form-control" value="Rajasthan"></div>
-                    <div class="form-group"><label class="form-label">Pincode</label><input type="text" id="comp-pincode" class="form-control"></div>
-                    <div class="form-group"><label class="form-label">Financial Year</label><input type="text" id="comp-fy" class="form-control" value="2026-2027"></div>
-                </div>
-                <div class="modal-footer" style="padding-left:0; padding-right:0; margin-top:1.5rem;">
-                    <button type="button" class="btn btn-outline modal-close">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Save Company</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
 <!-- 2. Modal User -->
 <div class="modal-overlay" id="modal-user">
     <div class="modal-card">

@@ -492,32 +492,56 @@
 @push('scripts')
 <script>
     // Open Create Modal
-    function openCreateCompanyModal() {
+    window.openCreateCompanyModal = function() {
         const form = document.getElementById('company-master-form');
-        form.reset();
+        if (form) form.reset();
+        
         form.action = "{{ route('admin.masters.company.store') }}";
         document.getElementById('company-form-method').value = 'POST';
         document.getElementById('company-edit-id').value = '';
         document.getElementById('modal-company-title').innerText = 'Add New Company';
-        document.getElementById('modal-company-icon').className = 'fa-solid fa-building-circle-check';
+        
+        const icon = document.getElementById('modal-company-icon');
+        if (icon) icon.className = 'fa-solid fa-building-circle-check';
+        
         document.getElementById('comp-city').value = 'Sojat City';
         document.getElementById('comp-state').value = 'Rajasthan';
         document.getElementById('comp-financial-year').value = '2026-2027';
-        document.getElementById('modal-company-form').style.display = 'flex';
-    }
+        document.getElementById('comp-status').value = 'active';
+        
+        const modal = document.getElementById('modal-company-form');
+        if (modal) {
+            modal.style.display = 'flex';
+            modal.style.opacity = '1';
+            modal.style.pointerEvents = 'auto';
+            modal.classList.add('active');
+        }
+    };
 
     // Close Form Modal
-    function closeCompanyFormModal() {
-        document.getElementById('modal-company-form').style.display = 'none';
-    }
+    window.closeCompanyFormModal = function() {
+        const modal = document.getElementById('modal-company-form');
+        if (modal) {
+            modal.style.display = 'none';
+            modal.style.opacity = '0';
+            modal.style.pointerEvents = 'none';
+            modal.classList.remove('active');
+        }
+    };
 
     // Close View Modal
-    function closeCompanyViewModal() {
-        document.getElementById('modal-company-view').style.display = 'none';
-    }
+    window.closeCompanyViewModal = function() {
+        const modal = document.getElementById('modal-company-view');
+        if (modal) {
+            modal.style.display = 'none';
+            modal.style.opacity = '0';
+            modal.style.pointerEvents = 'none';
+            modal.classList.remove('active');
+        }
+    };
 
     // Edit Company Profile
-    function editCompanyProfile(id) {
+    window.editCompanyProfile = function(id) {
         fetch(`/admin/masters/company/${id}`, {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
@@ -555,19 +579,25 @@
             document.getElementById('comp-bank-account').value = c.bank_account_no || '';
             document.getElementById('comp-bank-ifsc').value = c.bank_ifsc || '';
             document.getElementById('comp-bank-branch').value = c.bank_branch || '';
-            document.getElementById('comp-is-default').checked = !!c.is_default;
+            document.getElementById('comp-is-default').checked = Boolean(c.is_default);
 
-            closeCompanyViewModal();
-            document.getElementById('modal-company-form').style.display = 'flex';
+            window.closeCompanyViewModal();
+            const modal = document.getElementById('modal-company-form');
+            if (modal) {
+                modal.style.display = 'flex';
+                modal.style.opacity = '1';
+                modal.style.pointerEvents = 'auto';
+                modal.classList.add('active');
+            }
         })
         .catch(err => {
             console.error(err);
             alert('Failed to connect to server.');
         });
-    }
+    };
 
     // View Company Details
-    function viewCompanyDetails(id) {
+    window.viewCompanyDetails = function(id) {
         fetch(`/admin/masters/company/${id}`, {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
@@ -632,27 +662,33 @@
 
             document.getElementById('view-comp-body').innerHTML = html;
             document.getElementById('btn-view-to-edit').onclick = function() {
-                editCompanyProfile(c.id);
+                window.editCompanyProfile(c.id);
             };
-            document.getElementById('modal-company-view').style.display = 'flex';
+            const modal = document.getElementById('modal-company-view');
+            if (modal) {
+                modal.style.display = 'flex';
+                modal.style.opacity = '1';
+                modal.style.pointerEvents = 'auto';
+                modal.classList.add('active');
+            }
         });
-    }
+    };
 
     // Delete confirmation
-    function confirmDeleteCompany(id, name) {
+    window.confirmDeleteCompany = function(id, name) {
         if (confirm(`Are you sure you want to delete company profile "${name}"?\nThis action cannot be undone.`)) {
             const form = document.getElementById('delete-company-form');
             form.action = `/admin/masters/company/${id}`;
             form.submit();
         }
-    }
+    };
 
     // Close modals on clicking overlay backdrop
     window.addEventListener('click', function(e) {
         const formModal = document.getElementById('modal-company-form');
         const viewModal = document.getElementById('modal-company-view');
-        if (e.target === formModal) closeCompanyFormModal();
-        if (e.target === viewModal) closeCompanyViewModal();
+        if (e.target === formModal) window.closeCompanyFormModal();
+        if (e.target === viewModal) window.closeCompanyViewModal();
     });
 </script>
 @endpush
