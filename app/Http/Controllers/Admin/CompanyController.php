@@ -109,7 +109,7 @@ class CompanyController extends Controller
     {
         $validated = $request->validate([
             'name'            => 'required|string|max:255',
-            'code'            => ['nullable', 'string', 'max:30', 'unique:companies,code'],
+            'code'            => ['nullable', 'string', 'max:30', Rule::unique('companies', 'code')->whereNull('deleted_at')],
             'gstin'           => 'nullable|string|max:20',
             'pan'             => 'nullable|string|max:15',
             'phone'           => 'nullable|string|max:30',
@@ -199,7 +199,7 @@ class CompanyController extends Controller
     {
         $validated = $request->validate([
             'name'            => 'required|string|max:255',
-            'code'            => ['nullable', 'string', 'max:30', Rule::unique('companies', 'code')->ignore($company->id)],
+            'code'            => ['nullable', 'string', 'max:30', Rule::unique('companies', 'code')->whereNull('deleted_at')->ignore($company->id)],
             'gstin'           => 'nullable|string|max:20',
             'pan'             => 'nullable|string|max:15',
             'phone'           => 'nullable|string|max:30',
