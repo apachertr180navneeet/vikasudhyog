@@ -88,13 +88,16 @@
 
                         <div class="form-row-3">
                             <div class="form-group">
-                                <label class="form-label">
+                                <label class="form-label" style="display: flex; justify-content: space-between; align-items: center;">
                                     <span>Short Code / Prefix</span>
-                                    <span class="label-hint">For Doc IDs</span>
+                                    <span class="label-hint" id="code-status-badge" style="font-size: 0.72rem; color: var(--primary); font-weight: 600;">Unique Code</span>
                                 </label>
-                                <div class="input-icon-wrap">
+                                <div class="input-icon-wrap" style="position: relative;">
                                     <i class="fa-solid fa-hashtag input-icon"></i>
-                                    <input type="text" name="code" id="field-code" class="form-control uppercase-input" placeholder="VU-SOJAT" value="{{ old('code', $company->code) }}" maxlength="20">
+                                    <input type="text" name="code" id="field-code" class="form-control uppercase-input" placeholder="e.g. VU" value="{{ old('code', $company->code) }}" maxlength="30" style="padding-right: 2.5rem; text-transform: uppercase;" autocomplete="off">
+                                    <button type="button" id="btn-regenerate-code" title="Generate unique short code from name" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 5px 8px; font-size: 0.85rem; border-radius: 6px; transition: all 0.2s;" onmouseover="this.style.color='var(--primary)'; this.style.background='rgba(107, 142, 35, 0.1)'" onmouseout="this.style.color='var(--text-muted)'; this.style.background='none'">
+                                        <i class="fa-solid fa-arrows-rotate"></i>
+                                    </button>
                                 </div>
                             </div>
 
@@ -478,6 +481,54 @@
 
         if (statusSelect) statusSelect.addEventListener('change', updatePreview);
         if (defaultCheck) defaultCheck.addEventListener('change', updatePreview);
+
+        // Auto-generate Unique Short Code
+        let isManualCode = true; // When editing, existing code is preserved unless changed or clicked regenerate
+        let codeTimer = null;
+        const codeBadge = document.getElementById('code-status-badge');
+        const regenBtn = document.getElementById('btn-regenerate-code');
+        const excludeId = '{{ $company->id }}';
+
+        function fetchGeneratedCode(name) {
+            if (!name) return;
+
+            if (codeBadge) codeBadge.textContent = 'Generating...';
+
+            fetch(`{{ route('admin.masters.company.generate-code') }}?name=${encodeURIComponent(name)}&exclude_id=${excludeId}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success && data.code) {
+                        codeInput.value = data.code;
+                        updatePreview();
+                    }
+                    if (codeBadge) codeBadge.textContent = 'Unique Code';
+                })
+                .catch(() => {
+                    if (codeBadge) codeBadge.textContent = 'Unique Code';
+                });
+        }
+
+        if (codeInput) {
+            codeInput.addEventListener('input', () => {
+                codeInput.value = codeInput.value.toUpperCase().replace(/[^A-Z0-9\-_]/g, '');
+                isManualCode = true;
+                if (codeBadge) {
+                    codeBadge.textContent = 'Custom Code';
+                }
+            });
+        }
+
+        if (regenBtn) {
+            regenBtn.addEventListener('click', () => {
+                isManualCode = false;
+                const icon = regenBtn.querySelector('i');
+                if (icon) icon.classList.add('fa-spin');
+                fetchGeneratedCode(nameInput ? nameInput.value.trim() : '');
+                setTimeout(() => {
+                    if (icon) icon.classList.remove('fa-spin');
+                }, 500);
+            });
+        }
 
         updatePreview();
     });

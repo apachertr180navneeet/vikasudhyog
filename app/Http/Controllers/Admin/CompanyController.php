@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Company;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class CompanyController extends Controller
 {
@@ -79,13 +80,36 @@ class CompanyController extends Controller
     }
 
     /**
+     * Generate a unique short code from company name via AJAX.
+     */
+    public function generateCode(Request $request)
+    {
+        $name = trim((string)$request->query('name', ''));
+        $excludeId = $request->query('exclude_id') ? (int)$request->query('exclude_id') : null;
+
+        if (empty($name)) {
+            return response()->json([
+                'success' => true,
+                'code'    => '',
+            ]);
+        }
+
+        $code = Company::generateUniqueCode($name, $excludeId);
+
+        return response()->json([
+            'success' => true,
+            'code'    => $code,
+        ]);
+    }
+
+    /**
      * Store a newly created company in storage.
      */
     public function store(Request $request)
     {
         $validated = $request->validate([
             'name'            => 'required|string|max:255',
-            'code'            => 'nullable|string|max:30',
+            'code'            => ['nullable', 'string', 'max:30', 'unique:companies,code'],
             'gstin'           => 'nullable|string|max:20',
             'pan'             => 'nullable|string|max:15',
             'phone'           => 'nullable|string|max:30',
@@ -104,6 +128,12 @@ class CompanyController extends Controller
             'status'          => 'required|in:active,inactive',
             'is_default'      => 'nullable|boolean',
         ]);
+
+        if (empty($validated['code'])) {
+            $validated['code'] = Company::generateUniqueCode($validated['name']);
+        } else {
+            $validated['code'] = strtoupper(trim($validated['code']));
+        }
 
         $isDefault = $request->boolean('is_default');
         
@@ -169,7 +199,7 @@ class CompanyController extends Controller
     {
         $validated = $request->validate([
             'name'            => 'required|string|max:255',
-            'code'            => 'nullable|string|max:30',
+            'code'            => ['nullable', 'string', 'max:30', Rule::unique('companies', 'code')->ignore($company->id)],
             'gstin'           => 'nullable|string|max:20',
             'pan'             => 'nullable|string|max:15',
             'phone'           => 'nullable|string|max:30',
@@ -188,6 +218,12 @@ class CompanyController extends Controller
             'status'          => 'required|in:active,inactive',
             'is_default'      => 'nullable|boolean',
         ]);
+
+        if (empty($validated['code'])) {
+            $validated['code'] = Company::generateUniqueCode($validated['name'], $company->id);
+        } else {
+            $validated['code'] = strtoupper(trim($validated['code']));
+        }
 
         $isDefault = $request->boolean('is_default');
         unset($validated['is_default']);

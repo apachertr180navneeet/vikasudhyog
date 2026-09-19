@@ -38,6 +38,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             // Company Master CRUD (Dedicated Pages)
             Route::get('/company', [CompanyController::class, 'index'])->name('company');
             Route::get('/company/create', [CompanyController::class, 'create'])->name('company.create');
+            Route::get('/company/generate-code', [CompanyController::class, 'generateCode'])->name('company.generate-code');
             Route::post('/company', [CompanyController::class, 'store'])->name('company.store');
             Route::get('/company/{company}', [CompanyController::class, 'show'])->name('company.show');
             Route::get('/company/{company}/edit', [CompanyController::class, 'edit'])->name('company.edit');
