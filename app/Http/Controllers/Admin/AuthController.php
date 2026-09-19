@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
@@ -15,7 +18,7 @@ class AuthController extends Controller
      */
     public function showLoginForm()
     {
-        if (Auth::check() || session('vu_logged_in')) {
+        if (Auth::check()) {
             return redirect()->route('admin.dashboard');
         }
 
@@ -23,35 +26,52 @@ class AuthController extends Controller
     }
 
     /**
-     * Handle authentication for admin/login.
+     * Handle authentication for admin/login with brute-force protection.
      */
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'username' => 'required|string',
-            'password' => 'required|string',
+            'username' => 'required|string|max:100',
+            'password' => 'required|string|min:6|max:100',
         ]);
 
         $username = trim($credentials['username']);
         $password = $credentials['password'];
         $remember = $request->boolean('remember');
 
+        // Throttle key based on username and client IP
+        $throttleKey = Str::transliterate(Str::lower($username).'|'.$request->ip());
+
+        // Check if user is temporarily locked out (5 attempts allowed per 60 seconds)
+        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
+            return back()
+                ->withInput($request->only('username', 'remember'))
+                ->with('error', "Too many failed login attempts. Please try again in {$seconds} seconds.");
+        }
+
         // Query user by username, email, or name
         $user = User::where('username', $username)
             ->orWhere('email', $username)
-            ->orWhere('name', $username)
             ->first();
 
         if ($user && Hash::check($password, $user->password)) {
             // Verify active status
-            if ($user->status && $user->status !== 'active') {
+            if (!$user->isActive()) {
+                RateLimiter::hit($throttleKey);
                 return back()
                     ->withInput($request->only('username', 'remember'))
                     ->with('error', 'Your account has been deactivated or suspended. Please contact the administrator.');
             }
 
+            // Clear login attempt limiter on success
+            RateLimiter::clear($throttleKey);
+
             // Log the user into Laravel's auth guard
             Auth::login($user, $remember);
+
+            // Protect against session fixation
+            $request->session()->regenerate();
 
             // Update login audit telemetry
             $user->update([
@@ -72,21 +92,12 @@ class AuthController extends Controller
                 ->with('success', 'Welcome back, ' . $user->name . '! Logged in successfully.');
         }
 
-        // Demo fallback for test environments if DB is empty
-        if (strtolower($username) === 'admin' && $password === 'admin123') {
-            session([
-                'vu_logged_in' => true,
-                'vu_user_name' => 'Administrator',
-                'vu_user_role' => 'Super Administrator',
-                'vu_user_email'=> 'admin@vikasudhyog.com',
-            ]);
-            return redirect()->route('admin.dashboard')
-                ->with('success', 'Logged in as Administrator (Demo Mode).');
-        }
+        // Record failed attempt
+        RateLimiter::hit($throttleKey);
 
         return back()
             ->withInput($request->only('username', 'remember'))
-            ->with('error', 'Invalid username or password. Please verify your credentials and try again.');
+            ->with('error', 'Invalid username/email or password. Please check your credentials and try again.');
     }
 
     /**
