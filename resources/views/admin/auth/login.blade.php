@@ -728,28 +728,17 @@
                     </div>
                 @endif
 
-                <!-- Seeded Account Quick Switcher -->
-                <div style="background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 12px; padding: 0.75rem 0.9rem; margin-bottom: 1.5rem;">
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
-                        <span style="font-size: 0.78rem; font-weight: 700; color: #4B5563; text-transform: uppercase; letter-spacing: 0.5px;">
-                            <i class="fa-solid fa-users-gear" style="color: var(--brand-primary); margin-right: 4px;"></i> Seeded Login Accounts
-                        </span>
-                        <span style="font-size: 0.72rem; color: #9CA3AF;">Click to auto-fill</span>
+                <!-- Admin Seeded Credential Banner -->
+                <div class="demo-pill-banner" style="background: #F8FAF5; border: 1px dashed #A3E635; border-radius: 12px; padding: 0.85rem 1rem; margin-bottom: 1.75rem; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;">
+                    <div class="demo-info" style="display: flex; align-items: center; gap: 0.6rem; font-size: 0.85rem; color: #374151;">
+                        <i class="fa-solid fa-shield-halved" style="color: var(--brand-primary); font-size: 1.1rem;"></i>
+                        <div>
+                            Admin: <code>admin</code> / <code>admin123</code>
+                        </div>
                     </div>
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.4rem;">
-                        <button type="button" class="role-fill-btn" onclick="fillCredentials('admin', 'admin123', 'Administrator', 'Super Administrator')" style="padding: 0.4rem 0.5rem; background: #FFFFFF; border: 1px solid #D1D5DB; border-radius: 8px; font-size: 0.76rem; font-weight: 600; color: #1F2937; cursor: pointer; text-align: left; transition: all 0.15s ease;">
-                            <div style="color: var(--brand-primary); font-weight: 700;">Super Admin</div>
-                            <div style="font-size: 0.68rem; color: #6B7280;">admin</div>
-                        </button>
-                        <button type="button" class="role-fill-btn" onclick="fillCredentials('rajesh.manager', 'password123', 'Rajesh Sharma', 'Plant & Production Manager')" style="padding: 0.4rem 0.5rem; background: #FFFFFF; border: 1px solid #D1D5DB; border-radius: 8px; font-size: 0.76rem; font-weight: 600; color: #1F2937; cursor: pointer; text-align: left; transition: all 0.15s ease;">
-                            <div style="color: #0284C7; font-weight: 700;">Manager</div>
-                            <div style="font-size: 0.68rem; color: #6B7280;">rajesh.manager</div>
-                        </button>
-                        <button type="button" class="role-fill-btn" onclick="fillCredentials('sunil.accounts', 'password123', 'Sunil Verma', 'Chief Accountant')" style="padding: 0.4rem 0.5rem; background: #FFFFFF; border: 1px solid #D1D5DB; border-radius: 8px; font-size: 0.76rem; font-weight: 600; color: #1F2937; cursor: pointer; text-align: left; transition: all 0.15s ease;">
-                            <div style="color: #7C3AED; font-weight: 700;">Accountant</div>
-                            <div style="font-size: 0.68rem; color: #6B7280;">sunil.accounts</div>
-                        </button>
-                    </div>
+                    <button type="button" class="btn-fill-demo" id="auto-fill-btn" onclick="fillCredentials('admin', 'admin123', 'Administrator', 'Super Administrator')">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Auto Fill
+                    </button>
                 </div>
 
                 <form id="login-form" action="{{ route('admin.login.post') }}" method="POST">

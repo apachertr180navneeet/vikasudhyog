@@ -3,12 +3,19 @@
     <div class="navbar-left">
         <button class="btn-icon" id="sidebar-toggle"><i class="fa-solid fa-bars"></i></button>
 
+        @php
+            $activeCompanies = \App\Models\Company::where('status', 'active')->orderBy('is_default', 'desc')->get();
+        @endphp
         <div class="company-selector">
             <i class="fa-solid fa-building"></i>
             <select id="company-selector-dropdown">
-                <option value="Vikas Udhyog">Vikas Udhyog (Sojat)</option>
-                <option value="Vikas Herbal Products">Vikas Herbal Products</option>
-                <option value="Vikas Trading">Vikas Trading</option>
+                @forelse($activeCompanies as $compItem)
+                    <option value="{{ $compItem->name }}" {{ $compItem->is_default ? 'selected' : '' }}>
+                        {{ $compItem->name }} ({{ $compItem->city }})
+                    </option>
+                @empty
+                    <option value="Vikas Udhyog">Vikas Udhyog (Sojat)</option>
+                @endforelse
             </select>
         </div>
 

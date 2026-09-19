@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\MasterController;
+use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Admin\InventoryController;
 use App\Http\Controllers\Admin\ReportController;
@@ -34,7 +35,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // Masters Routes
         Route::prefix('masters')->name('masters.')->group(function () {
-            Route::get('/company', [MasterController::class, 'company'])->name('company');
+            // Company Master CRUD
+            Route::get('/company', [CompanyController::class, 'index'])->name('company');
+            Route::post('/company', [CompanyController::class, 'store'])->name('company.store');
+            Route::get('/company/{company}', [CompanyController::class, 'show'])->name('company.show');
+            Route::put('/company/{company}', [CompanyController::class, 'update'])->name('company.update');
+            Route::delete('/company/{company}', [CompanyController::class, 'destroy'])->name('company.destroy');
+            Route::patch('/company/{company}/toggle-status', [CompanyController::class, 'toggleStatus'])->name('company.toggle-status');
+            Route::patch('/company/{company}/set-default', [CompanyController::class, 'setDefault'])->name('company.set-default');
+
             Route::get('/user', [MasterController::class, 'user'])->name('user');
             Route::get('/access-level', [MasterController::class, 'accessLevel'])->name('access-level');
             Route::get('/vendor', [MasterController::class, 'vendor'])->name('vendor');
