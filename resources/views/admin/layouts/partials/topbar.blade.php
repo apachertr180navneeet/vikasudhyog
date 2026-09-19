@@ -70,7 +70,7 @@
             $userInitial = $currentUser ? $currentUser->initials : strtoupper(substr($userName, 0, 1));
         @endphp
         <div class="user-profile-menu" id="user-profile-btn">
-            <div class="avatar" style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: #fff; font-weight: 700; display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 10px; font-size: 0.9rem;">
+            <div class="user-avatar-badge">
                 {{ $userInitial }}
             </div>
             <div class="user-info">

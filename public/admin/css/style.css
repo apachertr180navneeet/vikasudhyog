@@ -7,6 +7,8 @@
     /* Color Palette */
     --primary: #6B8E23;        /* Olive Green */
     --primary-hover: #5A781E;
+    --primary-dark: #4A6B13;   /* Deep Olive Green */
+    --primary-light: #8BA838;  /* Light Herbal Green */
     --secondary: #8FBF26;      /* Herbal Green */
     --secondary-light: #EBF7D4;
     --dark: #183A1D;           /* Deep Forest Green */
@@ -1868,6 +1870,59 @@ div:where(.swal2-container) button.swal2-cancel {
     padding: 0.65rem 1.35rem !important;
     font-size: 0.9rem !important;
 }
+
+/* Company & User Avatar Badges */
+.company-avatar-badge {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background-color: #6B8E23;
+    background: linear-gradient(135deg, #6B8E23 0%, #4A6B13 100%);
+    color: #FFFFFF !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1rem;
+    flex-shrink: 0;
+    box-shadow: 0 3px 8px rgba(107, 142, 35, 0.35);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.user-avatar-badge {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background-color: #6B8E23;
+    background: linear-gradient(135deg, #6B8E23 0%, #4A6B13 100%);
+    color: #FFFFFF !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.95rem;
+    flex-shrink: 0;
+    box-shadow: 0 3px 8px rgba(107, 142, 35, 0.3);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.company-avatar-large {
+    width: 72px;
+    height: 72px;
+    border-radius: 18px;
+    background-color: #6B8E23;
+    background: linear-gradient(135deg, #6B8E23 0%, #4A6B13 100%);
+    color: #FFFFFF !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 800;
+    margin: 0 auto 1rem;
+    box-shadow: 0 8px 20px rgba(107, 142, 35, 0.3);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+}
+
 
 
 

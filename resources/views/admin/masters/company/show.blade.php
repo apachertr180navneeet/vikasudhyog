@@ -39,7 +39,7 @@
     <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1.5rem; align-items: start;">
         <!-- Left Summary Card -->
         <div class="card" style="padding: 1.75rem; border-radius: 18px; text-align: center; border-top: 4px solid var(--primary);">
-            <div style="width: 72px; height: 72px; border-radius: 18px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 800; margin: 0 auto 1rem; box-shadow: 0 8px 20px rgba(91, 132, 30, 0.25);">
+            <div class="company-avatar-large">
                 {{ strtoupper(substr($company->name, 0, 1)) }}
             </div>
             <h2 style="font-size: 1.35rem; font-weight: 800; color: var(--text-primary); margin: 0 0 0.35rem;">

@@ -154,7 +154,7 @@
                             </td>
                             <td>
                                 <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
-                                    <div style="width: 36px; height: 36px; border-radius: 8px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.95rem; flex-shrink: 0; box-shadow: 0 2px 6px rgba(91, 132, 30, 0.25);">
+                                    <div class="company-avatar-badge">
                                         {{ strtoupper(substr($company->name, 0, 1)) }}
                                     </div>
                                     <div>
