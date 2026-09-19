@@ -16,7 +16,14 @@
     <link rel="stylesheet" href="{{ asset('admin/css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('admin/css/responsive.css') }}">
 
-    <!-- Chart.js for Executive Dashboard -->
+    <!-- Toastr & SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+    <!-- jQuery, Chart.js, Toastr & SweetAlert2 JS -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     @stack('styles')
 </head>
@@ -53,6 +60,42 @@
     <script src="{{ asset('admin/js/reports.js') }}"></script>
     <script src="{{ asset('admin/js/settings.js') }}"></script>
     <script src="{{ asset('admin/js/app.js') }}"></script>
+
+    <script>
+        // Global Toastr Configuration
+        if (typeof toastr !== 'undefined') {
+            toastr.options = {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": true,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "showDuration": "300",
+                "hideDuration": "800",
+                "timeOut": "4000",
+                "extendedTimeOut": "1500",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            };
+        }
+
+        // Global Flash Message Toasts
+        @if(session('success'))
+            if (typeof toastr !== 'undefined') toastr.success({!! json_encode(session('success')) !!});
+        @endif
+        @if(session('error'))
+            if (typeof toastr !== 'undefined') toastr.error({!! json_encode(session('error')) !!});
+        @endif
+        @if(session('warning'))
+            if (typeof toastr !== 'undefined') toastr.warning({!! json_encode(session('warning')) !!});
+        @endif
+        @if(session('info'))
+            if (typeof toastr !== 'undefined') toastr.info({!! json_encode(session('info')) !!});
+        @endif
+    </script>
     @stack('scripts')
 </body>
 </html>

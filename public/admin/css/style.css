@@ -1795,4 +1795,79 @@ textarea.form-control {
     flex-shrink: 0;
 }
 
+/* ==========================================================================
+   Toastr & SweetAlert2 Custom Styling for VIKAS UDHYOG ERP
+   ========================================================================== */
+#toast-container > div {
+    opacity: 1 !important;
+    border-radius: 12px !important;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+    font-family: var(--font-main) !important;
+    font-size: 0.88rem !important;
+    padding: 14px 18px 14px 50px !important;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+#toast-container > .toast-success {
+    background-color: #15803D !important;
+}
+
+#toast-container > .toast-error {
+    background-color: #DC2626 !important;
+}
+
+#toast-container > .toast-warning {
+    background-color: #D97706 !important;
+}
+
+#toast-container > .toast-info {
+    background-color: #2563EB !important;
+}
+
+.toast-progress {
+    background-color: rgba(255, 255, 255, 0.4) !important;
+}
+
+/* SweetAlert2 Modal Customization */
+div:where(.swal2-container) .swal2-popup {
+    border-radius: 20px !important;
+    font-family: var(--font-main) !important;
+    padding: 1.75rem 1.5rem !important;
+    box-shadow: 0 25px 50px -12px rgba(24, 58, 29, 0.25) !important;
+    border: 1px solid var(--border-color);
+}
+
+div:where(.swal2-container) .swal2-title {
+    font-family: var(--font-heading) !important;
+    font-weight: 800 !important;
+    color: var(--dark) !important;
+    font-size: 1.35rem !important;
+}
+
+div:where(.swal2-container) .swal2-html-container {
+    color: var(--text-muted) !important;
+    font-size: 0.92rem !important;
+    line-height: 1.5 !important;
+}
+
+div:where(.swal2-container) .swal2-actions {
+    gap: 0.75rem !important;
+}
+
+div:where(.swal2-container) button.swal2-confirm {
+    border-radius: 10px !important;
+    font-weight: 700 !important;
+    padding: 0.65rem 1.5rem !important;
+    font-size: 0.9rem !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+div:where(.swal2-container) button.swal2-cancel {
+    border-radius: 10px !important;
+    font-weight: 600 !important;
+    padding: 0.65rem 1.35rem !important;
+    font-size: 0.9rem !important;
+}
+
+
 

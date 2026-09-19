@@ -148,7 +148,7 @@
                 </thead>
                 <tbody>
                     @forelse($companies as $index => $company)
-                        <tr style="{{ $company->is_default ? 'background: rgba(91, 132, 30, 0.03);' : '' }}">
+                        <tr id="company-row-{{ $company->id }}" style="{{ $company->is_default ? 'background: rgba(91, 132, 30, 0.03);' : '' }}">
                             <td style="font-weight: 600; color: var(--text-muted);">
                                 {{ $companies->firstItem() + $index }}
                             </td>
@@ -228,14 +228,10 @@
                                 </div>
                             </td>
                             <td>
-                                <form action="{{ route('admin.masters.company.toggle-status', $company->id) }}" method="POST" style="display: inline;">
-                                    @csrf
-                                    @method('PATCH')
-                                    <button type="submit" class="badge {{ $company->status === 'active' ? 'badge-success' : 'badge-danger' }}" style="border: none; cursor: pointer; padding: 4px 10px; font-size: 0.75rem; border-radius: 20px; transition: all 0.2s ease;" title="Click to Toggle Status">
-                                        <i class="fa-solid {{ $company->status === 'active' ? 'fa-check' : 'fa-ban' }}" style="font-size: 0.65rem; margin-right: 3px;"></i>
-                                        {{ ucfirst($company->status) }}
-                                    </button>
-                                </form>
+                                <button type="button" class="badge {{ $company->status === 'active' ? 'badge-success' : 'badge-danger' }} btn-toggle-status" data-id="{{ $company->id }}" data-name="{{ $company->name }}" data-url="{{ route('admin.masters.company.toggle-status', $company->id) }}" data-status="{{ $company->status }}" style="border: none; cursor: pointer; padding: 4px 10px; font-size: 0.75rem; border-radius: 20px; transition: all 0.2s ease;" title="Click to Toggle Status">
+                                    <i class="fa-solid {{ $company->status === 'active' ? 'fa-check' : 'fa-ban' }}" style="font-size: 0.65rem; margin-right: 3px;"></i>
+                                    {{ ucfirst($company->status) }}
+                                </button>
                             </td>
                             <td style="text-align: right;">
                                 <div class="action-btns" style="justify-content: flex-end; gap: 0.35rem;">
@@ -251,23 +247,15 @@
 
                                     <!-- Make Primary/Default Button -->
                                     @if(!$company->is_default)
-                                        <form action="{{ route('admin.masters.company.set-default', $company->id) }}" method="POST" style="display: inline;">
-                                            @csrf
-                                            @method('PATCH')
-                                            <button type="submit" class="btn-action" style="color: #D4A017;" title="Set as Primary Default Entity">
-                                                <i class="fa-regular fa-star"></i>
-                                            </button>
-                                        </form>
+                                        <button type="button" class="btn-action btn-set-default" data-id="{{ $company->id }}" data-name="{{ $company->name }}" data-url="{{ route('admin.masters.company.set-default', $company->id) }}" style="color: #D4A017; border: none; background: none; cursor: pointer;" title="Set as Primary Default Entity">
+                                            <i class="fa-regular fa-star"></i>
+                                        </button>
                                     @endif
 
                                     <!-- Delete Button -->
-                                    <form action="{{ route('admin.masters.company.destroy', $company->id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete company profile \'{{ addslashes($company->name) }}\'?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn-action delete" title="Delete Company">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </button>
-                                    </form>
+                                    <button type="button" class="btn-action delete btn-delete-company" data-id="{{ $company->id }}" data-name="{{ $company->name }}" data-url="{{ route('admin.masters.company.destroy', $company->id) }}" style="border: none; background: none; cursor: pointer;" title="Delete Company">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
                                 </div>
                             </td>
                         </tr>
@@ -305,3 +293,168 @@
     </div>
 </section>
 @endsection
+
+@push('scripts')
+<script>
+    $(document).ready(function() {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+        // 1. AJAX Status Toggle with SweetAlert Confirmation
+        $(document).on('click', '.btn-toggle-status', function(e) {
+            e.preventDefault();
+            const btn = $(this);
+            const name = btn.data('name');
+            const url = btn.data('url');
+            const currentStatus = btn.data('status');
+            const nextStatus = currentStatus === 'active' ? 'Inactive' : 'Active';
+
+            Swal.fire({
+                title: 'Change Company Status?',
+                text: `Are you sure you want to mark "${name}" as ${nextStatus}?`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: nextStatus === 'Active' ? '#10B981' : '#EF4444',
+                cancelButtonColor: '#6B7280',
+                confirmButtonText: `Yes, make ${nextStatus}`,
+                cancelButtonText: 'Cancel',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    btn.prop('disabled', true).css('opacity', '0.6');
+
+                    $.ajax({
+                        url: url,
+                        type: 'PATCH',
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken,
+                            'Accept': 'application/json'
+                        },
+                        success: function(res) {
+                            btn.prop('disabled', false).css('opacity', '1');
+                            if (res.success) {
+                                toastr.success(res.message || 'Status updated successfully!');
+                                const newStatus = res.status;
+                                btn.data('status', newStatus);
+                                if (newStatus === 'active') {
+                                    btn.removeClass('badge-danger').addClass('badge-success');
+                                    btn.html('<i class="fa-solid fa-check" style="font-size: 0.65rem; margin-right: 3px;"></i> Active');
+                                } else {
+                                    btn.removeClass('badge-success').addClass('badge-danger');
+                                    btn.html('<i class="fa-solid fa-ban" style="font-size: 0.65rem; margin-right: 3px;"></i> Inactive');
+                                }
+                            } else {
+                                toastr.error(res.message || 'Failed to update status.');
+                            }
+                        },
+                        error: function(xhr) {
+                            btn.prop('disabled', false).css('opacity', '1');
+                            const errorMsg = xhr.responseJSON?.message || 'Error occurred while updating status.';
+                            toastr.error(errorMsg);
+                        }
+                    });
+                }
+            });
+        });
+
+        // 2. AJAX Delete with SweetAlert Confirmation
+        $(document).on('click', '.btn-delete-company', function(e) {
+            e.preventDefault();
+            const btn = $(this);
+            const name = btn.data('name');
+            const url = btn.data('url');
+            const id = btn.data('id');
+
+            Swal.fire({
+                title: 'Delete Company Profile?',
+                html: `Are you sure you want to permanently delete <strong>"${name}"</strong>?<br><span style="font-size:0.85rem; color:#EF4444; margin-top: 4px; display: inline-block;">This action cannot be undone.</span>`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#EF4444',
+                cancelButtonColor: '#6B7280',
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    btn.prop('disabled', true);
+
+                    $.ajax({
+                        url: url,
+                        type: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken,
+                            'Accept': 'application/json'
+                        },
+                        success: function(res) {
+                            if (res.success) {
+                                toastr.success(res.message || 'Company profile deleted successfully!');
+                                $(`#company-row-${id}`).fadeOut(350, function() {
+                                    $(this).remove();
+                                    if ($('tbody tr').length === 0) {
+                                        location.reload();
+                                    }
+                                });
+                            } else {
+                                btn.prop('disabled', false);
+                                toastr.error(res.message || 'Failed to delete company.');
+                            }
+                        },
+                        error: function(xhr) {
+                            btn.prop('disabled', false);
+                            const errorMsg = xhr.responseJSON?.message || 'Error occurred while deleting company.';
+                            toastr.error(errorMsg);
+                        }
+                    });
+                }
+            });
+        });
+
+        // 3. AJAX Set Default Primary with SweetAlert Confirmation
+        $(document).on('click', '.btn-set-default', function(e) {
+            e.preventDefault();
+            const btn = $(this);
+            const name = btn.data('name');
+            const url = btn.data('url');
+
+            Swal.fire({
+                title: 'Set as Primary Entity?',
+                text: `Do you want to set "${name}" as the primary default company profile?`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#D4A017',
+                cancelButtonColor: '#6B7280',
+                confirmButtonText: 'Yes, Set Primary',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    btn.prop('disabled', true);
+
+                    $.ajax({
+                        url: url,
+                        type: 'PATCH',
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken,
+                            'Accept': 'application/json'
+                        },
+                        success: function(res) {
+                            if (res.success) {
+                                toastr.success(res.message || 'Default primary entity updated!');
+                                setTimeout(() => location.reload(), 600);
+                            } else {
+                                btn.prop('disabled', false);
+                                toastr.error(res.message || 'Failed to update default company.');
+                            }
+                        },
+                        error: function(xhr) {
+                            btn.prop('disabled', false);
+                            const errorMsg = xhr.responseJSON?.message || 'Error updating default company.';
+                            toastr.error(errorMsg);
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>
+@endpush

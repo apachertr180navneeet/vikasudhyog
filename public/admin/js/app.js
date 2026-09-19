@@ -312,6 +312,15 @@ const App = {
     },
 
     showToast(message, type = 'success') {
+        const toastType = (type === 'danger' || type === 'error') ? 'error' : (type === 'warning' ? 'warning' : (type === 'info' ? 'info' : 'success'));
+
+        // If Toastr library is available, use Toastr
+        if (typeof toastr !== 'undefined') {
+            toastr[toastType](message);
+            return;
+        }
+
+        // Fallback built-in toast container
         const container = document.getElementById('toast-container');
         if (!container) return;
 
@@ -319,8 +328,9 @@ const App = {
         toast.className = `toast toast-${type}`;
         
         let icon = 'fa-circle-check';
-        if (type === 'danger') icon = 'fa-circle-exclamation';
+        if (type === 'danger' || type === 'error') icon = 'fa-circle-exclamation';
         if (type === 'warning') icon = 'fa-triangle-exclamation';
+        if (type === 'info') icon = 'fa-circle-info';
 
         toast.innerHTML = `
             <i class="fa-solid ${icon}"></i>
@@ -335,6 +345,37 @@ const App = {
             toast.style.transition = 'all 0.3s ease';
             setTimeout(() => toast.remove(), 300);
         }, 3500);
+    },
+
+    confirm({
+        title = 'Are you sure?',
+        text = 'Do you want to continue with this action?',
+        icon = 'warning',
+        confirmButtonText = 'Yes, Proceed',
+        cancelButtonText = 'Cancel',
+        confirmButtonColor = '#6B8E23',
+        cancelButtonColor = '#6B7280'
+    } = {}) {
+        if (typeof Swal !== 'undefined') {
+            return Swal.fire({
+                title: title,
+                text: text,
+                icon: icon,
+                showCancelButton: true,
+                confirmButtonColor: confirmButtonColor,
+                cancelButtonColor: cancelButtonColor,
+                confirmButtonText: confirmButtonText,
+                cancelButtonText: cancelButtonText,
+                reverseButtons: true,
+                focusCancel: true,
+                customClass: {
+                    popup: 'vu-swal-popup',
+                    confirmButton: 'btn btn-primary',
+                    cancelButton: 'btn btn-outline'
+                }
+            });
+        }
+        return Promise.resolve({ isConfirmed: window.confirm(text || title) });
     },
 
     logout() {

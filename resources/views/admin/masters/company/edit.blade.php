@@ -530,6 +530,67 @@
             });
         }
 
+        // AJAX Form Submission with Toastr
+        const editForm = document.getElementById('company-edit-form');
+        if (editForm) {
+            editForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const form = this;
+                const submitBtn = form.querySelector('button[type="submit"]');
+                const originalHtml = submitBtn ? submitBtn.innerHTML : '';
+
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Updating Profile...';
+                }
+
+                const formData = new FormData(form);
+                formData.append('_method', 'PUT');
+                const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+                fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(async response => {
+                    const data = await response.json().catch(() => ({}));
+                    if (response.ok && data.success) {
+                        toastr.success(data.message || 'Company profile updated successfully!');
+                        setTimeout(() => {
+                            window.location.href = "{{ route('admin.masters.company') }}";
+                        }, 800);
+                    } else if (response.status === 422 && data.errors) {
+                        if (submitBtn) {
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = originalHtml;
+                        }
+                        for (const key in data.errors) {
+                            if (data.errors.hasOwnProperty(key)) {
+                                data.errors[key].forEach(err => toastr.error(err));
+                            }
+                        }
+                    } else {
+                        if (submitBtn) {
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = originalHtml;
+                        }
+                        toastr.error(data.message || 'Failed to update company profile.');
+                    }
+                })
+                .catch(err => {
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalHtml;
+                    }
+                    toastr.error('An unexpected network error occurred.');
+                });
+            });
+        }
+
         updatePreview();
     });
 </script>

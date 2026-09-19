@@ -90,11 +90,19 @@ const Masters = {
     },
 
     deleteCompany(id) {
-        if (confirm('Are you sure you want to delete this company?')) {
-            db.deleteItem('COMPANIES', id);
-            App.showToast('Company deleted', 'warning');
-            this.renderCompanyMaster();
-        }
+        App.confirm({
+            title: 'Delete Company?',
+            text: 'Are you sure you want to delete this company profile?',
+            icon: 'warning',
+            confirmButtonColor: '#EF4444',
+            confirmButtonText: 'Yes, delete it!'
+        }).then(res => {
+            if (res.isConfirmed) {
+                db.deleteItem('COMPANIES', id);
+                App.showToast('Company deleted', 'warning');
+                this.renderCompanyMaster();
+            }
+        });
     },
 
     // 2. User Master
@@ -187,11 +195,19 @@ const Masters = {
     },
 
     deleteUser(id) {
-        if (confirm('Delete this user?')) {
-            db.deleteItem('USERS', id);
-            App.showToast('User deleted', 'warning');
-            this.renderUserMaster();
-        }
+        App.confirm({
+            title: 'Delete User?',
+            text: 'Are you sure you want to delete this user account?',
+            icon: 'warning',
+            confirmButtonColor: '#EF4444',
+            confirmButtonText: 'Yes, delete it!'
+        }).then(res => {
+            if (res.isConfirmed) {
+                db.deleteItem('USERS', id);
+                App.showToast('User deleted successfully', 'warning');
+                this.renderUserMaster();
+            }
+        });
     },
 
     togglePasswordVisibility(inputId, btn) {
@@ -347,11 +363,19 @@ const Masters = {
     },
 
     deleteVendor(id) {
-        if (confirm('Delete vendor record?')) {
-            db.deleteItem('VENDORS', id);
-            App.showToast('Vendor removed', 'warning');
-            this.renderVendorMaster();
-        }
+        App.confirm({
+            title: 'Delete Vendor?',
+            text: 'Are you sure you want to delete this vendor record?',
+            icon: 'warning',
+            confirmButtonColor: '#EF4444',
+            confirmButtonText: 'Yes, delete it!'
+        }).then(res => {
+            if (res.isConfirmed) {
+                db.deleteItem('VENDORS', id);
+                App.showToast('Vendor removed successfully', 'warning');
+                this.renderVendorMaster();
+            }
+        });
     },
 
     // 5. Customer Master
@@ -425,11 +449,19 @@ const Masters = {
     },
 
     deleteCustomer(id) {
-        if (confirm('Delete customer record?')) {
-            db.deleteItem('CUSTOMERS', id);
-            App.showToast('Customer deleted', 'warning');
-            this.renderCustomerMaster();
-        }
+        App.confirm({
+            title: 'Delete Customer?',
+            text: 'Are you sure you want to delete this customer record?',
+            icon: 'warning',
+            confirmButtonColor: '#EF4444',
+            confirmButtonText: 'Yes, delete it!'
+        }).then(res => {
+            if (res.isConfirmed) {
+                db.deleteItem('CUSTOMERS', id);
+                App.showToast('Customer deleted successfully', 'warning');
+                this.renderCustomerMaster();
+            }
+        });
     },
 
     // 6. Item Master
@@ -515,11 +547,19 @@ const Masters = {
     },
 
     deleteItem(id) {
-        if (confirm('Delete product item?')) {
-            db.deleteItem('ITEMS', id);
-            App.showToast('Item deleted', 'warning');
-            this.renderItemMaster();
-        }
+        App.confirm({
+            title: 'Delete Product Item?',
+            text: 'Are you sure you want to delete this product item?',
+            icon: 'warning',
+            confirmButtonColor: '#EF4444',
+            confirmButtonText: 'Yes, delete it!'
+        }).then(res => {
+            if (res.isConfirmed) {
+                db.deleteItem('ITEMS', id);
+                App.showToast('Product item deleted successfully', 'warning');
+                this.renderItemMaster();
+            }
+        });
     },
 
     // 7. Unit Master
@@ -562,11 +602,19 @@ const Masters = {
     },
 
     deleteUnit(id) {
-        if (confirm('Delete unit?')) {
-            db.deleteItem('UNITS', id);
-            App.showToast('Unit deleted', 'warning');
-            this.renderUnitMaster();
-        }
+        App.confirm({
+            title: 'Delete Measurement Unit?',
+            text: 'Are you sure you want to delete this unit?',
+            icon: 'warning',
+            confirmButtonColor: '#EF4444',
+            confirmButtonText: 'Yes, delete it!'
+        }).then(res => {
+            if (res.isConfirmed) {
+                db.deleteItem('UNITS', id);
+                App.showToast('Measurement unit deleted', 'warning');
+                this.renderUnitMaster();
+            }
+        });
     },
 
     // 8. Account Master
@@ -713,10 +761,18 @@ const Masters = {
     },
 
     deleteBroker(id) {
-        if (confirm('Are you sure you want to delete this broker record?')) {
-            db.deleteItem('BROKERS', id);
-            App.showToast('Broker deleted', 'warning');
-            this.renderBrokerMaster();
-        }
+        App.confirm({
+            title: 'Delete Broker?',
+            text: 'Are you sure you want to delete this broker record?',
+            icon: 'warning',
+            confirmButtonColor: '#EF4444',
+            confirmButtonText: 'Yes, delete it!'
+        }).then(res => {
+            if (res.isConfirmed) {
+                db.deleteItem('BROKERS', id);
+                App.showToast('Broker deleted successfully', 'warning');
+                this.renderBrokerMaster();
+            }
+        });
     }
 };
