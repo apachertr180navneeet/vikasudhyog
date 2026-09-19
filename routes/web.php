@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\MasterController;
 use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\AccessLevelController;
 use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Admin\InventoryController;
 use App\Http\Controllers\Admin\ReportController;
@@ -57,7 +58,16 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::put('/user/{user}', [UserController::class, 'update'])->name('user.update');
             Route::delete('/user/{user}', [UserController::class, 'destroy'])->name('user.destroy');
             Route::patch('/user/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('user.toggle-status');
-            Route::get('/access-level', [MasterController::class, 'accessLevel'])->name('access-level');
+
+            // Access Level & Dynamic Role Permissions
+            Route::get('/access-level', [AccessLevelController::class, 'index'])->name('access-level');
+            Route::post('/access-level/roles', [AccessLevelController::class, 'store'])->name('access-level.store');
+            Route::put('/access-level/roles/{role}', [AccessLevelController::class, 'update'])->name('access-level.update');
+            Route::delete('/access-level/roles/{role}', [AccessLevelController::class, 'destroy'])->name('access-level.destroy');
+            Route::patch('/access-level/roles/{role}/toggle-status', [AccessLevelController::class, 'toggleStatus'])->name('access-level.toggle-status');
+            Route::post('/access-level/roles/{role}/permissions', [AccessLevelController::class, 'savePermissions'])->name('access-level.save-permissions');
+            Route::post('/access-level/roles/{role}/reset-defaults', [AccessLevelController::class, 'resetDefaults'])->name('access-level.reset-defaults');
+
             Route::get('/vendor', [MasterController::class, 'vendor'])->name('vendor');
             Route::get('/customer', [MasterController::class, 'customer'])->name('customer');
             Route::get('/broker', [MasterController::class, 'broker'])->name('broker');

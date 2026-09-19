@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Company;
+use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Hash;
@@ -25,6 +26,21 @@ class UserController extends Controller
         'Inventory Operator'  => 'Stock adjustments, item tracking & warehouse monitoring',
         'Staff'               => 'General data entry and view permissions',
     ];
+
+    /**
+     * Get active dynamic roles from database.
+     */
+    protected function getActiveRoles(): array
+    {
+        Role::seedDefaultsIfEmpty();
+        $dbRoles = Role::where('status', 'active')
+            ->orderBy('order')
+            ->orderBy('id')
+            ->pluck('description', 'name')
+            ->toArray();
+
+        return !empty($dbRoles) ? $dbRoles : self::ROLES;
+    }
 
     /**
      * Display a listing of system users with filtering & statistical KPI counters.
@@ -81,7 +97,7 @@ class UserController extends Controller
         ];
 
         $companies = Company::orderBy('name')->get();
-        $roles = self::ROLES;
+        $roles = $this->getActiveRoles();
 
         if ($request->ajax() || $request->wantsJson()) {
             return response()->json([
@@ -113,7 +129,7 @@ class UserController extends Controller
     public function create()
     {
         $companies = Company::orderBy('name')->get();
-        $roles = self::ROLES;
+        $roles = $this->getActiveRoles();
 
         return view('admin.masters.user.create', [
             'pageTitle' => 'Add New User - VIKAS UDHYOG ERP',
@@ -188,7 +204,7 @@ class UserController extends Controller
     public function edit(User $user)
     {
         $companies = Company::orderBy('name')->get();
-        $roles = self::ROLES;
+        $roles = $this->getActiveRoles();
 
         return view('admin.masters.user.edit', [
             'pageTitle' => 'Edit ' . $user->name . ' - User Master',

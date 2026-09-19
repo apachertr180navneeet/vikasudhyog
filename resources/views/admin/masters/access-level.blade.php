@@ -563,20 +563,20 @@
             </div>
             <button type="button" class="custom-modal-close-btn" onclick="closeAddRoleModal()">&times;</button>
         </div>
-        <form onsubmit="handleCreateRoleSubmit(event)">
+        <form id="form-add-role" onsubmit="handleCreateRoleSubmit(event)">
             <div class="custom-modal-body">
                 <div class="custom-modal-form-group">
                     <label class="custom-modal-label">
                         Role Title <span class="erp-req-star">*</span>
                     </label>
-                    <input type="text" id="new-role-name" class="form-control custom-modal-input" placeholder="e.g. Quality Inspector, Dispatch Supervisor" required>
+                    <input type="text" id="new-role-name" class="form-control custom-modal-input" placeholder="e.g. Quality Inspector, Dispatch Supervisor" required maxlength="60">
                 </div>
 
                 <div class="custom-modal-form-group">
                     <label class="custom-modal-label">
                         Role Description
                     </label>
-                    <input type="text" id="new-role-desc" class="form-control custom-modal-input" placeholder="Short summary of role scope">
+                    <input type="text" id="new-role-desc" class="form-control custom-modal-input" placeholder="Short summary of role scope" maxlength="255">
                 </div>
 
                 <div class="custom-modal-form-group-lg">
@@ -584,18 +584,18 @@
                         Base Permission Template
                     </label>
                     <select id="new-role-template" class="form-control custom-modal-input">
-                        <option value="Staff">Staff (Standard view & data entry)</option>
-                        <option value="Manager">Manager (Operations & reports)</option>
-                        <option value="Accountant">Accountant (Ledgers & vouchers)</option>
-                        <option value="Sales Manager">Sales Manager (Commercial & dispatch)</option>
-                        <option value="Purchase Manager">Purchase Manager (Inward & procurement)</option>
-                        <option value="Inventory Operator">Inventory Operator (Warehouse)</option>
+                        <option value="">Blank (No module permissions)</option>
+                        @foreach($roles as $r)
+                            <option value="{{ $r['id'] }}">{{ $r['name'] }} ({{ $r['badge'] }})</option>
+                        @endforeach
                     </select>
                 </div>
 
                 <div class="custom-modal-footer">
                     <button type="button" class="btn btn-outline custom-modal-btn-cancel" onclick="closeAddRoleModal()">Cancel</button>
-                    <button type="submit" class="btn btn-primary custom-modal-btn-submit">Create Role</button>
+                    <button type="submit" id="btn-submit-add-role" class="btn btn-primary custom-modal-btn-submit">
+                        <i class="fa-solid fa-plus"></i> Create Role
+                    </button>
                 </div>
             </div>
         </form>
@@ -611,22 +611,23 @@
             </div>
             <button type="button" class="custom-modal-close-btn" onclick="closeEditRoleModal()">&times;</button>
         </div>
-        <form onsubmit="handleEditRoleSubmit(event)">
+        <form id="form-edit-role" onsubmit="handleEditRoleSubmit(event)">
             <div class="custom-modal-body">
-                <input type="hidden" id="edit-role-old-key">
+                <input type="hidden" id="edit-role-id">
 
                 <div class="custom-modal-form-group">
                     <label class="custom-modal-label">
                         Role Title <span class="erp-req-star">*</span>
                     </label>
-                    <input type="text" id="edit-role-name" class="form-control custom-modal-input" required>
+                    <input type="text" id="edit-role-name" class="form-control custom-modal-input" required maxlength="60">
+                    <small id="edit-role-system-hint" style="display:none; color: var(--text-muted); font-size: 11px; margin-top: 3px;">Built-in system role title cannot be renamed.</small>
                 </div>
 
                 <div class="custom-modal-form-group">
                     <label class="custom-modal-label">
                         Role Description
                     </label>
-                    <textarea id="edit-role-desc" class="form-control custom-modal-textarea" rows="3"></textarea>
+                    <textarea id="edit-role-desc" class="form-control custom-modal-textarea" rows="3" maxlength="255"></textarea>
                 </div>
 
                 <div class="custom-modal-form-group-lg">
@@ -641,7 +642,9 @@
 
                 <div class="custom-modal-footer">
                     <button type="button" class="btn btn-outline custom-modal-btn-cancel" onclick="closeEditRoleModal()">Cancel</button>
-                    <button type="submit" class="btn btn-primary custom-modal-btn-submit">Save Role</button>
+                    <button type="submit" id="btn-submit-edit-role" class="btn btn-primary custom-modal-btn-submit">
+                        <i class="fa-solid fa-floppy-disk"></i> Save Role
+                    </button>
                 </div>
             </div>
         </form>
@@ -652,158 +655,32 @@
 <script>
 const ACTIONS_LIST = ['view', 'add', 'edit', 'delete', 'export'];
 
-// Roles Database
-let ROLE_DEFINITIONS = [
-    {
-        key: 'Super Administrator',
-        name: 'Super Administrator',
-        icon: 'fa-shield-halved',
-        color: '#7E22CE',
-        bg: '#FAF5FF',
-        badge: 'Master Level',
-        isSystem: true,
-        status: 'active',
-        desc: 'Unrestricted master privilege. Full control over system configurations, plants & users.',
-        defaultModules: ['company', 'user', 'access_level', 'vendor', 'customer', 'broker', 'item', 'unit', 'account', 'purchase_entry', 'wb_purchase_entry', 'sales_entry', 'wb_sales_entry', 'order_dispatch', 'sales_purchase_order', 'receipt_voucher', 'payment_voucher', 'stock_overview', 'item_ledger', 'stock_adjustment', 'low_stock_alert', 'purchase_report', 'sales_report', 'order_report', 'cash_bank_register', 'company_settings', 'whatsapp_settings', 'backup_restore']
-    },
-    {
-        key: 'Admin',
-        name: 'Admin',
-        icon: 'fa-user-gear',
-        color: '#15803D',
-        bg: '#F0FDF4',
-        badge: 'Admin Level',
-        isSystem: true,
-        status: 'active',
-        desc: 'Operational administrator with management access across all transaction modules.',
-        defaultModules: ['company', 'user', 'vendor', 'customer', 'broker', 'item', 'unit', 'account', 'purchase_entry', 'wb_purchase_entry', 'sales_entry', 'wb_sales_entry', 'order_dispatch', 'sales_purchase_order', 'receipt_voucher', 'payment_voucher', 'stock_overview', 'item_ledger', 'stock_adjustment', 'low_stock_alert', 'purchase_report', 'sales_report', 'order_report', 'cash_bank_register', 'company_settings', 'whatsapp_settings']
-    },
-    {
-        key: 'Manager',
-        name: 'Manager',
-        icon: 'fa-briefcase',
-        color: '#1D4ED8',
-        bg: '#EFF6FF',
-        badge: 'Operations',
-        isSystem: true,
-        status: 'active',
-        desc: 'Plant & production oversight, operational approvals and analytical summary reports.',
-        defaultModules: ['vendor', 'customer', 'broker', 'item', 'unit', 'purchase_entry', 'wb_purchase_entry', 'sales_entry', 'wb_sales_entry', 'order_dispatch', 'sales_purchase_order', 'receipt_voucher', 'payment_voucher', 'stock_overview', 'item_ledger', 'stock_adjustment', 'low_stock_alert', 'purchase_report', 'sales_report', 'order_report']
-    },
-    {
-        key: 'Accountant',
-        name: 'Accountant',
-        icon: 'fa-calculator',
-        color: '#0F766E',
-        bg: '#F0FDFA',
-        badge: 'Finance',
-        isSystem: true,
-        status: 'active',
-        desc: 'Financial ledgers, payment/receipt vouchers, billing and tax GST audit reports.',
-        defaultModules: ['vendor', 'customer', 'broker', 'item', 'unit', 'account', 'sales_entry', 'purchase_entry', 'receipt_voucher', 'payment_voucher', 'stock_overview', 'item_ledger', 'purchase_report', 'sales_report', 'cash_bank_register']
-    },
-    {
-        key: 'Sales Manager',
-        name: 'Sales Manager',
-        icon: 'fa-chart-line',
-        color: '#B45309',
-        bg: '#FFFBEB',
-        badge: 'Commercial',
-        isSystem: true,
-        status: 'active',
-        desc: 'Customer orders, dispatch manifests, sales invoices and client ledger monitoring.',
-        defaultModules: ['customer', 'broker', 'item', 'sales_entry', 'wb_sales_entry', 'order_dispatch', 'sales_purchase_order', 'stock_overview', 'sales_report', 'order_report']
-    },
-    {
-        key: 'Purchase Manager',
-        name: 'Purchase Manager',
-        icon: 'fa-cart-flatbed',
-        color: '#047857',
-        bg: '#ECFDF5',
-        badge: 'Procurement',
-        isSystem: true,
-        status: 'active',
-        desc: 'Raw material procurement, weighbridge receipts and supplier purchase entries.',
-        defaultModules: ['vendor', 'broker', 'item', 'unit', 'purchase_entry', 'wb_purchase_entry', 'sales_purchase_order', 'stock_overview', 'item_ledger', 'purchase_report']
-    },
-    {
-        key: 'Inventory Operator',
-        name: 'Inventory Operator',
-        icon: 'fa-boxes-stacked',
-        color: '#0E7490',
-        bg: '#ECFEFF',
-        badge: 'Warehouse',
-        isSystem: true,
-        status: 'active',
-        desc: 'Warehouse stock adjustments, item tracking, transfer vouchers and low stock monitoring.',
-        defaultModules: ['item', 'unit', 'stock_overview', 'item_ledger', 'stock_adjustment', 'low_stock_alert', 'order_dispatch']
-    },
-    {
-        key: 'Staff',
-        name: 'Staff',
-        icon: 'fa-user-pen',
-        color: '#475569',
-        bg: '#F8FAFC',
-        badge: 'Standard',
-        isSystem: true,
-        status: 'active',
-        desc: 'Basic transactional data entry and view permissions with restricted settings.',
-        defaultModules: ['item', 'customer', 'vendor', 'sales_entry', 'purchase_entry', 'stock_overview']
-    }
-];
+const ALL_MODULE_KEYS = @json($allModuleKeys ?? []);
 
-const ALL_MODULE_KEYS = [
-    'company', 'user', 'access_level', 'vendor', 'customer', 'broker', 'item', 'unit', 'account',
-    'purchase_entry', 'wb_purchase_entry', 'sales_entry', 'wb_sales_entry', 'order_dispatch', 'sales_purchase_order', 'receipt_voucher', 'payment_voucher',
-    'stock_overview', 'item_ledger', 'stock_adjustment', 'low_stock_alert',
-    'purchase_report', 'sales_report', 'order_report', 'cash_bank_register',
-    'company_settings', 'whatsapp_settings', 'backup_restore'
-];
+// Database dynamic roles list & permissions loaded from controller
+let DB_ROLES = @json($roles ?? []);
 
-// User counts passed from backend
-const DB_USER_COUNTS = @json($userCounts ?? []);
+let selectedRoleId = (DB_ROLES.length > 0) ? DB_ROLES[0].id : null;
 
-let currentRoleKey = 'Super Administrator';
-let roleSubPermissionsStore = {};
+const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
+
+const CATEGORY_MODULE_MAP = {
+    'masters': ['company', 'user', 'access_level', 'vendor', 'customer', 'broker', 'item', 'unit', 'account'],
+    'transactions': ['purchase_entry', 'wb_purchase_entry', 'sales_entry', 'wb_sales_entry', 'order_dispatch', 'sales_purchase_order', 'receipt_voucher', 'payment_voucher'],
+    'inventory': ['stock_overview', 'item_ledger', 'stock_adjustment', 'low_stock_alert'],
+    'reports': ['purchase_report', 'sales_report', 'order_report', 'cash_bank_register'],
+    'settings': ['company_settings', 'whatsapp_settings', 'backup_restore']
+};
+
+function getActiveRole() {
+    return DB_ROLES.find(r => r.id === selectedRoleId) || DB_ROLES[0];
+}
 
 function initAccessLevelManager() {
-    // Load custom roles if saved
-    const savedRoles = localStorage.getItem('vu_custom_roles_list');
-    if (savedRoles) {
-        try {
-            ROLE_DEFINITIONS = JSON.parse(savedRoles);
-        } catch(e) {}
-    }
-
-    // Load sub-permissions matrix
-    const savedMatrix = localStorage.getItem('vu_role_granular_permissions');
-    if (savedMatrix) {
-        try {
-            roleSubPermissionsStore = JSON.parse(savedMatrix);
-        } catch(e) {
-            roleSubPermissionsStore = {};
-        }
-    }
-
-    // Initialize defaults for missing roles
-    ROLE_DEFINITIONS.forEach(r => {
-        if (!roleSubPermissionsStore[r.key]) {
-            roleSubPermissionsStore[r.key] = {};
-            ALL_MODULE_KEYS.forEach(mod => {
-                const isEnabled = (r.defaultModules || []).includes(mod);
-                roleSubPermissionsStore[r.key][mod] = {
-                    view: isEnabled,
-                    add: isEnabled && !['access_level', 'backup_restore'].includes(mod),
-                    edit: isEnabled && !['access_level', 'backup_restore'].includes(mod),
-                    delete: isEnabled && r.key.includes('Admin'),
-                    export: isEnabled
-                };
-            });
-        }
-    });
-
     renderRolesList();
-    selectRole(currentRoleKey);
+    if (selectedRoleId) {
+        selectRole(selectedRoleId);
+    }
 }
 
 function renderRolesList() {
@@ -811,19 +688,19 @@ function renderRolesList() {
     if (!container) return;
 
     let html = '';
-    ROLE_DEFINITIONS.forEach(r => {
-        const userCount = DB_USER_COUNTS[r.key] || 0;
-        const isActive = r.key === currentRoleKey;
+    DB_ROLES.forEach(r => {
+        const userCount = r.users_count || 0;
+        const isActive = r.id === selectedRoleId;
         const isInactive = r.status === 'inactive';
         html += `
-            <div class="role-nav-item ${isActive ? 'active' : ''} ${isInactive ? 'inactive-role' : ''}" onclick="selectRole('${r.key}')">
+            <div class="role-nav-item ${isActive ? 'active' : ''} ${isInactive ? 'inactive-role' : ''}" onclick="selectRole(${r.id})">
                 <div class="role-nav-left">
-                    <div class="role-avatar-box" style="background: ${r.bg}; color: ${r.color};">
-                        <i class="fa-solid ${r.icon}"></i>
+                    <div class="role-avatar-box" style="background: ${r.bg || '#EEF2FF'}; color: ${r.color || '#4F46E5'};">
+                        <i class="fa-solid ${r.icon || 'fa-shield-halved'}"></i>
                     </div>
                     <div>
                         <div class="role-item-name">
-                            ${r.name}
+                            ${escapeHtml(r.name)}
                             ${isInactive ? '<span class="role-inactive-pill">Inactive</span>' : ''}
                         </div>
                         <div class="role-item-users">
@@ -838,68 +715,34 @@ function renderRolesList() {
 
     container.innerHTML = html;
     const countBadge = document.getElementById('role-count-badge');
-    if (countBadge) countBadge.innerText = ROLE_DEFINITIONS.length;
+    if (countBadge) countBadge.innerText = DB_ROLES.length;
+
+    // Also update template options in add modal if open
+    const templateSelect = document.getElementById('new-role-template');
+    if (templateSelect) {
+        let tplHtml = '<option value="">Blank (No module permissions)</option>';
+        DB_ROLES.forEach(r => {
+            tplHtml += `<option value="${r.id}">${escapeHtml(r.name)} (${escapeHtml(r.badge || 'Role')})</option>`;
+        });
+        templateSelect.innerHTML = tplHtml;
+    }
 }
 
-const CATEGORY_MODULE_MAP = {
-    'masters': ['company', 'user', 'access_level', 'vendor', 'customer', 'broker', 'item', 'unit', 'account'],
-    'transactions': ['purchase_entry', 'wb_purchase_entry', 'sales_entry', 'wb_sales_entry', 'order_dispatch', 'sales_purchase_order', 'receipt_voucher', 'payment_voucher'],
-    'inventory': ['stock_overview', 'item_ledger', 'stock_adjustment', 'low_stock_alert'],
-    'reports': ['purchase_report', 'sales_report', 'order_report', 'cash_bank_register'],
-    'settings': ['company_settings', 'whatsapp_settings', 'backup_restore']
-};
-
-function toggleCategoryGroup(categoryKey, enableAll) {
-    if (currentRoleKey === 'Super Administrator') return;
-    const moduleList = CATEGORY_MODULE_MAP[categoryKey] || [];
-    moduleList.forEach(mod => {
-        toggleModuleAllActions(mod, enableAll);
-    });
-    toastr.info(`Updated privileges for ${categoryKey.toUpperCase()} category.`);
-}
-
-function filterPermissionsModules(query) {
-    const q = query.toLowerCase().trim();
-    ALL_MODULE_KEYS.forEach(mod => {
-        const card = document.getElementById(`card-mod-${mod}`);
-        if (!card) return;
-        if (!q) {
-            card.style.display = 'flex';
-        } else {
-            const text = card.innerText.toLowerCase();
-            card.style.display = text.includes(q) ? 'flex' : 'none';
-        }
-    });
-
-    // Check if any category is completely empty and hide empty categories during search
-    document.querySelectorAll('.perm-groups-container > div').forEach(group => {
-        const visibleCards = group.querySelectorAll('.perm-module-card:not([style*="display: none"])');
-        group.style.display = (q && visibleCards.length === 0) ? 'none' : 'block';
-    });
-}
-
-function filterRolesList(query) {
-    const q = query.toLowerCase().trim();
-    document.querySelectorAll('#roles-list-wrapper .role-nav-item').forEach(el => {
-        const text = el.innerText.toLowerCase();
-        el.style.display = text.includes(q) ? 'flex' : 'none';
-    });
-}
-
-function selectRole(roleKey) {
-    currentRoleKey = roleKey;
-    const role = ROLE_DEFINITIONS.find(r => r.key === roleKey) || ROLE_DEFINITIONS[0];
+function selectRole(roleId) {
+    selectedRoleId = roleId;
+    const role = getActiveRole();
+    if (!role) return;
 
     renderRolesList();
 
     // Update Hero Banner
     document.getElementById('hero-role-name').innerText = role.name;
-    document.getElementById('hero-role-desc').innerText = role.desc;
-    document.getElementById('hero-role-badge').innerText = role.badge || (role.isSystem ? 'System Built-in' : 'Custom Role');
-    document.getElementById('hero-role-icon-box').innerHTML = `<i class="fa-solid ${role.icon}"></i>`;
+    document.getElementById('hero-role-desc').innerText = role.description || 'No description provided.';
+    document.getElementById('hero-role-badge').innerText = role.badge || (role.is_system ? 'System Built-in' : 'Custom Role');
+    document.getElementById('hero-role-icon-box').innerHTML = `<i class="fa-solid ${role.icon || 'fa-shield-halved'}"></i>`;
 
-    const isSuperAdmin = role.key === 'Super Administrator';
-    const isInactive = role.status === 'inactive';
+    const isSuperAdmin = (role.name === 'Super Administrator');
+    const isInactive = (role.status === 'inactive');
 
     // Status Badge
     const statusBadge = document.getElementById('hero-role-status-badge');
@@ -923,25 +766,24 @@ function selectRole(roleKey) {
 
     // Delete button disabled for System Roles
     const deleteBtn = document.getElementById('btn-delete-role');
-    if (role.isSystem) {
+    if (role.is_system) {
         deleteBtn.style.display = 'none';
     } else {
         deleteBtn.style.display = 'inline-flex';
     }
 
-    // Notice
+    // Super Admin notice
     document.getElementById('super-admin-notice').style.display = isSuperAdmin ? 'flex' : 'none';
 
-    // Ensure store exists
-    if (!roleSubPermissionsStore[role.key]) {
-        roleSubPermissionsStore[role.key] = {};
+    if (!role.permissions) {
+        role.permissions = {};
     }
 
     // Populate all module cards & sub-actions
     ALL_MODULE_KEYS.forEach(mod => {
-        let modData = roleSubPermissionsStore[role.key][mod] || { view: false, add: false, edit: false, delete: false, export: false };
+        let modData = role.permissions[mod] || { can_view: false, can_add: false, can_edit: false, can_delete: false, can_export: false };
         if (isSuperAdmin) {
-            modData = { view: true, add: true, edit: true, delete: true, export: true };
+            modData = { can_view: true, can_add: true, can_edit: true, can_delete: true, can_export: true };
         }
 
         const masterSwitch = document.getElementById(`perm-${mod}-master`);
@@ -952,14 +794,17 @@ function selectRole(roleKey) {
         }
 
         ACTIONS_LIST.forEach(act => {
+            const prop = 'can_' + act;
             const chk = document.getElementById(`act-${mod}-${act}`);
             const pill = document.getElementById(`pill-${mod}-${act}`);
+            const isChecked = Boolean(modData[prop]);
+
             if (chk) {
-                chk.checked = !!modData[act];
+                chk.checked = isChecked;
                 chk.disabled = isSuperAdmin;
             }
             if (pill) {
-                if (modData[act]) {
+                if (isChecked) {
                     pill.classList.add('active');
                 } else {
                     pill.classList.remove('active');
@@ -974,20 +819,20 @@ function selectRole(roleKey) {
 }
 
 function updateSubAction(modKey, actionKey, isChecked) {
-    if (currentRoleKey === 'Super Administrator') return;
+    const role = getActiveRole();
+    if (!role || role.name === 'Super Administrator') return;
 
-    if (!roleSubPermissionsStore[currentRoleKey]) {
-        roleSubPermissionsStore[currentRoleKey] = {};
-    }
-    if (!roleSubPermissionsStore[currentRoleKey][modKey]) {
-        roleSubPermissionsStore[currentRoleKey][modKey] = { view: false, add: false, edit: false, delete: false, export: false };
+    if (!role.permissions) role.permissions = {};
+    if (!role.permissions[modKey]) {
+        role.permissions[modKey] = { can_view: false, can_add: false, can_edit: false, can_delete: false, can_export: false };
     }
 
-    roleSubPermissionsStore[currentRoleKey][modKey][actionKey] = isChecked;
+    const prop = 'can_' + actionKey;
+    role.permissions[modKey][prop] = isChecked;
 
     // If add/edit/delete/export is checked, automatically ensure view is checked
     if (isChecked && actionKey !== 'view') {
-        roleSubPermissionsStore[currentRoleKey][modKey]['view'] = true;
+        role.permissions[modKey]['can_view'] = true;
         const viewChk = document.getElementById(`act-${modKey}-view`);
         if (viewChk) viewChk.checked = true;
         const viewPill = document.getElementById(`pill-${modKey}-view`);
@@ -1002,7 +847,7 @@ function updateSubAction(modKey, actionKey, isChecked) {
     }
 
     // Update master switch for module
-    const anyActive = Object.values(roleSubPermissionsStore[currentRoleKey][modKey]).some(v => v === true);
+    const anyActive = Object.values(role.permissions[modKey]).some(v => v === true);
     const masterSwitch = document.getElementById(`perm-${modKey}-master`);
     if (masterSwitch) masterSwitch.checked = anyActive;
 
@@ -1011,18 +856,16 @@ function updateSubAction(modKey, actionKey, isChecked) {
 }
 
 function toggleModuleAllActions(modKey, enableAll) {
-    if (currentRoleKey === 'Super Administrator') return;
+    const role = getActiveRole();
+    if (!role || role.name === 'Super Administrator') return;
 
-    if (!roleSubPermissionsStore[currentRoleKey]) {
-        roleSubPermissionsStore[currentRoleKey] = {};
-    }
-
-    roleSubPermissionsStore[currentRoleKey][modKey] = {
-        view: enableAll,
-        add: enableAll,
-        edit: enableAll,
-        delete: enableAll,
-        export: enableAll
+    if (!role.permissions) role.permissions = {};
+    role.permissions[modKey] = {
+        can_view: enableAll,
+        can_add: enableAll,
+        can_edit: enableAll,
+        can_delete: enableAll,
+        can_export: enableAll
     };
 
     ACTIONS_LIST.forEach(act => {
@@ -1043,8 +886,9 @@ function updateModuleActionCountBadge(modKey) {
     const badge = document.getElementById(`badge-count-${modKey}`);
     if (!badge) return;
 
-    const modData = roleSubPermissionsStore[currentRoleKey]?.[modKey] || {};
-    const activeCount = ACTIONS_LIST.filter(a => modData[a] === true).length;
+    const role = getActiveRole();
+    const modData = role?.permissions?.[modKey] || {};
+    const activeCount = ACTIONS_LIST.filter(a => modData['can_' + a] === true).length;
     badge.innerText = `${activeCount}/5 Actions`;
 
     if (activeCount === 5) {
@@ -1059,20 +903,30 @@ function updateModuleActionCountBadge(modKey) {
     }
 }
 
-function toggleAllSubPermissions(enableAll) {
-    if (currentRoleKey === 'Super Administrator') return;
+function toggleCategoryGroup(categoryKey, enableAll) {
+    const role = getActiveRole();
+    if (!role || role.name === 'Super Administrator') return;
 
-    if (!roleSubPermissionsStore[currentRoleKey]) {
-        roleSubPermissionsStore[currentRoleKey] = {};
-    }
+    const moduleList = CATEGORY_MODULE_MAP[categoryKey] || [];
+    moduleList.forEach(mod => {
+        toggleModuleAllActions(mod, enableAll);
+    });
+    toastr.info(`Updated privileges for ${categoryKey.toUpperCase()} category.`);
+}
+
+function toggleAllSubPermissions(enableAll) {
+    const role = getActiveRole();
+    if (!role || role.name === 'Super Administrator') return;
+
+    if (!role.permissions) role.permissions = {};
 
     ALL_MODULE_KEYS.forEach(mod => {
-        roleSubPermissionsStore[currentRoleKey][mod] = {
-            view: enableAll,
-            add: enableAll,
-            edit: enableAll,
-            delete: enableAll,
-            export: enableAll
+        role.permissions[mod] = {
+            can_view: enableAll,
+            can_add: enableAll,
+            can_edit: enableAll,
+            can_delete: enableAll,
+            can_export: enableAll
         };
 
         const masterSwitch = document.getElementById(`perm-${mod}-master`);
@@ -1096,19 +950,18 @@ function toggleAllSubPermissions(enableAll) {
 }
 
 function setReadOnlyPreset() {
-    if (currentRoleKey === 'Super Administrator') return;
+    const role = getActiveRole();
+    if (!role || role.name === 'Super Administrator') return;
 
-    if (!roleSubPermissionsStore[currentRoleKey]) {
-        roleSubPermissionsStore[currentRoleKey] = {};
-    }
+    if (!role.permissions) role.permissions = {};
 
     ALL_MODULE_KEYS.forEach(mod => {
-        roleSubPermissionsStore[currentRoleKey][mod] = {
-            view: true,
-            add: false,
-            edit: false,
-            delete: false,
-            export: true
+        role.permissions[mod] = {
+            can_view: true,
+            can_add: false,
+            can_edit: false,
+            can_delete: false,
+            can_export: true
         };
 
         const masterSwitch = document.getElementById(`perm-${mod}-master`);
@@ -1132,38 +985,21 @@ function setReadOnlyPreset() {
     toastr.info('Applied Read-Only (View & Export) preset.');
 }
 
-function resetCurrentRoleDefaults() {
-    const role = ROLE_DEFINITIONS.find(r => r.key === currentRoleKey);
-    if (!role) return;
-
-    roleSubPermissionsStore[role.key] = {};
-    ALL_MODULE_KEYS.forEach(mod => {
-        const isEnabled = (role.defaultModules || []).includes(mod);
-        roleSubPermissionsStore[role.key][mod] = {
-            view: isEnabled,
-            add: isEnabled && !['access_level', 'backup_restore'].includes(mod),
-            edit: isEnabled && !['access_level', 'backup_restore'].includes(mod),
-            delete: isEnabled && role.key.includes('Admin'),
-            export: isEnabled
-        };
-    });
-
-    selectRole(currentRoleKey);
-    toastr.success(`Restored default permissions for ${role.name}.`);
-}
-
 function updateCoverageMeter() {
     const totalPossible = ALL_MODULE_KEYS.length * 5;
     let totalGranted = 0;
 
-    if (currentRoleKey === 'Super Administrator') {
+    const role = getActiveRole();
+    if (!role) return;
+
+    if (role.name === 'Super Administrator') {
         totalGranted = totalPossible;
     } else {
-        const modStore = roleSubPermissionsStore[currentRoleKey] || {};
+        const modStore = role.permissions || {};
         ALL_MODULE_KEYS.forEach(mod => {
             const m = modStore[mod] || {};
             ACTIONS_LIST.forEach(act => {
-                if (m[act] === true) totalGranted++;
+                if (m['can_' + act] === true) totalGranted++;
             });
         });
     }
@@ -1173,29 +1009,143 @@ function updateCoverageMeter() {
     document.getElementById('permission-progress-bar').style.width = pct + '%';
 }
 
-function saveCurrentPermissions() {
-    localStorage.setItem('vu_role_granular_permissions', JSON.stringify(roleSubPermissionsStore));
-    localStorage.setItem('vu_custom_roles_list', JSON.stringify(ROLE_DEFINITIONS));
-    toastr.success(`Access permissions and role configuration for "${currentRoleKey}" updated successfully!`);
+function filterPermissionsModules(query) {
+    const q = query.toLowerCase().trim();
+    ALL_MODULE_KEYS.forEach(mod => {
+        const card = document.getElementById(`card-mod-${mod}`);
+        if (!card) return;
+        if (!q) {
+            card.style.display = 'flex';
+        } else {
+            const text = card.innerText.toLowerCase();
+            card.style.display = text.includes(q) ? 'flex' : 'none';
+        }
+    });
+
+    document.querySelectorAll('.perm-groups-container > div').forEach(group => {
+        const visibleCards = group.querySelectorAll('.perm-module-card:not([style*="display: none"])');
+        group.style.display = (q && visibleCards.length === 0) ? 'none' : 'block';
+    });
 }
 
-function toggleRoleStatus() {
-    const role = ROLE_DEFINITIONS.find(r => r.key === currentRoleKey);
+function filterRolesList(query) {
+    const q = query.toLowerCase().trim();
+    document.querySelectorAll('#roles-list-wrapper .role-nav-item').forEach(el => {
+        const text = el.innerText.toLowerCase();
+        el.style.display = text.includes(q) ? 'flex' : 'none';
+    });
+}
+
+// ----------------- Dynamic AJAX Backend Operations -----------------
+
+async function saveCurrentPermissions() {
+    const role = getActiveRole();
     if (!role) return;
 
-    if (role.key === 'Super Administrator') {
+    try {
+        const res = await fetch(`{{ url('/admin/masters/access-level/roles') }}/${role.id}/permissions`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': CSRF_TOKEN,
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                permissions: role.permissions || {}
+            })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+            if (data.permissions) {
+                role.permissions = data.permissions;
+            }
+            toastr.success(data.message || `Permissions for "${role.name}" saved successfully to database!`);
+        } else {
+            toastr.error(data.message || 'Failed to save permissions.');
+        }
+    } catch (err) {
+        toastr.error('Error saving permissions to server. Please try again.');
+        console.error(err);
+    }
+}
+
+async function toggleRoleStatus() {
+    const role = getActiveRole();
+    if (!role) return;
+
+    if (role.name === 'Super Administrator') {
         toastr.error('Super Administrator role cannot be deactivated.');
         return;
     }
 
-    role.status = role.status === 'active' ? 'inactive' : 'active';
-    localStorage.setItem('vu_custom_roles_list', JSON.stringify(ROLE_DEFINITIONS));
+    try {
+        const res = await fetch(`{{ url('/admin/masters/access-level/roles') }}/${role.id}/toggle-status`, {
+            method: 'PATCH',
+            headers: {
+                'X-CSRF-TOKEN': CSRF_TOKEN,
+                'Accept': 'application/json'
+            }
+        });
 
-    selectRole(currentRoleKey);
-    toastr.success(`Role "${role.name}" status changed to ${role.status.toUpperCase()}.`);
+        const data = await res.json();
+        if (data.success) {
+            role.status = data.status;
+            selectRole(role.id);
+            toastr.success(data.message || `Role "${role.name}" status updated.`);
+        } else {
+            toastr.error(data.message || 'Failed to change role status.');
+        }
+    } catch (err) {
+        toastr.error('Network error while toggling role status.');
+        console.error(err);
+    }
+}
+
+async function resetCurrentRoleDefaults() {
+    const role = getActiveRole();
+    if (!role) return;
+
+    Swal.fire({
+        title: `Reset Permissions for "${role.name}"?`,
+        text: 'This will restore the standard factory blueprint permissions for this role.',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#2563EB',
+        cancelButtonColor: '#64748B',
+        confirmButtonText: '<i class="fa-solid fa-arrows-rotate"></i> Yes, Reset Defaults',
+        cancelButtonText: 'Cancel'
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            try {
+                const res = await fetch(`{{ url('/admin/masters/access-level/roles') }}/${role.id}/reset-defaults`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': CSRF_TOKEN,
+                        'Accept': 'application/json'
+                    }
+                });
+
+                const data = await res.json();
+                if (data.success) {
+                    if (data.permissions) {
+                        role.permissions = data.permissions;
+                    }
+                    selectRole(role.id);
+                    toastr.success(data.message || `Permissions reset to defaults for "${role.name}".`);
+                } else {
+                    toastr.error(data.message || 'Failed to reset defaults.');
+                }
+            } catch (err) {
+                toastr.error('Network error while resetting role permissions.');
+                console.error(err);
+            }
+        }
+    });
 }
 
 function openAddRoleModal() {
+    document.getElementById('form-add-role').reset();
     document.getElementById('modal-add-role').style.display = 'flex';
 }
 
@@ -1203,63 +1153,76 @@ function closeAddRoleModal() {
     document.getElementById('modal-add-role').style.display = 'none';
 }
 
-function handleCreateRoleSubmit(e) {
+async function handleCreateRoleSubmit(e) {
     e.preventDefault();
     const name = document.getElementById('new-role-name').value.trim();
-    const desc = document.getElementById('new-role-desc').value.trim() || 'Custom organizational designation.';
-    const template = document.getElementById('new-role-template').value;
+    const desc = document.getElementById('new-role-desc').value.trim();
+    const templateId = document.getElementById('new-role-template').value;
 
     if (!name) return;
 
-    const baseRole = ROLE_DEFINITIONS.find(r => r.key === template) || ROLE_DEFINITIONS[0];
+    const submitBtn = document.getElementById('btn-submit-add-role');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Creating...';
 
-    const newRole = {
-        key: name,
-        name: name,
-        icon: 'fa-user-tag',
-        color: '#2563EB',
-        bg: '#EFF6FF',
-        badge: 'Custom Role',
-        isSystem: false,
-        status: 'active',
-        desc: desc,
-        defaultModules: [...(baseRole.defaultModules || [])]
-    };
+    try {
+        const res = await fetch(`{{ url('/admin/masters/access-level/roles') }}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': CSRF_TOKEN,
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                name: name,
+                description: desc,
+                template_role_id: templateId || null
+            })
+        });
 
-    ROLE_DEFINITIONS.push(newRole);
-
-    // Initialize granular permissions for new role
-    roleSubPermissionsStore[name] = {};
-    ALL_MODULE_KEYS.forEach(mod => {
-        const isEnabled = (newRole.defaultModules || []).includes(mod);
-        roleSubPermissionsStore[name][mod] = {
-            view: isEnabled,
-            add: isEnabled,
-            edit: isEnabled,
-            delete: false,
-            export: isEnabled
-        };
-    });
-
-    localStorage.setItem('vu_custom_roles_list', JSON.stringify(ROLE_DEFINITIONS));
-    localStorage.setItem('vu_role_granular_permissions', JSON.stringify(roleSubPermissionsStore));
-
-    closeAddRoleModal();
-    renderRolesList();
-    selectRole(name);
-    toastr.success(`Custom role "${name}" created with ${template} template!`);
+        const data = await res.json();
+        if (data.success && data.role) {
+            DB_ROLES.push(data.role);
+            closeAddRoleModal();
+            renderRolesList();
+            selectRole(data.role.id);
+            toastr.success(data.message || `Custom role "${data.role.name}" created successfully!`);
+        } else {
+            toastr.error(data.message || (data.errors ? Object.values(data.errors).flat().join('<br>') : 'Error creating role.'));
+        }
+    } catch (err) {
+        toastr.error('Network error creating role.');
+        console.error(err);
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+    }
 }
 
 function openEditRoleModal() {
-    const role = ROLE_DEFINITIONS.find(r => r.key === currentRoleKey);
+    const role = getActiveRole();
     if (!role) return;
 
-    document.getElementById('edit-role-old-key').value = role.key;
+    document.getElementById('edit-role-id').value = role.id;
     document.getElementById('edit-role-name').value = role.name;
-    document.getElementById('edit-role-desc').value = role.desc || '';
+    document.getElementById('edit-role-desc').value = role.description || '';
     document.getElementById('edit-role-status').value = role.status || 'active';
 
-    if (role.key === 'Super Administrator') {
+    const isSystem = Boolean(role.is_system);
+    const nameInput = document.getElementById('edit-role-name');
+    const hint = document.getElementById('edit-role-system-hint');
+    if (isSystem) {
+        nameInput.readOnly = true;
+        nameInput.style.backgroundColor = '#F8FAFC';
+        hint.style.display = 'block';
+    } else {
+        nameInput.readOnly = false;
+        nameInput.style.backgroundColor = '#FFFFFF';
+        hint.style.display = 'none';
+    }
+
+    if (role.name === 'Super Administrator') {
         document.getElementById('edit-role-status').disabled = true;
     } else {
         document.getElementById('edit-role-status').disabled = false;
@@ -1272,53 +1235,73 @@ function closeEditRoleModal() {
     document.getElementById('modal-edit-role').style.display = 'none';
 }
 
-function handleEditRoleSubmit(e) {
+async function handleEditRoleSubmit(e) {
     e.preventDefault();
-    const oldKey = document.getElementById('edit-role-old-key').value;
+    const roleId = document.getElementById('edit-role-id').value;
     const newName = document.getElementById('edit-role-name').value.trim();
     const newDesc = document.getElementById('edit-role-desc').value.trim();
     const newStatus = document.getElementById('edit-role-status').value;
 
-    const role = ROLE_DEFINITIONS.find(r => r.key === oldKey);
+    const role = DB_ROLES.find(r => r.id == roleId);
     if (!role) return;
 
-    role.name = newName;
-    role.desc = newDesc;
-    if (role.key !== 'Super Administrator') {
-        role.status = newStatus;
+    const submitBtn = document.getElementById('btn-submit-edit-role');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+
+    try {
+        const res = await fetch(`{{ url('/admin/masters/access-level/roles') }}/${role.id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': CSRF_TOKEN,
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                name: newName,
+                description: newDesc,
+                status: newStatus
+            })
+        });
+
+        const data = await res.json();
+        if (data.success && data.role) {
+            role.name = data.role.name;
+            role.description = data.role.description;
+            role.status = data.role.status;
+            role.badge = data.role.badge;
+
+            closeEditRoleModal();
+            renderRolesList();
+            selectRole(role.id);
+            toastr.success(data.message || `Role "${role.name}" updated successfully!`);
+        } else {
+            toastr.error(data.message || (data.errors ? Object.values(data.errors).flat().join('<br>') : 'Error updating role.'));
+        }
+    } catch (err) {
+        toastr.error('Network error updating role.');
+        console.error(err);
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
     }
-
-    // If key changed for custom role
-    if (oldKey !== newName && !role.isSystem) {
-        role.key = newName;
-        roleSubPermissionsStore[newName] = roleSubPermissionsStore[oldKey];
-        delete roleSubPermissionsStore[oldKey];
-        currentRoleKey = newName;
-    }
-
-    localStorage.setItem('vu_custom_roles_list', JSON.stringify(ROLE_DEFINITIONS));
-    localStorage.setItem('vu_role_granular_permissions', JSON.stringify(roleSubPermissionsStore));
-
-    closeEditRoleModal();
-    renderRolesList();
-    selectRole(currentRoleKey);
-    toastr.success(`Role "${newName}" details updated successfully!`);
 }
 
 function confirmDeleteCurrentRole() {
-    const role = ROLE_DEFINITIONS.find(r => r.key === currentRoleKey);
-    if (!role || role.isSystem) {
+    const role = getActiveRole();
+    if (!role || role.is_system) {
         toastr.error('System built-in roles cannot be deleted.');
         return;
     }
 
-    const assignedCount = DB_USER_COUNTS[role.key] || 0;
+    const assignedCount = role.users_count || 0;
 
     Swal.fire({
         title: `Delete Role "${role.name}"?`,
         html: assignedCount > 0 
-            ? `<div class="erp-swal-warn-text">Warning: ${assignedCount} active user(s) currently assigned to this role!</div><div>Deleting this role will revoke their permissions.</div>` 
-            : `Are you sure you want to delete this custom role?`,
+            ? `<div class="erp-swal-warn-text">Warning: ${assignedCount} active user(s) currently assigned to this role!</div><div>Please reassign users to another role before deleting.</div>` 
+            : `Are you sure you want to permanently delete this custom role from the database?`,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#DC2626',
@@ -1326,20 +1309,45 @@ function confirmDeleteCurrentRole() {
         confirmButtonText: '<i class="fa-solid fa-trash-can"></i> Yes, Delete Role',
         cancelButtonText: 'Cancel',
         reverseButtons: true
-    }).then((result) => {
+    }).then(async (result) => {
         if (result.isConfirmed) {
-            ROLE_DEFINITIONS = ROLE_DEFINITIONS.filter(r => r.key !== role.key);
-            delete roleSubPermissionsStore[role.key];
+            try {
+                const res = await fetch(`{{ url('/admin/masters/access-level/roles') }}/${role.id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': CSRF_TOKEN,
+                        'Accept': 'application/json'
+                    }
+                });
 
-            localStorage.setItem('vu_custom_roles_list', JSON.stringify(ROLE_DEFINITIONS));
-            localStorage.setItem('vu_role_granular_permissions', JSON.stringify(roleSubPermissionsStore));
-
-            currentRoleKey = 'Super Administrator';
-            renderRolesList();
-            selectRole(currentRoleKey);
-            toastr.success(`Role "${role.name}" deleted successfully.`);
+                const data = await res.json();
+                if (data.success) {
+                    DB_ROLES = DB_ROLES.filter(r => r.id !== role.id);
+                    selectedRoleId = DB_ROLES[0]?.id || null;
+                    renderRolesList();
+                    if (selectedRoleId) {
+                        selectRole(selectedRoleId);
+                    }
+                    toastr.success(data.message || `Role "${role.name}" deleted successfully.`);
+                } else {
+                    toastr.error(data.message || 'Could not delete role.');
+                }
+            } catch (err) {
+                toastr.error('Network error while deleting role.');
+                console.error(err);
+            }
         }
     });
+}
+
+function escapeHtml(text) {
+    if (!text) return '';
+    return String(text)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
 }
 
 document.addEventListener('DOMContentLoaded', () => {
