@@ -728,26 +728,13 @@
                     </div>
                 @endif
 
-                <!-- Admin Seeded Credential Banner -->
-                <div class="demo-pill-banner" style="background: #F8FAF5; border: 1px dashed #A3E635; border-radius: 12px; padding: 0.85rem 1rem; margin-bottom: 1.75rem; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;">
-                    <div class="demo-info" style="display: flex; align-items: center; gap: 0.6rem; font-size: 0.85rem; color: #374151;">
-                        <i class="fa-solid fa-shield-halved" style="color: var(--brand-primary); font-size: 1.1rem;"></i>
-                        <div>
-                            Admin: <code>admin</code> / <code>admin123</code>
-                        </div>
-                    </div>
-                    <button type="button" class="btn-fill-demo" id="auto-fill-btn" onclick="fillCredentials('admin', 'admin123', 'Administrator', 'Super Administrator')">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i> Auto Fill
-                    </button>
-                </div>
-
-                <form id="login-form" action="{{ route('admin.login.post') }}" method="POST">
+                <form id="login-form" action="{{ route('admin.login.post') }}" method="POST" style="margin-top: 1.5rem;">
                     @csrf
                     
                     <div class="input-group-custom">
                         <label class="input-label" for="username">Username or Email</label>
                         <div class="input-wrapper">
-                            <input type="text" name="username" id="username" class="input-field" placeholder="e.g. admin or admin@vikasudhyog.com" value="{{ old('username', 'admin') }}" required autofocus>
+                            <input type="text" name="username" id="username" class="input-field" placeholder="Enter username or email address" value="{{ old('username') }}" required autofocus>
                             <i class="fa-regular fa-user input-icon-left"></i>
                         </div>
                     </div>
@@ -755,7 +742,7 @@
                     <div class="input-group-custom">
                         <label class="input-label" for="password">Password</label>
                         <div class="input-wrapper">
-                            <input type="password" name="password" id="password" class="input-field" placeholder="Enter your password" value="admin123" required>
+                            <input type="password" name="password" id="password" class="input-field" placeholder="Enter your password" required>
                             <i class="fa-solid fa-lock input-icon-left"></i>
                             <button type="button" class="toggle-password-btn" id="toggle-password" title="Toggle password visibility">
                                 <i class="fa-regular fa-eye" id="toggle-icon"></i>
@@ -800,18 +787,7 @@
             });
         }
 
-        // Fill credentials helper for seeded users
-        function fillCredentials(username, password, name, role) {
-            const userInput = document.getElementById('username');
-            const passInput = document.getElementById('password');
-            userInput.value = username;
-            passInput.value = password;
-            userInput.focus();
 
-            sessionStorage.setItem('vu_logged_in', 'true');
-            sessionStorage.setItem('vu_user_role', role);
-            sessionStorage.setItem('vu_user_name', name);
-        }
 
         // Session storage helper
         document.getElementById('login-form').addEventListener('submit', function(e) {
