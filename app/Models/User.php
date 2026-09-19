@@ -23,6 +23,7 @@ class User extends Authenticatable
         'username',
         'email',
         'role',
+        'company_id',
         'phone',
         'status',
         'avatar',
@@ -56,6 +57,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Company relationship.
+     */
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
+    }
+
+    /**
      * Check if user is active.
      */
     public function isActive(): bool
@@ -81,5 +90,22 @@ class User extends Authenticatable
             return strtoupper(substr($words[0], 0, 1) . substr($words[1], 0, 1));
         }
         return strtoupper(substr($this->name, 0, 1) ?: 'A');
+    }
+
+    /**
+     * Get role badge color class.
+     */
+    public function getRoleColorAttribute(): string
+    {
+        return match (strtolower($this->role)) {
+            'super administrator', 'super admin' => 'purple',
+            'admin' => 'primary',
+            'manager' => 'blue',
+            'accountant' => 'teal',
+            'sales manager' => 'amber',
+            'purchase manager' => 'emerald',
+            'inventory operator' => 'cyan',
+            default => 'gray',
+        };
     }
 }

@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\MasterController;
 use App\Http\Controllers\Admin\CompanyController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Admin\InventoryController;
 use App\Http\Controllers\Admin\ReportController;
@@ -47,7 +48,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::patch('/company/{company}/toggle-status', [CompanyController::class, 'toggleStatus'])->name('company.toggle-status');
             Route::patch('/company/{company}/set-default', [CompanyController::class, 'setDefault'])->name('company.set-default');
 
-            Route::get('/user', [MasterController::class, 'user'])->name('user');
+            // User Master CRUD (Dedicated Pages)
+            Route::get('/user', [UserController::class, 'index'])->name('user');
+            Route::get('/user/create', [UserController::class, 'create'])->name('user.create');
+            Route::post('/user', [UserController::class, 'store'])->name('user.store');
+            Route::get('/user/{user}', [UserController::class, 'show'])->name('user.show');
+            Route::get('/user/{user}/edit', [UserController::class, 'edit'])->name('user.edit');
+            Route::put('/user/{user}', [UserController::class, 'update'])->name('user.update');
+            Route::delete('/user/{user}', [UserController::class, 'destroy'])->name('user.destroy');
+            Route::patch('/user/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('user.toggle-status');
             Route::get('/access-level', [MasterController::class, 'accessLevel'])->name('access-level');
             Route::get('/vendor', [MasterController::class, 'vendor'])->name('vendor');
             Route::get('/customer', [MasterController::class, 'customer'])->name('customer');

@@ -66,13 +66,14 @@
         if (typeof toastr !== 'undefined') {
             toastr.options = {
                 "closeButton": true,
+                "closeHtml": '<button type="button" class="toast-close-button" aria-label="Close"><i class="fa-solid fa-xmark" style="font-size: 0.85rem;"></i></button>',
                 "debug": false,
                 "newestOnTop": true,
                 "progressBar": true,
                 "positionClass": "toast-top-right",
                 "preventDuplicates": false,
-                "showDuration": "300",
-                "hideDuration": "800",
+                "showDuration": "250",
+                "hideDuration": "500",
                 "timeOut": "4000",
                 "extendedTimeOut": "1500",
                 "showEasing": "swing",

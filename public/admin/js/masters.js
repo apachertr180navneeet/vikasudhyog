@@ -5,7 +5,7 @@
 const Masters = {
     render(viewId) {
         if (viewId === 'master-company') return; // Handled by Laravel Company Master
-        if (viewId === 'master-user') this.renderUserMaster();
+        if (viewId === 'master-user' || viewId === 'master-user-create' || viewId === 'master-user-edit') return; // Handled by Laravel User Master
         if (viewId === 'master-access') this.renderAccessLevel();
         if (viewId === 'master-vendor') this.renderVendorMaster();
         if (viewId === 'master-customer') this.renderCustomerMaster();
