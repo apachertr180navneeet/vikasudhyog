@@ -1,4 +1,4 @@
-﻿@extends('admin.layouts.app')
+@extends('admin.layouts.app')
 
 @section('title', 'Dashboard - VIKAS UDHYOG ERP')
 @section('page_code', 'dashboard')
@@ -7,7 +7,7 @@
 <section class="view-section active" id="view-dashboard">
     <div class="page-header">
         <div>
-            <h1 class="page-title">Good Morning, {{ session('vu_user_name', 'Admin') }}</h1>
+            <h1 class="page-title">Good Morning, {{ session('vu_user_name', 'Administrator') }}</h1>
             <p class="page-subtitle">Here's what's happening with Vikas Udhyog today.</p>
         </div>
         <div class="page-actions">
@@ -23,7 +23,7 @@
                 <span class="kpi-title">Today's Sales</span>
                 <div class="kpi-icon"><i class="fa-solid fa-indian-rupee-sign"></i></div>
             </div>
-            <div class="kpi-value" id="kpi-sales-val">â‚¹1,28,450</div>
+            <div class="kpi-value" id="kpi-sales-val">₹1,28,450</div>
             <div class="kpi-bottom"><span class="trend-up"><i class="fa-solid fa-arrow-trend-up"></i> +14.2%</span> <span class="kpi-subtext">vs yesterday</span></div>
         </div>
 
@@ -32,7 +32,7 @@
                 <span class="kpi-title">Today's Purchase</span>
                 <div class="kpi-icon"><i class="fa-solid fa-cart-shopping"></i></div>
             </div>
-            <div class="kpi-value" id="kpi-purchase-val">â‚¹84,200</div>
+            <div class="kpi-value" id="kpi-purchase-val">₹84,200</div>
             <div class="kpi-bottom"><span class="trend-up"><i class="fa-solid fa-arrow-trend-up"></i> +8.5%</span> <span class="kpi-subtext">vs last week</span></div>
         </div>
 
@@ -41,7 +41,7 @@
                 <span class="kpi-title">Total Receivable</span>
                 <div class="kpi-icon"><i class="fa-solid fa-hand-holding-dollar"></i></div>
             </div>
-            <div class="kpi-value" id="kpi-receivable-val">â‚¹4,82,600</div>
+            <div class="kpi-value" id="kpi-receivable-val">₹4,82,600</div>
             <div class="kpi-bottom"><span class="kpi-subtext">From 5 Customers</span></div>
         </div>
 
@@ -50,7 +50,7 @@
                 <span class="kpi-title">Total Payable</span>
                 <div class="kpi-icon"><i class="fa-solid fa-credit-card"></i></div>
             </div>
-            <div class="kpi-value" id="kpi-payable-val">â‚¹2,74,350</div>
+            <div class="kpi-value" id="kpi-payable-val">₹2,74,350</div>
             <div class="kpi-bottom"><span class="kpi-subtext">To 4 Vendors</span></div>
         </div>
 
@@ -59,7 +59,7 @@
                 <span class="kpi-title">Current Stock Value</span>
                 <div class="kpi-icon"><i class="fa-solid fa-warehouse"></i></div>
             </div>
-            <div class="kpi-value" id="kpi-stock-val">â‚¹12,45,800</div>
+            <div class="kpi-value" id="kpi-stock-val">₹12,45,800</div>
             <div class="kpi-bottom"><span class="kpi-subtext">8 Product Categories</span></div>
         </div>
 
@@ -142,4 +142,3 @@
     </div>
 </section>
 @endsection
-

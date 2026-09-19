@@ -45,7 +45,6 @@
 
     <!-- Admin Application JavaScript Modules -->
     <script src="{{ asset('admin/js/data.js') }}"></script>
-    <script src="{{ asset('admin/js/app.js') }}"></script>
     <script src="{{ asset('admin/js/dashboard.js') }}"></script>
     <script src="{{ asset('admin/js/masters.js') }}"></script>
     <script src="{{ asset('admin/js/purchase.js') }}"></script>
@@ -53,6 +52,7 @@
     <script src="{{ asset('admin/js/inventory.js') }}"></script>
     <script src="{{ asset('admin/js/reports.js') }}"></script>
     <script src="{{ asset('admin/js/settings.js') }}"></script>
+    <script src="{{ asset('admin/js/app.js') }}"></script>
     @stack('scripts')
 </body>
 </html>

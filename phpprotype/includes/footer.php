@@ -9,7 +9,6 @@
 
     <!-- Application JavaScript Modules -->
     <script src="js/data.js"></script>
-    <script src="js/app.js"></script>
     <script src="js/dashboard.js"></script>
     <script src="js/masters.js"></script>
     <script src="js/purchase.js"></script>
@@ -17,5 +16,6 @@
     <script src="js/inventory.js"></script>
     <script src="js/reports.js"></script>
     <script src="js/settings.js"></script>
+    <script src="js/app.js"></script>
 </body>
 </html>
