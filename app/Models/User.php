@@ -19,7 +19,14 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'username',
         'email',
+        'role',
+        'phone',
+        'status',
+        'avatar',
+        'last_login_at',
+        'last_login_ip',
         'password',
     ];
 
@@ -42,7 +49,36 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'last_login_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Check if user is active.
+     */
+    public function isActive(): bool
+    {
+        return $this->status === 'active';
+    }
+
+    /**
+     * Check if user is Super Administrator.
+     */
+    public function isSuperAdmin(): bool
+    {
+        return in_array(strtolower($this->role), ['super administrator', 'super admin', 'admin']);
+    }
+
+    /**
+     * Get initials for avatar display.
+     */
+    public function getInitialsAttribute(): string
+    {
+        $words = explode(' ', trim($this->name));
+        if (count($words) >= 2) {
+            return strtoupper(substr($words[0], 0, 1) . substr($words[1], 0, 1));
+        }
+        return strtoupper(substr($this->name, 0, 1) ?: 'A');
     }
 }

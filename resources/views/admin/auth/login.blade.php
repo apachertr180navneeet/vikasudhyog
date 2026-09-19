@@ -700,6 +700,20 @@
                     <p class="form-subtitle">Enter your credentials to securely access your ERP workspace</p>
                 </div>
 
+                @if(session('success'))
+                    <div style="background: #F0FDF4; border: 1px solid #BBF7D0; border-left: 4px solid #16A34A; padding: 0.85rem 1rem; border-radius: 10px; font-size: 0.85rem; color: #166534; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.6rem;">
+                        <i class="fa-solid fa-circle-check" style="font-size: 1.1rem; color: #16A34A;"></i>
+                        <div>{{ session('success') }}</div>
+                    </div>
+                @endif
+
+                @if(session('info'))
+                    <div style="background: #EFF6FF; border: 1px solid #BFDBFE; border-left: 4px solid #3B82F6; padding: 0.85rem 1rem; border-radius: 10px; font-size: 0.85rem; color: #1E40AF; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.6rem;">
+                        <i class="fa-solid fa-circle-info" style="font-size: 1.1rem; color: #3B82F6;"></i>
+                        <div>{{ session('info') }}</div>
+                    </div>
+                @endif
+
                 @if(session('error'))
                     <div class="error-alert-box">
                         <i class="fa-solid fa-circle-exclamation" style="font-size: 1.1rem; color: #DC2626;"></i>
@@ -714,17 +728,28 @@
                     </div>
                 @endif
 
-                <!-- Interactive Demo Access Quick Fill -->
-                <div class="demo-pill-banner">
-                    <div class="demo-info">
-                        <i class="fa-solid fa-key"></i>
-                        <div>
-                            Demo: <code>admin</code> / <code>admin123</code>
-                        </div>
+                <!-- Seeded Account Quick Switcher -->
+                <div style="background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 12px; padding: 0.75rem 0.9rem; margin-bottom: 1.5rem;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span style="font-size: 0.78rem; font-weight: 700; color: #4B5563; text-transform: uppercase; letter-spacing: 0.5px;">
+                            <i class="fa-solid fa-users-gear" style="color: var(--brand-primary); margin-right: 4px;"></i> Seeded Login Accounts
+                        </span>
+                        <span style="font-size: 0.72rem; color: #9CA3AF;">Click to auto-fill</span>
                     </div>
-                    <button type="button" class="btn-fill-demo" id="auto-fill-btn">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i> Auto Fill
-                    </button>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.4rem;">
+                        <button type="button" class="role-fill-btn" onclick="fillCredentials('admin', 'admin123', 'Administrator', 'Super Administrator')" style="padding: 0.4rem 0.5rem; background: #FFFFFF; border: 1px solid #D1D5DB; border-radius: 8px; font-size: 0.76rem; font-weight: 600; color: #1F2937; cursor: pointer; text-align: left; transition: all 0.15s ease;">
+                            <div style="color: var(--brand-primary); font-weight: 700;">Super Admin</div>
+                            <div style="font-size: 0.68rem; color: #6B7280;">admin</div>
+                        </button>
+                        <button type="button" class="role-fill-btn" onclick="fillCredentials('rajesh.manager', 'password123', 'Rajesh Sharma', 'Plant & Production Manager')" style="padding: 0.4rem 0.5rem; background: #FFFFFF; border: 1px solid #D1D5DB; border-radius: 8px; font-size: 0.76rem; font-weight: 600; color: #1F2937; cursor: pointer; text-align: left; transition: all 0.15s ease;">
+                            <div style="color: #0284C7; font-weight: 700;">Manager</div>
+                            <div style="font-size: 0.68rem; color: #6B7280;">rajesh.manager</div>
+                        </button>
+                        <button type="button" class="role-fill-btn" onclick="fillCredentials('sunil.accounts', 'password123', 'Sunil Verma', 'Chief Accountant')" style="padding: 0.4rem 0.5rem; background: #FFFFFF; border: 1px solid #D1D5DB; border-radius: 8px; font-size: 0.76rem; font-weight: 600; color: #1F2937; cursor: pointer; text-align: left; transition: all 0.15s ease;">
+                            <div style="color: #7C3AED; font-weight: 700;">Accountant</div>
+                            <div style="font-size: 0.68rem; color: #6B7280;">sunil.accounts</div>
+                        </button>
+                    </div>
                 </div>
 
                 <form id="login-form" action="{{ route('admin.login.post') }}" method="POST">
@@ -786,26 +811,29 @@
             });
         }
 
-        // Demo autofill button
-        const autoFillBtn = document.getElementById('auto-fill-btn');
-        if (autoFillBtn) {
-            autoFillBtn.addEventListener('click', function() {
-                document.getElementById('username').value = 'admin';
-                document.getElementById('password').value = 'admin123';
-                
-                autoFillBtn.innerHTML = '<i class="fa-solid fa-check"></i> Filled!';
-                setTimeout(() => {
-                    autoFillBtn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Auto Fill';
-                }, 1500);
-            });
+        // Fill credentials helper for seeded users
+        function fillCredentials(username, password, name, role) {
+            const userInput = document.getElementById('username');
+            const passInput = document.getElementById('password');
+            userInput.value = username;
+            passInput.value = password;
+            userInput.focus();
+
+            sessionStorage.setItem('vu_logged_in', 'true');
+            sessionStorage.setItem('vu_user_role', role);
+            sessionStorage.setItem('vu_user_name', name);
         }
 
         // Session storage helper
         document.getElementById('login-form').addEventListener('submit', function(e) {
             const u = document.getElementById('username').value.trim();
             sessionStorage.setItem('vu_logged_in', 'true');
-            sessionStorage.setItem('vu_user_role', 'Super Administrator');
-            sessionStorage.setItem('vu_user_name', u === 'admin' ? 'Administrator' : u);
+            if (u === 'admin') {
+                sessionStorage.setItem('vu_user_role', 'Super Administrator');
+                sessionStorage.setItem('vu_user_name', 'Administrator');
+            } else {
+                sessionStorage.setItem('vu_user_name', u);
+            }
         });
     </script>
 </body>
