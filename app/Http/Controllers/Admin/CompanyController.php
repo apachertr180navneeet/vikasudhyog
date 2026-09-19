@@ -55,7 +55,7 @@ class CompanyController extends Controller
             ]);
         }
 
-        return view('admin.masters.company', [
+        return view('admin.masters.company.index', [
             'pageTitle'  => 'Company Master - VIKAS UDHYOG ERP',
             'pageCode'   => 'master-company',
             'companies'  => $companies,
@@ -64,6 +64,17 @@ class CompanyController extends Controller
                 'search' => $request->input('search', ''),
                 'status' => $request->input('status', 'all'),
             ]
+        ]);
+    }
+
+    /**
+     * Show the form for creating a new company.
+     */
+    public function create()
+    {
+        return view('admin.masters.company.create', [
+            'pageTitle' => 'Add New Company - VIKAS UDHYOG ERP',
+            'pageCode'  => 'master-company',
         ]);
     }
 
@@ -121,13 +132,33 @@ class CompanyController extends Controller
     }
 
     /**
-     * Return company details for editing / preview.
+     * Display the specified company profile.
      */
-    public function show(Company $company)
+    public function show(Request $request, Company $company)
     {
-        return response()->json([
-            'success' => true,
-            'company' => $company,
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'company' => $company,
+            ]);
+        }
+
+        return view('admin.masters.company.show', [
+            'pageTitle' => $company->name . ' - Company Profile',
+            'pageCode'  => 'master-company',
+            'company'   => $company,
+        ]);
+    }
+
+    /**
+     * Show the form for editing the specified company.
+     */
+    public function edit(Company $company)
+    {
+        return view('admin.masters.company.edit', [
+            'pageTitle' => 'Edit ' . $company->name . ' - Company Master',
+            'pageCode'  => 'master-company',
+            'company'   => $company,
         ]);
     }
 

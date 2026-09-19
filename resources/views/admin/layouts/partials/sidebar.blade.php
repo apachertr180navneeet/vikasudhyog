@@ -26,7 +26,7 @@
                 <i class="fa-solid fa-chevron-right nav-arrow"></i>
             </a>
             <ul class="submenu">
-                <li><a href="{{ route('admin.masters.company') }}" class="submenu-link {{ request()->routeIs('admin.masters.company') ? 'active' : '' }}" data-view="master-company">Company Master</a></li>
+                <li><a href="{{ route('admin.masters.company') }}" class="submenu-link {{ request()->routeIs('admin.masters.company*') ? 'active' : '' }}" data-view="master-company">Company Master</a></li>
                 <li><a href="{{ route('admin.masters.user') }}" class="submenu-link {{ request()->routeIs('admin.masters.user') ? 'active' : '' }}" data-view="master-user">User Master</a></li>
                 <li><a href="{{ route('admin.masters.access-level') }}" class="submenu-link {{ request()->routeIs('admin.masters.access-level') ? 'active' : '' }}" data-view="master-access">Access Level</a></li>
                 <li><a href="{{ route('admin.masters.vendor') }}" class="submenu-link {{ request()->routeIs('admin.masters.vendor') ? 'active' : '' }}" data-view="master-vendor">Vendor Master</a></li>

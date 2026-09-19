@@ -34,6 +34,43 @@ class CompanyMasterTest extends TestCase
         $response->assertSee('Company Master');
     }
 
+    public function test_company_create_page_can_be_rendered(): void
+    {
+        $user = $this->getAdminUser();
+
+        $response = $this->actingAs($user)->get('/admin/masters/company/create');
+        $response->assertStatus(200);
+        $response->assertSee('Add New Company');
+        $response->assertSee('Add New Company Profile');
+    }
+
+    public function test_company_edit_page_can_be_rendered(): void
+    {
+        $user = $this->getAdminUser();
+        $company = Company::firstOrCreate(
+            ['name' => 'Test Company For Edit Page'],
+            ['city' => 'Sojat City', 'state' => 'Rajasthan', 'status' => 'active']
+        );
+
+        $response = $this->actingAs($user)->get('/admin/masters/company/' . $company->id . '/edit');
+        $response->assertStatus(200);
+        $response->assertSee('Edit Company:');
+        $response->assertSee($company->name);
+    }
+
+    public function test_company_show_page_can_be_rendered(): void
+    {
+        $user = $this->getAdminUser();
+        $company = Company::firstOrCreate(
+            ['name' => 'Test Company For Show Page'],
+            ['city' => 'Sojat City', 'state' => 'Rajasthan', 'status' => 'active']
+        );
+
+        $response = $this->actingAs($user)->get('/admin/masters/company/' . $company->id);
+        $response->assertStatus(200);
+        $response->assertSee($company->name);
+    }
+
     public function test_can_create_new_company(): void
     {
         $user = $this->getAdminUser();

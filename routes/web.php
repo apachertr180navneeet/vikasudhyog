@@ -35,10 +35,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // Masters Routes
         Route::prefix('masters')->name('masters.')->group(function () {
-            // Company Master CRUD
+            // Company Master CRUD (Dedicated Pages)
             Route::get('/company', [CompanyController::class, 'index'])->name('company');
+            Route::get('/company/create', [CompanyController::class, 'create'])->name('company.create');
             Route::post('/company', [CompanyController::class, 'store'])->name('company.store');
             Route::get('/company/{company}', [CompanyController::class, 'show'])->name('company.show');
+            Route::get('/company/{company}/edit', [CompanyController::class, 'edit'])->name('company.edit');
             Route::put('/company/{company}', [CompanyController::class, 'update'])->name('company.update');
             Route::delete('/company/{company}', [CompanyController::class, 'destroy'])->name('company.destroy');
             Route::patch('/company/{company}/toggle-status', [CompanyController::class, 'toggleStatus'])->name('company.toggle-status');
