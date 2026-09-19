@@ -1,93 +1,180 @@
 /* ==========================================================================
-   VIKAS UDHYOG ERP - Comprehensive Mobile & Multi-Device Responsive System
+   VIKAS UDHYOG ERP - Comprehensive Multi-Device & Mobile Responsive System
+   Supports: Desktops, Laptops, Tablets (Landscape & Portrait), Phablets, Mobiles
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
-   1. Large Desktop & Laptop (<1280px)
+   1. Large Desktops & Standard Laptops (<= 1280px)
    -------------------------------------------------------------------------- */
 @media (max-width: 1280px) {
     .charts-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .kpi-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 1.25rem;
     }
 
-    .form-grid-layout {
+    .erp-kpi-grid,
+    .kpi-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+
+    .erp-form-layout-2col {
         grid-template-columns: 1fr 300px;
+        gap: 1.25rem;
+    }
+
+    .form-grid-layout {
+        grid-template-columns: 1fr 280px;
+        gap: 1.25rem;
+    }
+
+    .access-mgmt-grid {
+        grid-template-columns: 290px 1fr;
         gap: 1.25rem;
     }
 }
 
 /* --------------------------------------------------------------------------
-   2. Tablets & Small Laptops (<1024px)
+   2. Tablets & Small Laptops (<= 1024px)
    -------------------------------------------------------------------------- */
 @media (max-width: 1024px) {
+    /* --- Off-canvas Sidebar Drawer System --- */
     .sidebar {
-        transform: translateX(-100%);
-        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        box-shadow: 10px 0 30px rgba(0, 0, 0, 0.25);
+        position: fixed !important;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: var(--sidebar-width, 270px) !important;
+        transform: translateX(-100%) !important;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        box-shadow: 12px 0 35px rgba(0, 0, 0, 0.35) !important;
+        z-index: 1000 !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch;
     }
-    
+
     .sidebar.mobile-open {
-        transform: translateX(0);
+        transform: translateX(0) !important;
+    }
+
+    .sidebar-mobile-close {
+        display: inline-flex !important;
     }
 
     .main-wrapper {
         margin-left: 0 !important;
         width: 100% !important;
-        min-width: 100%;
+        min-width: 100% !important;
     }
 
     .sidebar-overlay {
-        position: fixed;
-        top: 0; left: 0; right: 0; bottom: 0;
-        background: rgba(0, 0, 0, 0.55);
-        backdrop-filter: blur(4px);
-        -webkit-backdrop-filter: blur(4px);
-        z-index: 95;
+        position: fixed !important;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.6) !important;
+        backdrop-filter: blur(4px) !important;
+        -webkit-backdrop-filter: blur(4px) !important;
+        z-index: 999 !important;
         display: none;
         opacity: 0;
-        transition: opacity 0.3s ease;
+        transition: opacity 0.3s ease !important;
     }
 
     .sidebar-overlay.active {
-        display: block;
-        opacity: 1;
+        display: block !important;
+        opacity: 1 !important;
     }
 
-    .form-grid-layout {
-        grid-template-columns: 1fr;
+    /* --- Top Navbar for Tablets --- */
+    .top-navbar {
+        padding: 0 1.25rem;
     }
 
     .search-box-wrapper {
         width: 220px;
     }
+
+    /* --- Access Level & Permissions Module Layout --- */
+    .access-mgmt-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1.25rem !important;
+    }
+
+    .role-directory-card {
+        position: static !important;
+    }
+
+    .roles-list-scroll {
+        max-height: 280px !important;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    /* --- Master Form Layouts (2-column -> 1 column) --- */
+    .erp-form-layout-2col,
+    .form-grid-layout {
+        grid-template-columns: 1fr !important;
+        gap: 1.25rem !important;
+    }
+
+    .erp-form-side-col {
+        order: 2;
+    }
+
+    .erp-preview-card {
+        position: static !important;
+    }
+
+    /* --- Profile Details Grid --- */
+    .erp-profile-details-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1.25rem !important;
+    }
+
+    /* --- Dashboard Lower Grid --- */
+    .dashboard-lower-grid,
+    div[style*="grid-template-columns: 2fr 1fr"] {
+        grid-template-columns: 1fr !important;
+        gap: 1.25rem !important;
+    }
+
+    /* --- KPI Grid for Tablets --- */
+    .erp-kpi-grid,
+    .kpi-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 1rem !important;
+    }
 }
 
 /* --------------------------------------------------------------------------
-   3. Phablets & Portrait Tablets (<768px)
+   3. Phablets & Portrait Tablets (<= 768px)
    -------------------------------------------------------------------------- */
 @media (max-width: 768px) {
-    /* Navbar */
+    /* --- Base Layout & Spacing --- */
+    .content-body {
+        padding: 1rem 0.85rem !important;
+    }
+
+    /* --- Top Navigation Bar --- */
     .top-navbar {
-        padding: 0 1rem;
-        height: 62px;
+        padding: 0 0.85rem !important;
+        height: 60px !important;
     }
 
     .company-selector {
-        max-width: 160px;
+        max-width: 160px !important;
     }
 
     .company-selector select {
-        font-size: 0.8rem;
-        padding-right: 1.25rem;
+        font-size: 0.8rem !important;
+        padding-right: 1.2rem !important;
     }
 
     .search-box-wrapper {
-        display: none;
+        display: none !important;
     }
 
     .user-info {
@@ -95,280 +182,645 @@
     }
 
     .user-profile-menu {
-        gap: 0.25rem;
-        padding: 0.25rem 0.4rem;
+        gap: 0.25rem !important;
+        padding: 0.25rem 0.4rem !important;
     }
 
     .notification-drawer {
-        right: -50px;
-        width: calc(100vw - 2rem);
-        max-width: 360px;
+        right: -45px !important;
+        width: calc(100vw - 2rem) !important;
+        max-width: 340px !important;
     }
 
     .user-dropdown {
-        right: 0;
-        width: calc(100vw - 2rem);
-        max-width: 280px;
+        right: 0 !important;
+        width: calc(100vw - 2rem) !important;
+        max-width: 280px !important;
     }
 
-    /* Content Area */
-    .content-body {
-        padding: 1rem 0.85rem;
+    /* --- Page Top Bar & Headers --- */
+    .erp-page-top-bar,
+    .page-header {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 0.85rem !important;
+        margin-bottom: 1.25rem !important;
     }
 
-    /* KPI Grid */
-    .kpi-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 0.85rem;
-    }
-
-    .stat-card, .kpi-card {
-        padding: 1rem;
-    }
-
-    .stat-value, .kpi-value {
-        font-size: 1.4rem;
-    }
-
-    /* Form Grids */
-    .form-grid, .form-grid-3, .form-row-2, .form-row-3 {
-        grid-template-columns: 1fr !important;
-        gap: 1rem !important;
-    }
-
-    /* Card Panels */
-    .erp-card-header {
-        padding: 1rem 1.25rem;
-    }
-
-    .erp-card-body {
-        padding: 1.25rem;
-    }
-
-    /* Tables & Filter Toolbars */
-    .filter-bar, .table-toolbar {
-        flex-direction: column;
-        align-items: stretch !important;
-        gap: 0.75rem !important;
-    }
-
-    .filter-bar form, .table-toolbar form {
-        max-width: 100% !important;
-        width: 100% !important;
-        flex-direction: column;
-        align-items: stretch !important;
-    }
-
-    .filter-bar .form-control, .table-toolbar .form-control {
-        width: 100% !important;
-    }
-
-    .table-responsive {
-        width: 100%;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        border-radius: 12px;
-        margin-bottom: 1rem;
-    }
-
-    .table-responsive table {
-        min-width: 650px;
-    }
-
-    /* Modals for Mobile */
-    .modal-card {
-        width: 96% !important;
-        max-width: 96% !important;
-        max-height: 92vh !important;
-        border-radius: 16px !important;
-        margin: auto;
-    }
-
-    .modal-header {
-        padding: 1rem 1.25rem !important;
-    }
-
-    .modal-body {
-        padding: 1.25rem !important;
-        max-height: calc(92vh - 130px) !important;
-    }
-
-    .modal-footer {
-        padding: 0.85rem 1.25rem !important;
+    .erp-breadcrumb-trail {
+        font-size: 0.75rem !important;
         flex-wrap: wrap;
     }
 
-    .modal-footer .btn {
-        flex: 1;
-        text-align: center;
-        justify-content: center;
-    }
-
-    /* Sticky Action Bar */
-    .form-actions-bar {
-        position: sticky;
-        bottom: 0.5rem;
-        padding: 0.85rem 1rem;
-        flex-direction: column-reverse;
-        gap: 0.75rem;
-    }
-
-    .form-actions-bar .btn,
-    .form-actions-bar div {
-        width: 100%;
-        justify-content: center;
-    }
-
-    .form-actions-bar button {
-        width: 100%;
-        justify-content: center;
-    }
-
-    /* View Profile / Letterhead */
-    .letterhead-card {
-        padding: 1.25rem !important;
-    }
-
-    .letterhead-header {
-        flex-direction: column !important;
-        align-items: flex-start !important;
-        gap: 1rem !important;
-    }
-}
-
-/* --------------------------------------------------------------------------
-   4. Mobile Phones (<576px)
-   -------------------------------------------------------------------------- */
-@media (max-width: 576px) {
-    /* Base typography */
-    body {
-        font-size: 14px;
-    }
-
+    .erp-page-title,
     .page-title {
         font-size: 1.35rem !important;
+        flex-wrap: wrap;
+        gap: 0.5rem !important;
     }
 
+    .erp-page-title-icon-box {
+        width: 36px !important;
+        height: 36px !important;
+        font-size: 1rem !important;
+    }
+
+    .erp-page-subtitle,
     .page-subtitle {
         font-size: 0.8rem !important;
     }
 
-    /* Topbar */
-    .top-navbar {
-        padding: 0 0.75rem;
+    .erp-header-actions,
+    .page-actions,
+    .page-header-actions {
+        width: 100% !important;
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 0.5rem !important;
     }
 
-    .company-selector {
-        max-width: 130px;
+    .erp-header-actions .btn,
+    .page-actions .btn,
+    .page-header-actions .btn {
+        flex: 1 1 auto !important;
+        justify-content: center !important;
+        text-align: center !important;
+        height: 40px !important;
     }
 
-    .company-selector i {
-        display: none;
-    }
-
-    /* Single column KPI cards */
+    /* --- KPI Grid System --- */
+    .erp-kpi-grid,
     .kpi-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.75rem !important;
+        margin-bottom: 1.25rem !important;
     }
 
-    .kpi-card {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
+    .erp-kpi-card,
+    .kpi-card,
+    .stat-card {
+        padding: 0.85rem !important;
+        gap: 0.75rem !important;
     }
 
-    /* Switches */
-    .switch-card {
-        padding: 1rem;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.75rem;
+    .erp-kpi-val,
+    .kpi-value,
+    .stat-value {
+        font-size: 1.3rem !important;
     }
 
-    .switch-control {
-        align-self: flex-end;
+    .erp-kpi-label,
+    .kpi-title {
+        font-size: 0.72rem !important;
     }
 
-    /* Action Buttons in tables */
-    .action-btns {
-        display: flex;
-        gap: 0.4rem;
-        flex-wrap: wrap;
+    .erp-kpi-icon-box {
+        width: 40px !important;
+        height: 40px !important;
+        font-size: 1.1rem !important;
     }
 
-    .btn-action {
+    /* --- Charts Grid --- */
+    .charts-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+    }
+
+    .chart-container {
+        height: 260px !important;
+    }
+
+    /* --- Form Sections & Grids --- */
+    .erp-form-section-header {
+        padding: 1rem 1.15rem !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 0.5rem !important;
+    }
+
+    .erp-form-section-body {
+        padding: 1.15rem !important;
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+    }
+
+    .form-grid,
+    .form-grid-2,
+    .form-grid-3,
+    .form-row-2,
+    .form-row-3 {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+    }
+
+    .erp-form-col-full {
+        grid-column: 1 / -1 !important;
+    }
+
+    /* --- Sticky Mobile Form Action Bar --- */
+    .form-actions-card,
+    .form-actions-bar {
+        position: sticky !important;
+        bottom: 0.5rem !important;
+        z-index: 50 !important;
+        padding: 0.75rem 1rem !important;
+        flex-direction: column-reverse !important;
+        gap: 0.5rem !important;
+        border-radius: 12px !important;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    .form-actions-card .btn,
+    .form-actions-bar .btn,
+    .form-actions-bar div,
+    .form-actions-bar button {
+        width: 100% !important;
+        justify-content: center !important;
+        text-align: center !important;
+        height: 44px !important;
+    }
+
+    /* --- Filters Toolbar --- */
+    .erp-filter-header,
+    .filter-bar,
+    .table-toolbar {
+        padding: 1rem !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 0.75rem !important;
+    }
+
+    .erp-filter-form,
+    .filter-bar form,
+    .table-toolbar form {
+        width: 100% !important;
+        max-width: 100% !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 0.6rem !important;
+    }
+
+    .erp-filter-search-wrap,
+    .erp-filter-select-role,
+    .erp-filter-select-company,
+    .erp-filter-select-status,
+    .filter-bar .form-control,
+    .table-toolbar .form-control {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 100% !important;
+    }
+
+    .erp-filter-submit-btn,
+    .erp-filter-clear-btn {
+        width: 100% !important;
+        justify-content: center !important;
+        height: 42px !important;
+    }
+
+    /* --- Data Tables Mobile Responsiveness --- */
+    .table-responsive {
+        width: 100% !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        border-radius: 10px !important;
+        margin-bottom: 0.5rem !important;
+        border: 1px solid var(--border-color, #E5E7EB);
+    }
+
+    .erp-main-table,
+    .custom-table {
+        min-width: 600px !important;
+        width: 100% !important;
+    }
+
+    .erp-main-table th,
+    .custom-table th {
+        padding: 0.75rem 0.65rem !important;
+        font-size: 0.78rem !important;
+        white-space: nowrap !important;
+    }
+
+    .erp-main-table td,
+    .custom-table td {
+        padding: 0.75rem 0.65rem !important;
+        font-size: 0.82rem !important;
+    }
+
+    .erp-user-cell {
+        gap: 0.6rem !important;
+    }
+
+    .erp-avatar-box {
         width: 34px !important;
         height: 34px !important;
         font-size: 0.85rem !important;
     }
 
-    /* Full-width primary buttons in headers */
-    .page-header-actions {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
+    .erp-actions-cell {
+        gap: 0.35rem !important;
+        justify-content: flex-end !important;
     }
 
-    .page-header-actions .btn {
-        width: 100%;
-        justify-content: center;
+    .erp-table-action-icon {
+        width: 36px !important;
+        height: 36px !important;
+        font-size: 0.88rem !important;
     }
 
-    /* Toast Container */
-    .toast-container {
-        left: 1rem !important;
-        right: 1rem !important;
-        bottom: 1rem !important;
-        max-width: calc(100vw - 2rem) !important;
+    /* --- Access Level & Role Matrix Module --- */
+    .role-hero-header {
+        padding: 1.15rem !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 0.85rem !important;
+    }
+
+    .role-hero-header > div:first-child {
+        width: 100% !important;
+    }
+
+    .role-hero-meta-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.75rem !important;
+        width: 100% !important;
+    }
+
+    .perm-preset-bar {
+        padding: 0.85rem 1rem !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 0.75rem !important;
+    }
+
+    .perm-preset-actions {
+        width: 100% !important;
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 0.4rem !important;
+    }
+
+    .perm-preset-btn {
+        flex: 1 1 calc(50% - 0.4rem) !important;
+        justify-content: center !important;
+        text-align: center !important;
+        font-size: 0.78rem !important;
+        padding: 0.45rem 0.6rem !important;
+    }
+
+    .perm-matrix-search-box {
+        width: 100% !important;
+    }
+
+    .perm-grid {
+        grid-template-columns: 1fr !important;
+        gap: 0.85rem !important;
+    }
+
+    .perm-card-header {
+        padding: 0.85rem 1rem !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 0.6rem !important;
+    }
+
+    .perm-card-title-wrap {
+        width: 100% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+    }
+
+    .perm-card-quick-toggle {
+        width: 100% !important;
+        justify-content: flex-end !important;
+    }
+
+    .perm-submodules-list {
+        padding: 0.85rem !important;
+        gap: 0.75rem !important;
+    }
+
+    .submodule-row {
+        padding: 0.75rem !important;
+        border-radius: 10px !important;
+    }
+
+    .submodule-header-row {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 0.4rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+
+    .action-pills-wrap {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 0.4rem !important;
+    }
+
+    .action-pill {
+        min-height: 40px !important;
+        padding: 0.45rem 0.75rem !important;
+        font-size: 0.82rem !important;
+        border-radius: 8px !important;
+        flex: 1 1 calc(50% - 0.4rem) !important;
+        justify-content: center !important;
+    }
+
+    /* --- Modals for Phablet & Mobile --- */
+    .custom-modal-card,
+    .modal-card {
+        width: 95vw !important;
+        max-width: 95vw !important;
+        max-height: 92vh !important;
+        border-radius: 14px !important;
+        margin: auto !important;
+    }
+
+    .custom-modal-header,
+    .modal-header {
+        padding: 1rem 1.15rem !important;
+    }
+
+    .custom-modal-body,
+    .modal-body {
+        padding: 1.15rem !important;
+        max-height: calc(92vh - 130px) !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+
+    .custom-modal-footer,
+    .modal-footer {
+        padding: 0.85rem 1.15rem !important;
+        flex-direction: column-reverse !important;
+        gap: 0.5rem !important;
+    }
+
+    .custom-modal-footer .btn,
+    .custom-modal-footer button,
+    .modal-footer .btn {
+        width: 100% !important;
+        justify-content: center !important;
+        text-align: center !important;
+        height: 42px !important;
+    }
+
+    /* --- User Profile Hero Banner --- */
+    .erp-profile-hero-banner {
+        padding: 1.5rem 1.15rem !important;
+    }
+
+    .erp-profile-hero-content {
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center !important;
+        gap: 1rem !important;
+    }
+
+    .erp-profile-hero-meta {
+        justify-content: center !important;
+        flex-wrap: wrap !important;
+        gap: 0.75rem !important;
+    }
+
+    .erp-profile-hero-details {
+        text-align: center !important;
     }
 }
 
 /* --------------------------------------------------------------------------
-   5. Ultra Small Phones (<380px)
+   4. Mobile Phones (<= 576px)
    -------------------------------------------------------------------------- */
-@media (max-width: 380px) {
+@media (max-width: 576px) {
+    /* --- Base Typography --- */
+    body {
+        font-size: 14px !important;
+    }
+
+    .erp-page-title,
+    .page-title {
+        font-size: 1.2rem !important;
+    }
+
+    .erp-page-subtitle,
+    .page-subtitle {
+        font-size: 0.78rem !important;
+    }
+
+    /* --- Topbar Mobile Optimizations --- */
     .top-navbar {
-        padding: 0 0.5rem;
+        padding: 0 0.65rem !important;
     }
 
     .company-selector {
-        display: none;
+        max-width: 130px !important;
     }
 
-    .btn-icon {
-        width: 36px;
-        height: 36px;
+    .company-selector i {
+        display: none !important;
     }
 
-    .content-body {
-        padding: 0.75rem 0.5rem;
+    .company-selector select {
+        font-size: 0.75rem !important;
+        padding: 0.35rem 0.5rem !important;
+    }
+
+    /* --- Single Column KPI Cards on Mobile --- */
+    .erp-kpi-grid,
+    .kpi-grid {
+        grid-template-columns: 1fr !important;
+        gap: 0.65rem !important;
+    }
+
+    .erp-kpi-card,
+    .kpi-card {
+        padding: 0.85rem 1rem !important;
+    }
+
+    .role-hero-meta-grid {
+        grid-template-columns: 1fr !important;
+        gap: 0.5rem !important;
+    }
+
+    .perm-preset-btn {
+        flex: 1 1 100% !important;
+    }
+
+    .action-pill {
+        flex: 1 1 100% !important;
+        justify-content: flex-start !important;
+    }
+
+    /* --- Form Switch Cards --- */
+    .switch-card,
+    .erp-switch-card {
+        padding: 0.85rem !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 0.65rem !important;
+    }
+
+    .switch-control,
+    .erp-switch-control {
+        align-self: flex-end !important;
+    }
+
+    /* --- Action Icon Sizing --- */
+    .btn-action,
+    .erp-table-action-icon {
+        width: 36px !important;
+        height: 36px !important;
+        font-size: 0.85rem !important;
+    }
+
+    /* --- Full Width Header Buttons --- */
+    .erp-header-actions,
+    .page-actions,
+    .page-header-actions {
+        width: 100% !important;
+        flex-direction: column !important;
+        gap: 0.5rem !important;
+    }
+
+    .erp-header-actions .btn,
+    .page-actions .btn,
+    .page-header-actions .btn {
+        width: 100% !important;
+        justify-content: center !important;
+    }
+
+    /* --- Toast Container Bottom Bar --- */
+    .toast-container {
+        left: 0.75rem !important;
+        right: 0.75rem !important;
+        bottom: 0.75rem !important;
+        max-width: calc(100vw - 1.5rem) !important;
+    }
+
+    .vu-swal-popup {
+        width: 92vw !important;
+        padding: 1.25rem !important;
+        border-radius: 14px !important;
     }
 }
 
 /* --------------------------------------------------------------------------
-   6. Touch Screen & Scroll Optimization Utilities
+   5. Ultra Small Phones (<= 380px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 380px) {
+    .top-navbar {
+        padding: 0 0.5rem !important;
+    }
+
+    .company-selector {
+        display: none !important;
+    }
+
+    .btn-icon {
+        width: 36px !important;
+        height: 36px !important;
+    }
+
+    .content-body {
+        padding: 0.65rem 0.4rem !important;
+    }
+
+    .erp-page-title {
+        font-size: 1.1rem !important;
+    }
+
+    .erp-page-title-icon-box {
+        width: 30px !important;
+        height: 30px !important;
+        font-size: 0.85rem !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   6. Touch Screen & Pointer Ergonomics
    -------------------------------------------------------------------------- */
 @media (hover: none) and (pointer: coarse) {
     /* Touch target minimum 44px for buttons and interactive controls */
-    .btn, button.btn-primary, button.btn-outline, a.btn {
-        min-height: 42px;
-        display: inline-flex;
-        align-items: center;
+    .btn,
+    button.btn-primary,
+    button.btn-outline,
+    a.btn,
+    .erp-btn-header-primary,
+    .erp-btn-header-back,
+    .erp-filter-submit-btn,
+    .erp-filter-clear-btn {
+        min-height: 44px !important;
+        display: inline-flex !important;
+        align-items: center !important;
     }
 
     .submenu-link {
-        padding-top: 0.65rem;
-        padding-bottom: 0.65rem;
+        padding-top: 0.75rem !important;
+        padding-bottom: 0.75rem !important;
+        min-height: 42px !important;
+        display: flex !important;
+        align-items: center !important;
     }
 
     .nav-link {
-        padding-top: 0.75rem;
-        padding-bottom: 0.75rem;
+        padding-top: 0.85rem !important;
+        padding-bottom: 0.85rem !important;
+        min-height: 44px !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+
+    /* Prevent iOS auto-zoom on input focus */
+    input,
+    select,
+    textarea {
+        font-size: 16px !important;
     }
 
     /* Smooth Momentum Scrolling */
-    .sidebar, .modal-body, .table-responsive, .content-body {
-        -webkit-overflow-scrolling: touch;
+    .sidebar,
+    .modal-body,
+    .custom-modal-body,
+    .table-responsive,
+    .content-body,
+    .roles-list-scroll,
+    .notification-list {
+        -webkit-overflow-scrolling: touch !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   7. Print Optimization Styles
+   -------------------------------------------------------------------------- */
+@media print {
+    .sidebar,
+    .top-navbar,
+    .sidebar-overlay,
+    .erp-filter-header,
+    .erp-header-actions,
+    .page-actions,
+    .erp-actions-cell,
+    .form-actions-card,
+    .form-actions-bar,
+    .toast-container {
+        display: none !important;
+    }
+
+    .main-wrapper {
+        margin-left: 0 !important;
+        width: 100% !important;
+        padding: 0 !important;
+    }
+
+    .content-body {
+        padding: 0 !important;
+    }
+
+    .card,
+    .erp-table-container-card {
+        box-shadow: none !important;
+        border: 1px solid #CCCCCC !important;
     }
 }

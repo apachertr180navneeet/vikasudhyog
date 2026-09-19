@@ -1,14 +1,14 @@
 <!-- Sidebar Navigation Drawer -->
 <aside class="sidebar" id="sidebar">
-    <div class="sidebar-header" style="display: flex; align-items: center; justify-content: space-between;">
-        <a href="{{ route('admin.dashboard') }}" style="display: flex; align-items: center; gap: 0.85rem; text-decoration: none;">
+    <div class="sidebar-header">
+        <a href="{{ route('admin.dashboard') }}" class="sidebar-brand-link">
             <img src="{{ asset('admin/images/logo.png') }}" alt="Vikas Udhyog Logo" class="sidebar-logo">
             <div class="sidebar-brand">
                 <span class="sidebar-brand-title">VIKAS UDHYOG</span>
                 <span class="sidebar-brand-subtitle">HERBAL ERP v2.4</span>
             </div>
         </a>
-        <button type="button" class="sidebar-mobile-close" id="sidebar-close-btn" style="display: none; background: none; border: none; color: #FFFFFF; font-size: 1.25rem; cursor: pointer; padding: 0.25rem 0.5rem;" title="Close Menu">
+        <button type="button" class="sidebar-mobile-close" id="sidebar-close-btn" title="Close Menu">
             <i class="fa-solid fa-xmark"></i>
         </button>
     </div>
@@ -107,6 +107,6 @@
 
     <div class="sidebar-footer">
         <span class="sidebar-footer-badge">ISO 9001:2015</span>
-        <span style="font-size: 0.72rem; color: rgba(255,255,255,0.6);">Herbal Manufacturing</span>
+        <span class="sidebar-footer-text">Herbal Manufacturing</span>
     </div>
 </aside>
