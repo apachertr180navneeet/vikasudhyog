@@ -1,10 +1,10 @@
 @extends('admin.layouts.app')
 
 @section('title', 'Edit ' . $company->name . ' - Company Master')
-@section('page_code', 'master-company')
+@section('page_code', 'master-company-edit')
 
 @section('content')
-<section class="view-section active" id="view-company-edit">
+<section class="view-section active" id="view-master-company-edit">
     <!-- Breadcrumb & Top Bar -->
     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
         <div>

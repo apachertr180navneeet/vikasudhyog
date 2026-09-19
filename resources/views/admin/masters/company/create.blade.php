@@ -1,10 +1,10 @@
 @extends('admin.layouts.app')
 
 @section('title', 'Add New Company - VIKAS UDHYOG ERP')
-@section('page_code', 'master-company')
+@section('page_code', 'master-company-create')
 
 @section('content')
-<section class="view-section active" id="view-company-create">
+<section class="view-section active" id="view-master-company-create">
     <!-- Breadcrumb & Top Bar -->
     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
         <div>

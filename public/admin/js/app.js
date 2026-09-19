@@ -56,9 +56,9 @@ const App = {
         this.bindUserProfile();
         this.bindModals();
         
-        // Initial view render based on current page
+        // Initial view render based on current page (do not auto-redirect)
         const currentPage = document.body.getAttribute('data-page') || 'dashboard';
-        this.navigateTo(currentPage);
+        this.navigateTo(currentPage, false);
     },
 
     bindNavigation() {
@@ -121,14 +121,16 @@ const App = {
         });
     },
 
-    navigateTo(viewId) {
+    navigateTo(viewId, allowRedirect = true) {
         this.currentView = viewId;
 
-        const targetSection = document.getElementById(`view-${viewId}`);
+        const targetSection = document.getElementById(`view-${viewId}`) || document.querySelector('.view-section');
         if (targetSection) {
-            // Hide all view sections
+            // Hide other view sections
             document.querySelectorAll('.view-section').forEach(section => {
-                section.classList.remove('active');
+                if (section !== targetSection) {
+                    section.classList.remove('active');
+                }
             });
             targetSection.classList.add('active');
             
@@ -141,7 +143,7 @@ const App = {
             else if (viewId.startsWith('set-') && window.SettingsModule) SettingsModule.render(viewId);
 
             window.scrollTo({ top: 0, behavior: 'smooth' });
-        } else if (VIEW_ROUTES[viewId]) {
+        } else if (allowRedirect && VIEW_ROUTES[viewId] && window.location.pathname !== VIEW_ROUTES[viewId]) {
             // Navigate to the corresponding HTML file
             window.location.href = VIEW_ROUTES[viewId];
         }
