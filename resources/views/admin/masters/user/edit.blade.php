@@ -6,33 +6,33 @@
 @section('content')
 <section class="view-section active" id="view-master-user-edit">
     <!-- Breadcrumb & Top Bar -->
-    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.75rem; flex-wrap: wrap; gap: 1rem;">
+    <div class="erp-page-top-bar">
         <div>
-            <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.5rem;">
-                <a href="{{ route('admin.dashboard') }}" style="color: var(--text-muted); text-decoration: none;">Dashboard</a>
-                <i class="fa-solid fa-chevron-right" style="font-size: 0.65rem;"></i>
+            <div class="erp-breadcrumb-trail">
+                <a href="{{ route('admin.dashboard') }}">Dashboard</a>
+                <i class="fa-solid fa-chevron-right erp-breadcrumb-sep"></i>
                 <span>Masters</span>
-                <i class="fa-solid fa-chevron-right" style="font-size: 0.65rem;"></i>
-                <a href="{{ route('admin.masters.user') }}" style="color: var(--text-muted); text-decoration: none;">User Master</a>
-                <i class="fa-solid fa-chevron-right" style="font-size: 0.65rem;"></i>
-                <span style="color: var(--primary); font-weight: 600;">Edit User</span>
+                <i class="fa-solid fa-chevron-right erp-breadcrumb-sep"></i>
+                <a href="{{ route('admin.masters.user') }}">User Master</a>
+                <i class="fa-solid fa-chevron-right erp-breadcrumb-sep"></i>
+                <span class="erp-breadcrumb-active">Edit User</span>
             </div>
-            <h1 class="page-title" style="margin: 0; font-size: 1.65rem; font-weight: 800; color: var(--text-primary); display: flex; align-items: center; gap: 0.65rem;">
-                <span style="width: 40px; height: 40px; border-radius: 12px; background: rgba(91, 132, 30, 0.12); color: var(--primary); display: inline-flex; align-items: center; justify-content: center; font-size: 1.15rem;">
+            <h1 class="erp-page-title">
+                <span class="erp-page-title-icon-box">
                     <i class="fa-solid fa-user-pen"></i>
                 </span>
                 Edit User: {{ $user->name }}
             </h1>
-            <p class="page-subtitle" style="margin: 0.25rem 0 0; color: var(--text-muted); font-size: 0.88rem;">
+            <p class="erp-page-subtitle">
                 Update operator credentials, access roles, status, and plant associations.
             </p>
         </div>
 
-        <div style="display: flex; align-items: center; gap: 0.75rem;">
-            <a href="{{ route('admin.masters.user.show', $user) }}" class="btn btn-outline" style="border-radius: 10px; height: 42px; padding: 0 1.25rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.5rem;">
+        <div class="erp-header-actions">
+            <a href="{{ route('admin.masters.user.show', $user) }}" class="btn btn-outline erp-btn-header-back">
                 <i class="fa-regular fa-eye"></i> View Profile
             </a>
-            <a href="{{ route('admin.masters.user') }}" class="btn btn-outline" style="border-radius: 10px; height: 42px; padding: 0 1.25rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.5rem;">
+            <a href="{{ route('admin.masters.user') }}" class="btn btn-outline erp-btn-header-back">
                 <i class="fa-solid fa-arrow-left"></i> Back to Directory
             </a>
         </div>
@@ -40,11 +40,11 @@
 
     <!-- Error Alerts -->
     @if($errors->any())
-        <div class="alert alert-danger" style="background: #FEF2F2; border: 1px solid #FECACA; border-left: 5px solid #EF4444; padding: 1.1rem 1.35rem; border-radius: 14px; color: #991B1B; font-size: 0.88rem; margin-bottom: 1.75rem; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.08);">
-            <div style="font-weight: 700; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.5rem; font-size: 0.95rem;">
-                <i class="fa-solid fa-triangle-exclamation" style="font-size: 1.1rem;"></i> Please correct the following errors:
+        <div class="alert erp-alert-error-list-card">
+            <div class="erp-alert-error-header">
+                <i class="fa-solid fa-triangle-exclamation"></i> Please correct the following errors:
             </div>
-            <ul style="margin: 0; padding-left: 1.25rem;">
+            <ul class="erp-alert-error-ul">
                 @foreach($errors->all() as $error)
                     <li>{{ $error }}</li>
                 @endforeach
@@ -56,114 +56,116 @@
         @csrf
         @method('PUT')
 
-        <div class="form-grid-layout" style="display: grid; grid-template-columns: 1fr 340px; gap: 1.5rem; align-items: start;">
+        <div class="erp-form-layout-2col">
             <!-- Left Main Form Column -->
-            <div class="form-main-col" style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <div class="erp-form-main-col">
 
                 <!-- 1. Personal & Contact Details -->
-                <div class="card" style="box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04); border-radius: 16px; overflow: hidden; border: 1px solid var(--border-color);">
-                    <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-color); background: #FCFDFB; display: flex; align-items: center; gap: 0.75rem;">
-                        <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(91, 132, 30, 0.1); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 1rem;">
-                            <i class="fa-solid fa-id-card"></i>
-                        </div>
-                        <div>
-                            <h3 style="margin: 0; font-size: 1.05rem; font-weight: 700; color: var(--text-primary);">1. Personal & Contact Details</h3>
-                            <p style="margin: 0.15rem 0 0; font-size: 0.8rem; color: var(--text-muted);">Operator's legal full name, communication phone and email</p>
+                <div class="card erp-form-section-card">
+                    <div class="erp-form-section-header">
+                        <div class="erp-form-section-header-left">
+                            <div class="erp-form-section-icon-box erp-form-icon-primary">
+                                <i class="fa-solid fa-id-card"></i>
+                            </div>
+                            <div>
+                                <h3 class="erp-form-section-title">1. Personal &amp; Contact Details</h3>
+                                <p class="erp-form-section-desc">Operator's legal full name, communication phone and email</p>
+                            </div>
                         </div>
                     </div>
 
-                    <div style="padding: 1.5rem; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem;">
-                        <div class="form-group" style="grid-column: 1 / -1;">
-                            <label class="form-label" style="font-weight: 600; font-size: 0.88rem; margin-bottom: 0.4rem; display: block;">
-                                Full Name <span style="color: #EF4444;">*</span>
+                    <div class="erp-form-section-body">
+                        <div class="form-group erp-form-col-full">
+                            <label class="erp-field-label">
+                                Full Name <span class="erp-req-star">*</span>
                             </label>
-                            <div style="position: relative;">
-                                <i class="fa-solid fa-user" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.9rem;"></i>
-                                <input type="text" name="name" id="field-name" class="form-control" placeholder="e.g. Navneet Sharma" value="{{ old('name', $user->name) }}" required style="padding-left: 2.5rem; height: 42px; border-radius: 8px;" oninput="updateLivePreview()">
+                            <div class="erp-field-icon-wrap">
+                                <i class="fa-solid fa-user erp-field-icon"></i>
+                                <input type="text" name="name" id="field-name" class="form-control erp-field-input-iconified" placeholder="e.g. Navneet Sharma" value="{{ old('name', $user->name) }}" required oninput="updateLivePreview()">
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label" style="font-weight: 600; font-size: 0.88rem; margin-bottom: 0.4rem; display: block;">
-                                Email Address <span style="color: #EF4444;">*</span>
+                            <label class="erp-field-label">
+                                Email Address <span class="erp-req-star">*</span>
                             </label>
-                            <div style="position: relative;">
-                                <i class="fa-regular fa-envelope" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.9rem;"></i>
-                                <input type="email" name="email" id="field-email" class="form-control" placeholder="e.g. navneet@vikasudhyog.com" value="{{ old('email', $user->email) }}" required style="padding-left: 2.5rem; height: 42px; border-radius: 8px;" oninput="updateLivePreview()">
+                            <div class="erp-field-icon-wrap">
+                                <i class="fa-regular fa-envelope erp-field-icon"></i>
+                                <input type="email" name="email" id="field-email" class="form-control erp-field-input-iconified" placeholder="e.g. navneet@vikasudhyog.com" value="{{ old('email', $user->email) }}" required oninput="updateLivePreview()">
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label" style="font-weight: 600; font-size: 0.88rem; margin-bottom: 0.4rem; display: block;">
+                            <label class="erp-field-label">
                                 Mobile Number
                             </label>
-                            <div style="position: relative;">
-                                <i class="fa-solid fa-phone" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.9rem;"></i>
-                                <input type="text" name="phone" id="field-phone" class="form-control" placeholder="e.g. +91 98290 12345" value="{{ old('phone', $user->phone) }}" style="padding-left: 2.5rem; height: 42px; border-radius: 8px;" oninput="updateLivePreview()">
+                            <div class="erp-field-icon-wrap">
+                                <i class="fa-solid fa-phone erp-field-icon"></i>
+                                <input type="text" name="phone" id="field-phone" class="form-control erp-field-input-iconified" placeholder="e.g. +91 98290 12345" value="{{ old('phone', $user->phone) }}" oninput="updateLivePreview()">
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- 2. Login Credentials & Security (Optional Password Reset) -->
-                <div class="card" style="box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04); border-radius: 16px; overflow: hidden; border: 1px solid var(--border-color);">
-                    <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-color); background: #FCFDFB; display: flex; align-items: center; justify-content: space-between;">
-                        <div style="display: flex; align-items: center; gap: 0.75rem;">
-                            <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(59, 130, 246, 0.1); color: #2563EB; display: flex; align-items: center; justify-content: center; font-size: 1rem;">
+                <div class="card erp-form-section-card">
+                    <div class="erp-form-section-header">
+                        <div class="erp-form-section-header-left">
+                            <div class="erp-form-section-icon-box erp-form-icon-blue">
                                 <i class="fa-solid fa-key"></i>
                             </div>
                             <div>
-                                <h3 style="margin: 0; font-size: 1.05rem; font-weight: 700; color: var(--text-primary);">2. Login Credentials &amp; Password Update</h3>
-                                <p style="margin: 0.15rem 0 0; font-size: 0.8rem; color: var(--text-muted);">Username handle and optional password reset</p>
+                                <h3 class="erp-form-section-title">2. Login Credentials &amp; Password Update</h3>
+                                <p class="erp-form-section-desc">Username handle and optional password reset</p>
                             </div>
                         </div>
 
-                        <button type="button" class="btn btn-outline" style="font-size: 0.78rem; padding: 0.35rem 0.75rem; border-radius: 6px; color: #2563EB;" onclick="generateRandomPassword()" title="Generate Random Strong Password">
+                        <button type="button" class="btn btn-outline erp-btn-gen-pwd" onclick="generateRandomPassword()" title="Generate Random Strong Password">
                             <i class="fa-solid fa-dice"></i> Generate New Password
                         </button>
                     </div>
 
-                    <div style="padding: 1.5rem; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem;">
-                        <div class="form-group" style="grid-column: 1 / -1;">
-                            <label class="form-label" style="font-weight: 600; font-size: 0.88rem; margin-bottom: 0.4rem; display: block;">
-                                Username <span style="color: #EF4444;">*</span>
+                    <div class="erp-form-section-body">
+                        <div class="form-group erp-form-col-full">
+                            <label class="erp-field-label">
+                                Username <span class="erp-req-star">*</span>
                             </label>
-                            <div style="position: relative;">
-                                <i class="fa-solid fa-at" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.9rem;"></i>
-                                <input type="text" name="username" id="field-username" class="form-control" placeholder="e.g. navneet" value="{{ old('username', $user->username) }}" required style="padding-left: 2.5rem; height: 42px; border-radius: 8px; font-family: monospace;" oninput="this.value = this.value.toLowerCase().replace(/[^a-z0-9_.-]/g, ''); updateLivePreview();">
+                            <div class="erp-field-icon-wrap">
+                                <i class="fa-solid fa-at erp-field-icon"></i>
+                                <input type="text" name="username" id="field-username" class="form-control erp-field-input-iconified erp-field-input-mono" placeholder="e.g. navneet" value="{{ old('username', $user->username) }}" required oninput="this.value = this.value.toLowerCase().replace(/[^a-z0-9_.-]/g, ''); updateLivePreview();">
                             </div>
                         </div>
 
                         <!-- Password -->
                         <div class="form-group">
-                            <label class="form-label" style="font-weight: 600; font-size: 0.88rem; margin-bottom: 0.4rem; display: flex; justify-content: space-between; align-items: center;">
+                            <label class="erp-field-label-flex">
                                 <span>New Password</span>
-                                <span style="font-size: 0.72rem; color: #64748B; font-weight: normal;">(Leave empty to keep current)</span>
+                                <span class="erp-field-hint mt-0">(Leave empty to keep current)</span>
                             </label>
-                            <div style="position: relative;">
-                                <i class="fa-solid fa-lock" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.9rem;"></i>
-                                <input type="password" name="password" id="field-password" class="form-control" placeholder="Leave blank to keep unchanged" style="padding-left: 2.5rem; padding-right: 2.5rem; height: 42px; border-radius: 8px;" oninput="checkPasswordStrength(this.value)">
-                                <button type="button" onclick="togglePasswordVisibility('field-password', this)" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 5px;" title="Show/Hide Password">
+                            <div class="erp-field-icon-wrap">
+                                <i class="fa-solid fa-lock erp-field-icon"></i>
+                                <input type="password" name="password" id="field-password" class="form-control erp-field-input-iconified-pwd" placeholder="Leave blank to keep unchanged" oninput="checkPasswordStrength(this.value)">
+                                <button type="button" onclick="togglePasswordVisibility('field-password', this)" class="erp-pwd-toggle-btn" title="Show/Hide Password">
                                     <i class="fa-regular fa-eye"></i>
                                 </button>
                             </div>
-                            <div style="margin-top: 0.4rem;">
-                                <div style="height: 4px; border-radius: 2px; background: #E2E8F0; overflow: hidden;">
-                                    <div id="pwd-strength-bar" style="height: 100%; width: 0%; background: #EF4444; transition: all 0.3s;"></div>
+                            <div>
+                                <div class="erp-pwd-strength-bar-wrap">
+                                    <div id="pwd-strength-bar" class="erp-pwd-strength-bar"></div>
                                 </div>
-                                <span id="pwd-strength-text" style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.2rem; display: block;">Only fill if changing password</span>
+                                <span id="pwd-strength-text" class="erp-pwd-strength-text">Only fill if changing password</span>
                             </div>
                         </div>
 
                         <!-- Confirm Password -->
                         <div class="form-group">
-                            <label class="form-label" style="font-weight: 600; font-size: 0.88rem; margin-bottom: 0.4rem; display: block;">
+                            <label class="erp-field-label">
                                 Confirm New Password
                             </label>
-                            <div style="position: relative;">
-                                <i class="fa-solid fa-shield-check" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.9rem;"></i>
-                                <input type="password" name="password_confirmation" id="field-password-confirm" class="form-control" placeholder="Re-enter new password" style="padding-left: 2.5rem; padding-right: 2.5rem; height: 42px; border-radius: 8px;">
-                                <button type="button" onclick="togglePasswordVisibility('field-password-confirm', this)" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 5px;" title="Show/Hide Password">
+                            <div class="erp-field-icon-wrap">
+                                <i class="fa-solid fa-shield-check erp-field-icon"></i>
+                                <input type="password" name="password_confirmation" id="field-password-confirm" class="form-control erp-field-input-iconified-pwd" placeholder="Re-enter new password">
+                                <button type="button" onclick="togglePasswordVisibility('field-password-confirm', this)" class="erp-pwd-toggle-btn" title="Show/Hide Password">
                                     <i class="fa-regular fa-eye"></i>
                                 </button>
                             </div>
@@ -172,26 +174,28 @@
                 </div>
 
                 <!-- 3. Role & Company Assignment -->
-                <div class="card" style="box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04); border-radius: 16px; overflow: hidden; border: 1px solid var(--border-color);">
-                    <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-color); background: #FCFDFB; display: flex; align-items: center; gap: 0.75rem;">
-                        <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(139, 92, 246, 0.1); color: #8B5CF6; display: flex; align-items: center; justify-content: center; font-size: 1rem;">
-                            <i class="fa-solid fa-user-shield"></i>
-                        </div>
-                        <div>
-                            <h3 style="margin: 0; font-size: 1.05rem; font-weight: 700; color: var(--text-primary);">3. Role &amp; Plant Assignment</h3>
-                            <p style="margin: 0.15rem 0 0; font-size: 0.8rem; color: var(--text-muted);">Assign module access permissions and manufacturing plant mapping</p>
+                <div class="card erp-form-section-card">
+                    <div class="erp-form-section-header">
+                        <div class="erp-form-section-header-left">
+                            <div class="erp-form-section-icon-box erp-form-icon-amber">
+                                <i class="fa-solid fa-user-shield"></i>
+                            </div>
+                            <div>
+                                <h3 class="erp-form-section-title">3. Role &amp; Plant Assignment</h3>
+                                <p class="erp-form-section-desc">Assign module access permissions and manufacturing plant mapping</p>
+                            </div>
                         </div>
                     </div>
 
-                    <div style="padding: 1.5rem; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem;">
+                    <div class="erp-form-section-body">
                         <!-- Role -->
                         <div class="form-group">
-                            <label class="form-label" style="font-weight: 600; font-size: 0.88rem; margin-bottom: 0.4rem; display: block;">
-                                System Role <span style="color: #EF4444;">*</span>
+                            <label class="erp-field-label">
+                                System Role <span class="erp-req-star">*</span>
                             </label>
-                            <div style="position: relative;">
-                                <i class="fa-solid fa-user-tag" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.9rem;"></i>
-                                <select name="role" id="field-role" class="form-control" required style="padding-left: 2.5rem; height: 42px; border-radius: 8px;" onchange="updateLivePreview()">
+                            <div class="erp-field-icon-wrap">
+                                <i class="fa-solid fa-user-tag erp-field-icon"></i>
+                                <select name="role" id="field-role" class="form-control erp-field-input-iconified" required onchange="updateLivePreview()">
                                     @foreach($roles as $roleKey => $roleDesc)
                                         <option value="{{ $roleKey }}" {{ old('role', $user->role) === $roleKey ? 'selected' : '' }} data-desc="{{ $roleDesc }}">
                                             {{ $roleKey }}
@@ -199,19 +203,19 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div id="role-description-box" style="margin-top: 0.4rem; font-size: 0.75rem; color: #64748B; background: #F8FAFC; padding: 0.4rem 0.6rem; border-radius: 6px; border: 1px solid #E2E8F0;">
+                            <div id="role-description-box" class="erp-profile-mod-badge w-100 mt-2">
                                 System role privileges
                             </div>
                         </div>
 
                         <!-- Company Assignment -->
                         <div class="form-group">
-                            <label class="form-label" style="font-weight: 600; font-size: 0.88rem; margin-bottom: 0.4rem; display: block;">
+                            <label class="erp-field-label">
                                 Company / Plant Assignment
                             </label>
-                            <div style="position: relative;">
-                                <i class="fa-solid fa-building" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.9rem;"></i>
-                                <select name="company_id" id="field-company" class="form-control" style="padding-left: 2.5rem; height: 42px; border-radius: 8px;" onchange="updateLivePreview()">
+                            <div class="erp-field-icon-wrap">
+                                <i class="fa-solid fa-building erp-field-icon"></i>
+                                <select name="company_id" id="field-company" class="form-control erp-field-input-iconified" onchange="updateLivePreview()">
                                     <option value="">-- All Companies / Multi-Plant Global --</option>
                                     @foreach($companies as $comp)
                                         <option value="{{ $comp->id }}" {{ old('company_id', $user->company_id) == $comp->id ? 'selected' : '' }}>
@@ -227,83 +231,89 @@
             </div>
 
             <!-- Right Sidebar Column -->
-            <div class="form-sidebar-col" style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <div class="erp-form-side-col">
 
                 <!-- Live Preview Card -->
-                <div class="card" style="box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04); border-radius: 16px; overflow: hidden; border: 1px solid var(--border-color); text-align: center;">
-                    <div style="padding: 1rem 1.25rem; border-bottom: 1px solid var(--border-color); background: #FCFDFB; font-weight: 700; font-size: 0.88rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">
+                <div class="card erp-preview-card">
+                    <div class="erp-preview-header">
                         Live Card Preview
                     </div>
-                    <div style="padding: 1.5rem 1.25rem;">
-                        <div id="preview-avatar" style="width: 64px; height: 64px; border-radius: 16px; background: linear-gradient(135deg, var(--primary) 0%, #3D5A14 100%); color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.5rem; margin-bottom: 0.85rem; box-shadow: 0 4px 12px rgba(91,132,30,0.3);">
+                    <div class="erp-preview-body">
+                        <div id="preview-avatar" class="erp-preview-avatar-circle">
                             {{ $user->initials }}
                         </div>
-                        <h4 id="preview-name" style="margin: 0; font-size: 1.1rem; font-weight: 700; color: var(--text-primary);">
+                        <h4 id="preview-name" class="erp-preview-name-text">
                             {{ $user->name }}
                         </h4>
-                        <div id="preview-username" style="font-family: monospace; font-size: 0.82rem; color: #64748B; margin: 0.25rem 0 0.75rem;">
+                        <div id="preview-username" class="erp-user-username mb-2">
                             @{{ $user->username }}
                         </div>
 
-                        <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; flex-wrap: wrap;">
-                            <span id="preview-role" style="font-size: 0.75rem; font-weight: 700; padding: 0.25rem 0.6rem; border-radius: 6px; background: #FAF5FF; color: #7E22CE; border: 1px solid #E9D5FF;">
+                        <div>
+                            <span id="preview-role" class="erp-preview-role-pill">
                                 {{ $user->role }}
                             </span>
                         </div>
 
-                        <div id="preview-company" style="font-size: 0.78rem; color: var(--text-muted); margin-top: 0.85rem; padding-top: 0.75rem; border-top: 1px dashed var(--border-color); display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
+                        <div id="preview-company" class="erp-preview-meta-list">
                             @if($user->company)
-                                <i class="fa-solid fa-building" style="color: var(--primary);"></i> {{ $user->company->name }}
+                                <div class="erp-preview-meta-item">
+                                    <i class="fa-solid fa-building"></i>
+                                    <span>{{ $user->company->name }}</span>
+                                </div>
                             @else
-                                <i class="fa-solid fa-globe"></i> All Plants / Global
+                                <div class="erp-preview-meta-item">
+                                    <i class="fa-solid fa-globe"></i>
+                                    <span>All Plants / Global</span>
+                                </div>
                             @endif
                         </div>
                     </div>
                 </div>
 
                 <!-- Account Metadata Card -->
-                <div class="card" style="box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04); border-radius: 16px; overflow: hidden; border: 1px solid var(--border-color); padding: 1.25rem; font-size: 0.8rem;">
-                    <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 0.75rem; font-size: 0.88rem; display: flex; align-items: center; gap: 0.4rem;">
-                        <i class="fa-solid fa-clock-rotate-left" style="color: var(--primary);"></i> Audit Trail
+                <div class="card erp-profile-detail-card p-3">
+                    <div class="erp-profile-audit-title mb-2">
+                        <i class="fa-solid fa-clock-rotate-left"></i> Audit Trail
                     </div>
-                    <div style="display: flex; flex-direction: column; gap: 0.5rem; color: #64748B;">
-                        <div style="display: flex; justify-content: space-between;">
+                    <div class="d-flex flex-column gap-2 text-muted">
+                        <div class="d-flex justify-content-between">
                             <span>Account ID:</span>
-                            <strong style="color: var(--text-primary);">#{{ $user->id }}</strong>
+                            <strong class="text-dark">#{{ $user->id }}</strong>
                         </div>
-                        <div style="display: flex; justify-content: space-between;">
+                        <div class="d-flex justify-content-between">
                             <span>Created:</span>
-                            <strong style="color: var(--text-primary);">{{ $user->created_at ? $user->created_at->format('d M Y, h:i A') : 'N/A' }}</strong>
+                            <strong class="text-dark">{{ $user->created_at ? $user->created_at->format('d M Y, h:i A') : 'N/A' }}</strong>
                         </div>
-                        <div style="display: flex; justify-content: space-between;">
+                        <div class="d-flex justify-content-between">
                             <span>Last Login:</span>
-                            <strong style="color: var(--text-primary);">{{ $user->last_login_at ? $user->last_login_at->format('d M Y, h:i A') : 'Never' }}</strong>
+                            <strong class="text-dark">{{ $user->last_login_at ? $user->last_login_at->format('d M Y, h:i A') : 'Never' }}</strong>
                         </div>
-                        <div style="display: flex; justify-content: space-between;">
+                        <div class="d-flex justify-content-between">
                             <span>Last IP Address:</span>
-                            <strong style="color: var(--text-primary); font-family: monospace;">{{ $user->last_login_ip ?: 'None' }}</strong>
+                            <strong class="text-dark font-monospace">{{ $user->last_login_ip ?: 'None' }}</strong>
                         </div>
                     </div>
                 </div>
 
                 <!-- Form Action Buttons -->
-                <div class="card" style="box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04); border-radius: 16px; overflow: hidden; border: 1px solid var(--border-color); padding: 1.25rem; display: flex; flex-direction: column; gap: 0.75rem;">
-                    <button type="submit" class="btn btn-primary" style="height: 44px; font-weight: 700; font-size: 0.95rem; border-radius: 10px; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                <div class="card erp-form-section-card p-3 d-flex flex-column gap-2">
+                    <button type="submit" class="btn btn-primary erp-btn-header-primary w-100 justify-content-center">
                         <i class="fa-solid fa-floppy-disk"></i> Save Changes
                     </button>
-                    <a href="{{ route('admin.masters.user') }}" class="btn btn-outline" style="height: 42px; font-weight: 600; font-size: 0.9rem; border-radius: 10px; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                    <a href="{{ route('admin.masters.user') }}" class="btn btn-outline erp-btn-header-back w-100 justify-content-center">
                         Cancel
                     </a>
                 </div>
 
                 <!-- Danger Zone (Delete Account) -->
                 @if(auth()->id() !== $user->id)
-                    <div style="background: #FEF2F2; border: 1px solid #FECACA; border-radius: 12px; padding: 1.25rem;">
-                        <div style="font-weight: 700; color: #991B1B; margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.4rem; font-size: 0.88rem;">
+                    <div class="erp-alert-error-list-card p-3">
+                        <div class="erp-alert-error-header mb-1">
                             <i class="fa-solid fa-triangle-exclamation"></i> Danger Zone
                         </div>
-                        <p style="font-size: 0.78rem; color: #7F1D1D; margin: 0 0 0.85rem;">Soft deletes this user account and immediately prevents login.</p>
-                        <button type="button" class="btn" style="background: #DC2626; color: #FFFFFF; font-weight: 700; font-size: 0.82rem; border-radius: 8px; width: 100%; height: 38px;" onclick="confirmDeleteUser({{ $user->id }}, '{{ addslashes($user->name) }}', '{{ $user->username }}')">
+                        <p class="erp-field-hint mt-0 mb-2">Soft deletes this user account and immediately prevents login.</p>
+                        <button type="button" class="btn btn-danger erp-btn-header-back w-100 justify-content-center" onclick="confirmDeleteUser({{ $user->id }}, '{{ addslashes($user->name) }}', '{{ $user->username }}')">
                             <i class="fa-solid fa-trash-can"></i> Delete User Account
                         </button>
                     </div>
@@ -315,7 +325,7 @@
 </section>
 
 <!-- Delete User Modal Form -->
-<form id="delete-user-form" action="" method="POST" style="display: none;">
+<form id="delete-user-form" action="" method="POST" class="d-none">
     @csrf
     @method('DELETE')
 </form>
@@ -395,8 +405,6 @@ function updateLivePreview() {
     const roleDesc = selectedOption ? selectedOption.getAttribute('data-desc') : '';
     const companySelect = document.getElementById('field-company');
     const companyText = companySelect.options[companySelect.selectedIndex].text;
-    const statusRadio = document.querySelector('input[name="status"]:checked');
-    const status = statusRadio ? statusRadio.value : 'active';
 
     // Initials
     const words = name.split(/\s+/);
@@ -418,16 +426,16 @@ function updateLivePreview() {
 
     const previewCompany = document.getElementById('preview-company');
     if (companySelect.value) {
-        previewCompany.innerHTML = `<i class="fa-solid fa-building" style="color: var(--primary);"></i> ${companyText}`;
+        previewCompany.innerHTML = `<div class="erp-preview-meta-item"><i class="fa-solid fa-building"></i> <span>${companyText}</span></div>`;
     } else {
-        previewCompany.innerHTML = `<i class="fa-solid fa-globe"></i> All Plants / Global`;
+        previewCompany.innerHTML = `<div class="erp-preview-meta-item"><i class="fa-solid fa-globe"></i> <span>All Plants / Global</span></div>`;
     }
 }
 
 function confirmDeleteUser(userId, userName, username) {
     Swal.fire({
         title: 'Delete User Account?',
-        html: `Are you sure you want to remove user <strong>"${userName}"</strong> (@${username})?<br><small style="color: #64748B;">This action soft-deletes the user and revokes ERP access immediately.</small>`,
+        html: `Are you sure you want to remove user <strong>"${userName}"</strong> (@${username})?<br><small class="text-muted">This action soft-deletes the user and revokes ERP access immediately.</small>`,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#DC2626',

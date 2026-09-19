@@ -6,166 +6,166 @@
 @section('content')
 <section class="view-section active" id="view-master-access">
     <!-- Breadcrumb & Top Bar -->
-    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+    <div class="erp-page-top-bar">
         <div>
-            <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.25rem; display: flex; align-items: center; gap: 0.5rem;">
-                <a href="{{ route('admin.dashboard') }}" style="color: var(--text-muted); text-decoration: none;">Dashboard</a>
-                <i class="fa-solid fa-chevron-right" style="font-size: 0.65rem;"></i>
+            <div class="erp-breadcrumb-trail">
+                <a href="{{ route('admin.dashboard') }}">Dashboard</a>
+                <i class="fa-solid fa-chevron-right erp-breadcrumb-sep"></i>
                 <span>Masters</span>
-                <i class="fa-solid fa-chevron-right" style="font-size: 0.65rem;"></i>
-                <span style="color: var(--primary); font-weight: 600;">Access Level &amp; Roles</span>
+                <i class="fa-solid fa-chevron-right erp-breadcrumb-sep"></i>
+                <span class="erp-breadcrumb-active">Access Level &amp; Roles</span>
             </div>
-            <h1 class="page-title" style="margin: 0; font-size: 1.6rem; font-weight: 800; color: var(--text-primary); display: flex; align-items: center; gap: 0.6rem;">
-                <i class="fa-solid fa-shield-halved" style="color: var(--primary);"></i> Access Level &amp; Role Management
+            <h1 class="erp-page-title">
+                <i class="fa-solid fa-shield-halved"></i> Access Level &amp; Role Management
             </h1>
-            <p class="page-subtitle" style="margin: 0.2rem 0 0; color: var(--text-muted); font-size: 0.88rem;">
+            <p class="erp-page-subtitle">
                 Configure granular sub-module authorization (View, Add, Edit, Delete, Export) and role activation status.
             </p>
         </div>
 
-        <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
-            <button type="button" class="btn btn-outline" onclick="openAddRoleModal()" style="border-radius: 8px; font-weight: 600;">
+        <div class="erp-header-actions">
+            <button type="button" class="btn btn-outline" onclick="openAddRoleModal()">
                 <i class="fa-solid fa-plus"></i> Add Custom Role
             </button>
-            <button type="button" class="btn btn-outline" onclick="resetCurrentRoleDefaults()" style="border-radius: 8px; font-weight: 600;" title="Restore standard default permissions for selected role">
+            <button type="button" class="btn btn-outline" onclick="resetCurrentRoleDefaults()" title="Restore standard default permissions for selected role">
                 <i class="fa-solid fa-arrows-rotate"></i> Reset Defaults
             </button>
-            <button type="button" class="btn btn-primary" onclick="saveCurrentPermissions()" style="border-radius: 8px; font-weight: 600; display: inline-flex; align-items: center; gap: 0.5rem;">
+            <button type="button" class="btn btn-primary" onclick="saveCurrentPermissions()">
                 <i class="fa-solid fa-floppy-disk"></i> Save Permissions
             </button>
         </div>
     </div>
 
     <!-- Main 2-Column Master Layout -->
-    <div style="display: grid; grid-template-columns: 330px 1fr; gap: 1.5rem; align-items: start;">
+    <div class="access-mgmt-grid">
         
         <!-- Left Column: Role Directory -->
-        <div class="card" style="box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04); border-radius: 16px; overflow: hidden; border: 1px solid var(--border-color);">
-            <div style="padding: 1.15rem 1.25rem; border-bottom: 1px solid var(--border-color); background: #FCFDFB; display: flex; align-items: center; justify-content: space-between;">
-                <div style="font-weight: 700; font-size: 0.92rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.45rem;">
-                    <i class="fa-solid fa-id-badge" style="color: var(--primary);"></i> Roles (<span id="role-count-badge">8</span>)
+        <div class="card role-directory-card">
+            <div class="role-directory-header">
+                <div class="role-directory-title">
+                    <i class="fa-solid fa-id-badge"></i> Roles (<span id="role-count-badge">8</span>)
                 </div>
-                <button type="button" onclick="openAddRoleModal()" class="btn btn-outline" style="padding: 0.2rem 0.6rem; font-size: 0.75rem; border-radius: 6px; color: var(--primary);" title="Create New Role">
+                <button type="button" onclick="openAddRoleModal()" class="btn btn-outline role-directory-btn-new" title="Create New Role">
                     <i class="fa-solid fa-plus"></i> New
                 </button>
             </div>
 
             <!-- Role Filter Search -->
-            <div style="padding: 0.85rem 1.25rem; border-bottom: 1px solid var(--border-color); background: #FFFFFF;">
-                <div style="position: relative;">
-                    <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.8rem;"></i>
-                    <input type="text" id="role-search-input" placeholder="Search roles..." class="form-control" style="padding-left: 2rem; height: 36px; border-radius: 8px; font-size: 0.82rem;" oninput="filterRolesList(this.value)">
+            <div class="role-search-wrap">
+                <div class="role-search-inner">
+                    <i class="fa-solid fa-magnifying-glass role-search-icon"></i>
+                    <input type="text" id="role-search-input" placeholder="Search roles..." class="form-control role-search-field" oninput="filterRolesList(this.value)">
                 </div>
             </div>
 
             <!-- Role List Container -->
-            <div id="roles-list-wrapper" style="padding: 0.75rem; display: flex; flex-direction: column; gap: 0.5rem; max-height: calc(100vh - 280px); overflow-y: auto;">
+            <div id="roles-list-wrapper" class="roles-list-scroll">
                 <!-- Roles injected via JS -->
             </div>
         </div>
 
         <!-- Right Column: Permission Matrix -->
-        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+        <div class="erp-form-main-col">
             
             <!-- Active Role Hero Banner Card -->
-            <div class="card" style="box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04); border-radius: 16px; overflow: hidden; border: 1px solid var(--border-color);">
-                <div id="role-hero-header" style="background: linear-gradient(135deg, #2D4010 0%, #5B841E 100%); padding: 1.5rem 1.75rem; color: #FFFFFF; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.25rem;">
-                    <div style="display: flex; align-items: center; gap: 1.15rem;">
-                        <div id="hero-role-icon-box" style="width: 52px; height: 52px; border-radius: 14px; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(8px); border: 1.5px solid rgba(255, 255, 255, 0.3); color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0;">
+            <div class="card role-matrix-card">
+                <div id="role-hero-header" class="role-hero-header">
+                    <div class="hero-left-wrap">
+                        <div id="hero-role-icon-box" class="hero-icon-box">
                             <i class="fa-solid fa-shield-halved"></i>
                         </div>
                         <div>
-                            <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;">
-                                <h2 id="hero-role-name" style="margin: 0; font-size: 1.35rem; font-weight: 800; color: #FFFFFF;">
+                            <div class="hero-title-row">
+                                <h2 id="hero-role-name" class="hero-role-heading">
                                     Super Administrator
                                 </h2>
-                                <span id="hero-role-badge" style="font-size: 0.72rem; background: rgba(255, 255, 255, 0.25); color: #FFFFFF; padding: 0.2rem 0.55rem; border-radius: 6px; font-weight: 700;">
+                                <span id="hero-role-badge" class="hero-badge-pill">
                                     System Built-in
                                 </span>
-                                <span id="hero-role-status-badge" style="font-size: 0.72rem; background: #DCFCE7; color: #166534; padding: 0.2rem 0.55rem; border-radius: 6px; font-weight: 700; display: inline-flex; align-items: center; gap: 0.3rem;">
-                                    <span style="width: 6px; height: 6px; border-radius: 50%; background: #16A34A;"></span> Active
+                                <span id="hero-role-status-badge" class="hero-status-pill">
+                                    <span class="erp-status-dot-green"></span> Active
                                 </span>
                             </div>
-                            <p id="hero-role-desc" style="margin: 0.25rem 0 0; font-size: 0.84rem; color: rgba(255, 255, 255, 0.9);">
+                            <p id="hero-role-desc" class="hero-role-description">
                                 Unrestricted master privilege. Full control over system configurations, plants & users.
                             </p>
                         </div>
                     </div>
 
                     <!-- Role Management & Quick Controls -->
-                    <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                    <div class="hero-actions-row">
                         <!-- Edit Role Button -->
-                        <button type="button" class="btn" onclick="openEditRoleModal()" style="background: rgba(255, 255, 255, 0.2); color: #FFFFFF; border: 1px solid rgba(255, 255, 255, 0.3); font-size: 0.78rem; font-weight: 700; padding: 0.45rem 0.85rem; border-radius: 6px; cursor: pointer;" title="Edit Role Details">
+                        <button type="button" class="btn hero-action-btn" onclick="openEditRoleModal()" title="Edit Role Details">
                             <i class="fa-solid fa-pen-to-square"></i> Edit Role
                         </button>
 
                         <!-- Toggle Role Status Button -->
-                        <button type="button" id="btn-toggle-role-status" class="btn" onclick="toggleRoleStatus()" style="background: rgba(255, 255, 255, 0.2); color: #FFFFFF; border: 1px solid rgba(255, 255, 255, 0.3); font-size: 0.78rem; font-weight: 700; padding: 0.45rem 0.85rem; border-radius: 6px; cursor: pointer;" title="Toggle Active / Inactive Status">
+                        <button type="button" id="btn-toggle-role-status" class="btn hero-action-btn" onclick="toggleRoleStatus()" title="Toggle Active / Inactive Status">
                             <i class="fa-solid fa-power-off"></i> <span id="lbl-toggle-status">Deactivate</span>
                         </button>
 
                         <!-- Delete Role Button -->
-                        <button type="button" id="btn-delete-role" class="btn" onclick="confirmDeleteCurrentRole()" style="background: rgba(239, 68, 68, 0.3); color: #FFFFFF; border: 1px solid rgba(239, 68, 68, 0.5); font-size: 0.78rem; font-weight: 700; padding: 0.45rem 0.85rem; border-radius: 6px; cursor: pointer;" title="Delete this role">
+                        <button type="button" id="btn-delete-role" class="btn hero-delete-btn" onclick="confirmDeleteCurrentRole()" title="Delete this role">
                             <i class="fa-solid fa-trash-can"></i> Delete
                         </button>
                     </div>
                 </div>
 
                 <!-- Sub-Permission Quick Preset Bar -->
-                <div style="padding: 0.9rem 1.75rem; background: #FCFDFB; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
-                    <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
-                        <span style="font-size: 0.84rem; font-weight: 700; color: var(--text-primary);">
+                <div class="perm-preset-bar">
+                    <div class="perm-coverage-wrap">
+                        <span class="perm-coverage-label">
                             Sub-Permission Scope:
                         </span>
-                        <span id="permission-ratio-text" style="font-size: 0.84rem; font-weight: 800; color: var(--primary);">
+                        <span id="permission-ratio-text" class="perm-coverage-text">
                             140 / 140 Actions Granted (100%)
                         </span>
-                        <div style="width: 140px; height: 8px; border-radius: 4px; background: #E2E8F0; overflow: hidden;">
-                            <div id="permission-progress-bar" style="height: 100%; width: 100%; background: var(--primary); transition: width 0.3s ease;"></div>
+                        <div class="perm-progress-track">
+                            <div id="permission-progress-bar" class="perm-progress-fill"></div>
                         </div>
                     </div>
 
-                    <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
-                        <button type="button" class="btn btn-outline" style="font-size: 0.75rem; padding: 0.3rem 0.65rem; border-radius: 6px; font-weight: 700;" onclick="toggleAllSubPermissions(true)">
+                    <div class="perm-preset-actions">
+                        <button type="button" class="btn btn-outline perm-preset-btn" onclick="toggleAllSubPermissions(true)">
                             <i class="fa-solid fa-check-double"></i> Full Access
                         </button>
-                        <button type="button" class="btn btn-outline" style="font-size: 0.75rem; padding: 0.3rem 0.65rem; border-radius: 6px; font-weight: 700;" onclick="setReadOnlyPreset()">
+                        <button type="button" class="btn btn-outline perm-preset-btn" onclick="setReadOnlyPreset()">
                             <i class="fa-regular fa-eye"></i> Read Only
                         </button>
-                        <button type="button" class="btn btn-outline" style="font-size: 0.75rem; padding: 0.3rem 0.65rem; border-radius: 6px; font-weight: 700; color: #EF4444;" onclick="toggleAllSubPermissions(false)">
+                        <button type="button" class="btn btn-outline perm-preset-btn-revoke" onclick="toggleAllSubPermissions(false)">
                             <i class="fa-solid fa-ban"></i> Revoke All
                         </button>
                     </div>
                 </div>
 
                 <!-- Inactive Role Warning Banner -->
-                <div id="inactive-role-notice" style="display: none; padding: 0.9rem 1.5rem; background: #FEF2F2; border-bottom: 1px solid #FECACA; color: #991B1B; font-size: 0.82rem; align-items: center; gap: 0.6rem;">
-                    <i class="fa-solid fa-circle-exclamation" style="font-size: 1.1rem; color: #EF4444;"></i>
+                <div id="inactive-role-notice" class="perm-notice-inactive">
+                    <i class="fa-solid fa-circle-exclamation perm-notice-icon-inactive"></i>
                     <span><strong>This role is currently INACTIVE.</strong> Operators assigned to this role cannot log in or perform actions until it is reactivated.</span>
                 </div>
 
                 <!-- Super Admin Notice Banner -->
-                <div id="super-admin-notice" style="display: none; padding: 0.9rem 1.5rem; background: #FEFCE8; border-bottom: 1px solid #FEF08A; color: #854D0E; font-size: 0.82rem; align-items: center; gap: 0.6rem;">
-                    <i class="fa-solid fa-crown" style="font-size: 1.1rem; color: #CA8A04;"></i>
+                <div id="super-admin-notice" class="perm-notice-superadmin">
+                    <i class="fa-solid fa-crown perm-notice-icon-super"></i>
                     <span><strong>Super Administrator</strong> inherently possesses unrestricted access across all ERP master registers, transactional ledgers, and database management modules.</span>
                 </div>
 
                 <!-- Granular Permissions Grid Grouped by Category -->
-                <div style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1.75rem;">
+                <div class="perm-groups-container">
                     
                     <!-- Group 1: Masters & Static Records -->
-                    <div>
-                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.85rem; padding-bottom: 0.4rem; border-bottom: 1.5px solid #F1F5F9;">
-                            <div style="font-weight: 800; font-size: 0.95rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
-                                <span style="width: 28px; height: 28px; border-radius: 6px; background: rgba(91, 132, 30, 0.12); color: var(--primary); display: inline-flex; align-items: center; justify-content: center; font-size: 0.85rem;">
+                    <div class="perm-theme-core">
+                        <div class="perm-group-header">
+                            <div class="perm-group-title">
+                                <span class="perm-group-icon">
                                     <i class="fa-solid fa-folder-tree"></i>
                                 </span>
                                 1. Master Records &amp; Directory Permissions
                             </div>
-                            <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">9 Modules</span>
+                            <span class="perm-group-count">9 Modules</span>
                         </div>
 
-                        <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+                        <div class="perm-modules-list">
                             @php
                                 $mastersModules = [
                                     'company' => ['Company Master', 'fa-building', 'Multi-company legal profiles, GSTIN & bank accounts'],
@@ -183,16 +183,16 @@
                             @foreach($mastersModules as $key => $data)
                                 <div class="perm-module-card" id="card-mod-{{ $key }}">
                                     <div class="perm-module-header">
-                                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                        <div class="perm-module-info">
                                             <div class="perm-icon-box">
                                                 <i class="fa-solid {{ $data[1] }}"></i>
                                             </div>
                                             <div>
-                                                <div style="font-weight: 700; font-size: 0.9rem; color: var(--text-primary);">{{ $data[0] }}</div>
-                                                <div style="font-size: 0.75rem; color: var(--text-muted);">{{ $data[2] }}</div>
+                                                <div class="perm-module-name">{{ $data[0] }}</div>
+                                                <div class="perm-module-desc">{{ $data[2] }}</div>
                                             </div>
                                         </div>
-                                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                        <div class="perm-module-actions-right">
                                             <span class="sub-perm-badge" id="badge-count-{{ $key }}">5/5 Actions</span>
                                             <label class="switch-control" onclick="event.stopPropagation()">
                                                 <input type="checkbox" id="perm-{{ $key }}-master" onchange="toggleModuleAllActions('{{ $key }}', this.checked)">
@@ -230,18 +230,18 @@
                     </div>
 
                     <!-- Group 2: Transactions & Commercial Entries -->
-                    <div>
-                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.85rem; padding-bottom: 0.4rem; border-bottom: 1.5px solid #F1F5F9;">
-                            <div style="font-weight: 800; font-size: 0.95rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
-                                <span style="width: 28px; height: 28px; border-radius: 6px; background: rgba(59, 130, 246, 0.12); color: #2563EB; display: inline-flex; align-items: center; justify-content: center; font-size: 0.85rem;">
+                    <div class="perm-theme-trans">
+                        <div class="perm-group-header">
+                            <div class="perm-group-title">
+                                <span class="perm-group-icon">
                                     <i class="fa-solid fa-right-left"></i>
                                 </span>
                                 2. Commercial Transactions &amp; Vouchers
                             </div>
-                            <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">8 Modules</span>
+                            <span class="perm-group-count">8 Modules</span>
                         </div>
 
-                        <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+                        <div class="perm-modules-list">
                             @php
                                 $transactionModules = [
                                     'purchase_entry' => ['Purchase Entry', 'fa-cart-shopping', 'Direct raw herbal inward procurement purchases'],
@@ -258,16 +258,16 @@
                             @foreach($transactionModules as $key => $data)
                                 <div class="perm-module-card" id="card-mod-{{ $key }}">
                                     <div class="perm-module-header">
-                                        <div style="display: flex; align-items: center; gap: 0.75rem;">
-                                            <div class="perm-icon-box" style="background: rgba(59, 130, 246, 0.1); color: #2563EB;">
+                                        <div class="perm-module-info">
+                                            <div class="perm-icon-box">
                                                 <i class="fa-solid {{ $data[1] }}"></i>
                                             </div>
                                             <div>
-                                                <div style="font-weight: 700; font-size: 0.9rem; color: var(--text-primary);">{{ $data[0] }}</div>
-                                                <div style="font-size: 0.75rem; color: var(--text-muted);">{{ $data[2] }}</div>
+                                                <div class="perm-module-name">{{ $data[0] }}</div>
+                                                <div class="perm-module-desc">{{ $data[2] }}</div>
                                             </div>
                                         </div>
-                                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                        <div class="perm-module-actions-right">
                                             <span class="sub-perm-badge" id="badge-count-{{ $key }}">5/5 Actions</span>
                                             <label class="switch-control" onclick="event.stopPropagation()">
                                                 <input type="checkbox" id="perm-{{ $key }}-master" onchange="toggleModuleAllActions('{{ $key }}', this.checked)">
@@ -305,18 +305,18 @@
                     </div>
 
                     <!-- Group 3: Inventory & Warehouse Control -->
-                    <div>
-                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.85rem; padding-bottom: 0.4rem; border-bottom: 1.5px solid #F1F5F9;">
-                            <div style="font-weight: 800; font-size: 0.95rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
-                                <span style="width: 28px; height: 28px; border-radius: 6px; background: rgba(217, 119, 6, 0.12); color: #D97706; display: inline-flex; align-items: center; justify-content: center; font-size: 0.85rem;">
+                    <div class="perm-theme-stock">
+                        <div class="perm-group-header">
+                            <div class="perm-group-title">
+                                <span class="perm-group-icon">
                                     <i class="fa-solid fa-boxes-stacked"></i>
                                 </span>
                                 3. Inventory &amp; Warehouse Control
                             </div>
-                            <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">4 Modules</span>
+                            <span class="perm-group-count">4 Modules</span>
                         </div>
 
-                        <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+                        <div class="perm-modules-list">
                             @php
                                 $inventoryModules = [
                                     'stock_overview' => ['Stock Overview', 'fa-cubes', 'Real-time plant inventory balances & storage bins'],
@@ -329,16 +329,16 @@
                             @foreach($inventoryModules as $key => $data)
                                 <div class="perm-module-card" id="card-mod-{{ $key }}">
                                     <div class="perm-module-header">
-                                        <div style="display: flex; align-items: center; gap: 0.75rem;">
-                                            <div class="perm-icon-box" style="background: rgba(217, 119, 6, 0.1); color: #D97706;">
+                                        <div class="perm-module-info">
+                                            <div class="perm-icon-box">
                                                 <i class="fa-solid {{ $data[1] }}"></i>
                                             </div>
                                             <div>
-                                                <div style="font-weight: 700; font-size: 0.9rem; color: var(--text-primary);">{{ $data[0] }}</div>
-                                                <div style="font-size: 0.75rem; color: var(--text-muted);">{{ $data[2] }}</div>
+                                                <div class="perm-module-name">{{ $data[0] }}</div>
+                                                <div class="perm-module-desc">{{ $data[2] }}</div>
                                             </div>
                                         </div>
-                                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                        <div class="perm-module-actions-right">
                                             <span class="sub-perm-badge" id="badge-count-{{ $key }}">5/5 Actions</span>
                                             <label class="switch-control" onclick="event.stopPropagation()">
                                                 <input type="checkbox" id="perm-{{ $key }}-master" onchange="toggleModuleAllActions('{{ $key }}', this.checked)">
@@ -376,18 +376,18 @@
                     </div>
 
                     <!-- Group 4: Reports & Auditing -->
-                    <div>
-                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.85rem; padding-bottom: 0.4rem; border-bottom: 1.5px solid #F1F5F9;">
-                            <div style="font-weight: 800; font-size: 0.95rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
-                                <span style="width: 28px; height: 28px; border-radius: 6px; background: rgba(5, 150, 105, 0.12); color: #059669; display: inline-flex; align-items: center; justify-content: center; font-size: 0.85rem;">
+                    <div class="perm-theme-reports">
+                        <div class="perm-group-header">
+                            <div class="perm-group-title">
+                                <span class="perm-group-icon">
                                     <i class="fa-solid fa-file-contract"></i>
                                 </span>
                                 4. Reports &amp; Financial Statements
                             </div>
-                            <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">4 Modules</span>
+                            <span class="perm-group-count">4 Modules</span>
                         </div>
 
-                        <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+                        <div class="perm-modules-list">
                             @php
                                 $reportModules = [
                                     'purchase_report' => ['Purchase Report', 'fa-receipt', 'Detailed procurement & supplier GST registers'],
@@ -400,16 +400,16 @@
                             @foreach($reportModules as $key => $data)
                                 <div class="perm-module-card" id="card-mod-{{ $key }}">
                                     <div class="perm-module-header">
-                                        <div style="display: flex; align-items: center; gap: 0.75rem;">
-                                            <div class="perm-icon-box" style="background: rgba(5, 150, 105, 0.1); color: #059669;">
+                                        <div class="perm-module-info">
+                                            <div class="perm-icon-box">
                                                 <i class="fa-solid {{ $data[1] }}"></i>
                                             </div>
                                             <div>
-                                                <div style="font-weight: 700; font-size: 0.9rem; color: var(--text-primary);">{{ $data[0] }}</div>
-                                                <div style="font-size: 0.75rem; color: var(--text-muted);">{{ $data[2] }}</div>
+                                                <div class="perm-module-name">{{ $data[0] }}</div>
+                                                <div class="perm-module-desc">{{ $data[2] }}</div>
                                             </div>
                                         </div>
-                                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                        <div class="perm-module-actions-right">
                                             <span class="sub-perm-badge" id="badge-count-{{ $key }}">5/5 Actions</span>
                                             <label class="switch-control" onclick="event.stopPropagation()">
                                                 <input type="checkbox" id="perm-{{ $key }}-master" onchange="toggleModuleAllActions('{{ $key }}', this.checked)">
@@ -447,18 +447,18 @@
                     </div>
 
                     <!-- Group 5: System Administration & Setup -->
-                    <div>
-                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.85rem; padding-bottom: 0.4rem; border-bottom: 1.5px solid #F1F5F9;">
-                            <div style="font-weight: 800; font-size: 0.95rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
-                                <span style="width: 28px; height: 28px; border-radius: 6px; background: rgba(139, 92, 246, 0.12); color: #8B5CF6; display: inline-flex; align-items: center; justify-content: center; font-size: 0.85rem;">
+                    <div class="perm-theme-admin">
+                        <div class="perm-group-header">
+                            <div class="perm-group-title">
+                                <span class="perm-group-icon">
                                     <i class="fa-solid fa-gears"></i>
                                 </span>
                                 5. System Administration &amp; Integration
                             </div>
-                            <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">3 Modules</span>
+                            <span class="perm-group-count">3 Modules</span>
                         </div>
 
-                        <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+                        <div class="perm-modules-list">
                             @php
                                 $settingModules = [
                                     'company_settings' => ['Company Information', 'fa-gear', 'System master config, plant variables & invoices'],
@@ -470,16 +470,16 @@
                             @foreach($settingModules as $key => $data)
                                 <div class="perm-module-card" id="card-mod-{{ $key }}">
                                     <div class="perm-module-header">
-                                        <div style="display: flex; align-items: center; gap: 0.75rem;">
-                                            <div class="perm-icon-box" style="background: rgba(139, 92, 246, 0.1); color: #8B5CF6;">
+                                        <div class="perm-module-info">
+                                            <div class="perm-icon-box">
                                                 <i class="{{ $data[1] }}"></i>
                                             </div>
                                             <div>
-                                                <div style="font-weight: 700; font-size: 0.9rem; color: var(--text-primary);">{{ $data[0] }}</div>
-                                                <div style="font-size: 0.75rem; color: var(--text-muted);">{{ $data[2] }}</div>
+                                                <div class="perm-module-name">{{ $data[0] }}</div>
+                                                <div class="perm-module-desc">{{ $data[2] }}</div>
                                             </div>
                                         </div>
-                                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                        <div class="perm-module-actions-right">
                                             <span class="sub-perm-badge" id="badge-count-{{ $key }}">5/5 Actions</span>
                                             <label class="switch-control" onclick="event.stopPropagation()">
                                                 <input type="checkbox" id="perm-{{ $key }}-master" onchange="toggleModuleAllActions('{{ $key }}', this.checked)">
@@ -524,210 +524,98 @@
 </section>
 
 <!-- Modal: Add Custom Role -->
-<div class="modal-overlay" id="modal-add-role" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
-    <div class="modal-card" style="background: #FFFFFF; width: 100%; max-width: 480px; border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); overflow: hidden;">
-        <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-color); background: #FCFDFB; display: flex; align-items: center; justify-content: space-between;">
-            <div style="font-weight: 700; font-size: 1.05rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
-                <i class="fa-solid fa-shield-plus" style="color: var(--primary);"></i> Add Custom Role
+<div class="custom-modal-overlay" id="modal-add-role">
+    <div class="custom-modal-card">
+        <div class="custom-modal-header">
+            <div class="custom-modal-title">
+                <i class="fa-solid fa-shield-plus custom-modal-title-icon"></i> Add Custom Role
             </div>
-            <button type="button" onclick="closeAddRoleModal()" style="background: none; border: none; font-size: 1.25rem; color: var(--text-muted); cursor: pointer;">&times;</button>
+            <button type="button" class="custom-modal-close-btn" onclick="closeAddRoleModal()">&times;</button>
         </div>
-        <form onsubmit="handleCreateRoleSubmit(event)" style="padding: 1.5rem;">
-            <div class="form-group" style="margin-bottom: 1.25rem;">
-                <label class="form-label" style="font-weight: 600; font-size: 0.88rem; margin-bottom: 0.4rem; display: block;">
-                    Role Title <span style="color: #EF4444;">*</span>
-                </label>
-                <input type="text" id="new-role-name" class="form-control" placeholder="e.g. Quality Inspector, Dispatch Supervisor" required style="height: 42px; border-radius: 8px;">
-            </div>
+        <form onsubmit="handleCreateRoleSubmit(event)">
+            <div class="custom-modal-body">
+                <div class="custom-modal-form-group">
+                    <label class="custom-modal-label">
+                        Role Title <span class="erp-req-star">*</span>
+                    </label>
+                    <input type="text" id="new-role-name" class="form-control custom-modal-input" placeholder="e.g. Quality Inspector, Dispatch Supervisor" required>
+                </div>
 
-            <div class="form-group" style="margin-bottom: 1.25rem;">
-                <label class="form-label" style="font-weight: 600; font-size: 0.88rem; margin-bottom: 0.4rem; display: block;">
-                    Role Description
-                </label>
-                <input type="text" id="new-role-desc" class="form-control" placeholder="Short summary of role scope" style="height: 42px; border-radius: 8px;">
-            </div>
+                <div class="custom-modal-form-group">
+                    <label class="custom-modal-label">
+                        Role Description
+                    </label>
+                    <input type="text" id="new-role-desc" class="form-control custom-modal-input" placeholder="Short summary of role scope">
+                </div>
 
-            <div class="form-group" style="margin-bottom: 1.5rem;">
-                <label class="form-label" style="font-weight: 600; font-size: 0.88rem; margin-bottom: 0.4rem; display: block;">
-                    Base Permission Template
-                </label>
-                <select id="new-role-template" class="form-control" style="height: 42px; border-radius: 8px;">
-                    <option value="Staff">Staff (Standard view & data entry)</option>
-                    <option value="Manager">Manager (Operations & reports)</option>
-                    <option value="Accountant">Accountant (Ledgers & vouchers)</option>
-                    <option value="Sales Manager">Sales Manager (Commercial & dispatch)</option>
-                    <option value="Purchase Manager">Purchase Manager (Inward & procurement)</option>
-                    <option value="Inventory Operator">Inventory Operator (Warehouse)</option>
-                </select>
-            </div>
+                <div class="custom-modal-form-group-lg">
+                    <label class="custom-modal-label">
+                        Base Permission Template
+                    </label>
+                    <select id="new-role-template" class="form-control custom-modal-input">
+                        <option value="Staff">Staff (Standard view & data entry)</option>
+                        <option value="Manager">Manager (Operations & reports)</option>
+                        <option value="Accountant">Accountant (Ledgers & vouchers)</option>
+                        <option value="Sales Manager">Sales Manager (Commercial & dispatch)</option>
+                        <option value="Purchase Manager">Purchase Manager (Inward & procurement)</option>
+                        <option value="Inventory Operator">Inventory Operator (Warehouse)</option>
+                    </select>
+                </div>
 
-            <div style="display: flex; align-items: center; justify-content: flex-end; gap: 0.75rem;">
-                <button type="button" class="btn btn-outline" onclick="closeAddRoleModal()" style="border-radius: 8px;">Cancel</button>
-                <button type="submit" class="btn btn-primary" style="border-radius: 8px; font-weight: 700;">Create Role</button>
+                <div class="custom-modal-footer">
+                    <button type="button" class="btn btn-outline custom-modal-btn-cancel" onclick="closeAddRoleModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary custom-modal-btn-submit">Create Role</button>
+                </div>
             </div>
         </form>
     </div>
 </div>
 
 <!-- Modal: Edit Role Details -->
-<div class="modal-overlay" id="modal-edit-role" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
-    <div class="modal-card" style="background: #FFFFFF; width: 100%; max-width: 480px; border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); overflow: hidden;">
-        <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-color); background: #FCFDFB; display: flex; align-items: center; justify-content: space-between;">
-            <div style="font-weight: 700; font-size: 1.05rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
-                <i class="fa-solid fa-pen-to-square" style="color: var(--primary);"></i> Edit Role Details
+<div class="custom-modal-overlay" id="modal-edit-role">
+    <div class="custom-modal-card">
+        <div class="custom-modal-header">
+            <div class="custom-modal-title">
+                <i class="fa-solid fa-pen-to-square custom-modal-title-icon"></i> Edit Role Details
             </div>
-            <button type="button" onclick="closeEditRoleModal()" style="background: none; border: none; font-size: 1.25rem; color: var(--text-muted); cursor: pointer;">&times;</button>
+            <button type="button" class="custom-modal-close-btn" onclick="closeEditRoleModal()">&times;</button>
         </div>
-        <form onsubmit="handleEditRoleSubmit(event)" style="padding: 1.5rem;">
-            <input type="hidden" id="edit-role-old-key">
+        <form onsubmit="handleEditRoleSubmit(event)">
+            <div class="custom-modal-body">
+                <input type="hidden" id="edit-role-old-key">
 
-            <div class="form-group" style="margin-bottom: 1.25rem;">
-                <label class="form-label" style="font-weight: 600; font-size: 0.88rem; margin-bottom: 0.4rem; display: block;">
-                    Role Title <span style="color: #EF4444;">*</span>
-                </label>
-                <input type="text" id="edit-role-name" class="form-control" required style="height: 42px; border-radius: 8px;">
-            </div>
+                <div class="custom-modal-form-group">
+                    <label class="custom-modal-label">
+                        Role Title <span class="erp-req-star">*</span>
+                    </label>
+                    <input type="text" id="edit-role-name" class="form-control custom-modal-input" required>
+                </div>
 
-            <div class="form-group" style="margin-bottom: 1.25rem;">
-                <label class="form-label" style="font-weight: 600; font-size: 0.88rem; margin-bottom: 0.4rem; display: block;">
-                    Role Description
-                </label>
-                <textarea id="edit-role-desc" class="form-control" rows="3" style="border-radius: 8px; resize: none;"></textarea>
-            </div>
+                <div class="custom-modal-form-group">
+                    <label class="custom-modal-label">
+                        Role Description
+                    </label>
+                    <textarea id="edit-role-desc" class="form-control custom-modal-textarea" rows="3"></textarea>
+                </div>
 
-            <div class="form-group" style="margin-bottom: 1.5rem;">
-                <label class="form-label" style="font-weight: 600; font-size: 0.88rem; margin-bottom: 0.4rem; display: block;">
-                    Role Status
-                </label>
-                <select id="edit-role-status" class="form-control" style="height: 42px; border-radius: 8px;">
-                    <option value="active">Active (Available for user assignment)</option>
-                    <option value="inactive">Inactive (Suspended / Deactivated)</option>
-                </select>
-            </div>
+                <div class="custom-modal-form-group-lg">
+                    <label class="custom-modal-label">
+                        Role Status
+                    </label>
+                    <select id="edit-role-status" class="form-control custom-modal-input">
+                        <option value="active">Active (Available for user assignment)</option>
+                        <option value="inactive">Inactive (Suspended / Deactivated)</option>
+                    </select>
+                </div>
 
-            <div style="display: flex; align-items: center; justify-content: flex-end; gap: 0.75rem;">
-                <button type="button" class="btn btn-outline" onclick="closeEditRoleModal()" style="border-radius: 8px;">Cancel</button>
-                <button type="submit" class="btn btn-primary" style="border-radius: 8px; font-weight: 700;">Save Role</button>
+                <div class="custom-modal-footer">
+                    <button type="button" class="btn btn-outline custom-modal-btn-cancel" onclick="closeEditRoleModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary custom-modal-btn-submit">Save Role</button>
+                </div>
             </div>
         </form>
     </div>
 </div>
-
-@push('styles')
-<style>
-.perm-module-card {
-    background: #FFFFFF;
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    padding: 1rem 1.25rem;
-    transition: all 0.2s ease;
-}
-
-.perm-module-card:hover {
-    border-color: #CBD5E1;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.03);
-}
-
-.perm-module-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    margin-bottom: 0.75rem;
-}
-
-.perm-icon-box {
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-    background: rgba(91, 132, 30, 0.1);
-    color: var(--primary);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.95rem;
-    flex-shrink: 0;
-}
-
-.sub-perm-badge {
-    font-size: 0.72rem;
-    font-weight: 700;
-    color: var(--primary);
-    background: rgba(91, 132, 30, 0.1);
-    padding: 0.2rem 0.55rem;
-    border-radius: 6px;
-}
-
-.sub-actions-container {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-    padding-top: 0.75rem;
-    border-top: 1px dashed #F1F5F9;
-}
-
-.action-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    padding: 0.3rem 0.65rem;
-    border-radius: 6px;
-    font-size: 0.76rem;
-    font-weight: 600;
-    cursor: pointer;
-    background: #F8FAFC;
-    color: #475569;
-    border: 1px solid #E2E8F0;
-    user-select: none;
-    transition: all 0.15s ease;
-}
-
-.action-pill:hover {
-    background: #F1F5F9;
-    border-color: #CBD5E1;
-}
-
-.action-pill.active {
-    background: #F0FDF4;
-    color: #15803D;
-    border-color: #86EFAC;
-    box-shadow: 0 1px 3px rgba(22, 163, 74, 0.1);
-}
-
-.action-pill input[type="checkbox"] {
-    margin: 0;
-    accent-color: var(--primary);
-}
-
-.role-nav-item {
-    padding: 0.9rem 1rem;
-    border-radius: 10px;
-    border: 1px solid transparent;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.75rem;
-}
-
-.role-nav-item:hover {
-    background: #F8FAF6;
-    border-color: #E2E8F0;
-}
-
-.role-nav-item.active {
-    background: #F4F7EE;
-    border-color: var(--primary);
-    box-shadow: 0 2px 8px rgba(91, 132, 30, 0.12);
-}
-
-.role-nav-item.inactive-role {
-    opacity: 0.65;
-}
-</style>
-@endpush
 
 @push('scripts')
 <script>
@@ -898,21 +786,21 @@ function renderRolesList() {
         const isInactive = r.status === 'inactive';
         html += `
             <div class="role-nav-item ${isActive ? 'active' : ''} ${isInactive ? 'inactive-role' : ''}" onclick="selectRole('${r.key}')">
-                <div style="display: flex; align-items: center; gap: 0.75rem;">
-                    <div style="width: 36px; height: 36px; border-radius: 8px; background: ${r.bg}; color: ${r.color}; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0;">
+                <div class="role-nav-left">
+                    <div class="role-avatar-box" style="background: ${r.bg}; color: ${r.color};">
                         <i class="fa-solid ${r.icon}"></i>
                     </div>
                     <div>
-                        <div style="font-weight: 700; font-size: 0.88rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.35rem;">
+                        <div class="role-item-name">
                             ${r.name}
-                            ${isInactive ? '<span style="font-size: 0.65rem; background: #FEE2E2; color: #991B1B; padding: 0.1rem 0.35rem; border-radius: 4px; font-weight: 700;">Inactive</span>' : ''}
+                            ${isInactive ? '<span class="role-inactive-pill">Inactive</span>' : ''}
                         </div>
-                        <div style="font-size: 0.72rem; color: var(--text-muted);">
+                        <div class="role-item-users">
                             ${userCount} ${userCount === 1 ? 'Operator' : 'Operators'} Assigned
                         </div>
                     </div>
                 </div>
-                ${isActive ? '<i class="fa-solid fa-chevron-right" style="color: var(--primary); font-size: 0.75rem;"></i>' : ''}
+                ${isActive ? '<i class="fa-solid fa-chevron-right role-nav-chevron"></i>' : ''}
             </div>
         `;
     });
@@ -949,13 +837,13 @@ function selectRole(roleKey) {
     if (isInactive) {
         statusBadge.style.background = '#FEE2E2';
         statusBadge.style.color = '#991B1B';
-        statusBadge.innerHTML = '<span style="width: 6px; height: 6px; border-radius: 50%; background: #DC2626;"></span> Inactive';
+        statusBadge.innerHTML = '<span class="erp-status-dot-red"></span> Inactive';
         document.getElementById('lbl-toggle-status').innerText = 'Activate';
         document.getElementById('inactive-role-notice').style.display = 'flex';
     } else {
         statusBadge.style.background = '#DCFCE7';
         statusBadge.style.color = '#166534';
-        statusBadge.innerHTML = '<span style="width: 6px; height: 6px; border-radius: 50%; background: #16A34A;"></span> Active';
+        statusBadge.innerHTML = '<span class="erp-status-dot-green"></span> Active';
         document.getElementById('lbl-toggle-status').innerText = 'Deactivate';
         document.getElementById('inactive-role-notice').style.display = 'none';
     }
@@ -1360,7 +1248,7 @@ function confirmDeleteCurrentRole() {
     Swal.fire({
         title: `Delete Role "${role.name}"?`,
         html: assignedCount > 0 
-            ? `<div style="color: #DC2626; font-weight: 700; margin-bottom: 0.5rem;">Warning: ${assignedCount} active user(s) currently assigned to this role!</div><div>Deleting this role will revoke their permissions.</div>` 
+            ? `<div class="erp-swal-warn-text">Warning: ${assignedCount} active user(s) currently assigned to this role!</div><div>Deleting this role will revoke their permissions.</div>` 
             : `Are you sure you want to delete this custom role?`,
         icon: 'warning',
         showCancelButton: true,

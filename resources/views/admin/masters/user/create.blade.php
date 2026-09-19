@@ -6,30 +6,30 @@
 @section('content')
 <section class="view-section active" id="view-master-user-create">
     <!-- Breadcrumb & Top Bar -->
-    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.75rem; flex-wrap: wrap; gap: 1rem;">
+    <div class="erp-page-top-bar">
         <div>
-            <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.5rem;">
-                <a href="{{ route('admin.dashboard') }}" style="color: var(--text-muted); text-decoration: none;">Dashboard</a>
-                <i class="fa-solid fa-chevron-right" style="font-size: 0.65rem;"></i>
+            <div class="erp-breadcrumb-trail">
+                <a href="{{ route('admin.dashboard') }}">Dashboard</a>
+                <i class="fa-solid fa-chevron-right erp-breadcrumb-sep"></i>
                 <span>Masters</span>
-                <i class="fa-solid fa-chevron-right" style="font-size: 0.65rem;"></i>
-                <a href="{{ route('admin.masters.user') }}" style="color: var(--text-muted); text-decoration: none;">User Master</a>
-                <i class="fa-solid fa-chevron-right" style="font-size: 0.65rem;"></i>
-                <span style="color: var(--primary); font-weight: 600;">Add New User</span>
+                <i class="fa-solid fa-chevron-right erp-breadcrumb-sep"></i>
+                <a href="{{ route('admin.masters.user') }}">User Master</a>
+                <i class="fa-solid fa-chevron-right erp-breadcrumb-sep"></i>
+                <span class="erp-breadcrumb-active">Add New User</span>
             </div>
-            <h1 class="page-title" style="margin: 0; font-size: 1.65rem; font-weight: 800; color: var(--text-primary); display: flex; align-items: center; gap: 0.65rem;">
-                <span style="width: 40px; height: 40px; border-radius: 12px; background: rgba(91, 132, 30, 0.12); color: var(--primary); display: inline-flex; align-items: center; justify-content: center; font-size: 1.15rem;">
+            <h1 class="erp-page-title">
+                <span class="erp-page-title-icon-box">
                     <i class="fa-solid fa-user-plus"></i>
                 </span>
                 Create User Account
             </h1>
-            <p class="page-subtitle" style="margin: 0.25rem 0 0; color: var(--text-muted); font-size: 0.88rem;">
+            <p class="erp-page-subtitle">
                 Provision login credentials, ERP access roles and multi-plant permissions for an operator.
             </p>
         </div>
 
-        <div style="display: flex; align-items: center; gap: 0.75rem;">
-            <a href="{{ route('admin.masters.user') }}" class="btn btn-outline" style="border-radius: 10px; height: 42px; padding: 0 1.25rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.5rem;">
+        <div class="erp-header-actions">
+            <a href="{{ route('admin.masters.user') }}" class="btn btn-outline erp-btn-header-back">
                 <i class="fa-solid fa-arrow-left"></i> Back to Directory
             </a>
         </div>
@@ -37,11 +37,11 @@
 
     <!-- Error Alerts -->
     @if($errors->any())
-        <div class="alert alert-danger" style="background: #FEF2F2; border: 1px solid #FECACA; border-left: 5px solid #EF4444; padding: 1.1rem 1.35rem; border-radius: 14px; color: #991B1B; font-size: 0.88rem; margin-bottom: 1.75rem; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.08);">
-            <div style="font-weight: 700; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.5rem; font-size: 0.95rem;">
-                <i class="fa-solid fa-triangle-exclamation" style="font-size: 1.1rem;"></i> Please correct the following errors:
+        <div class="alert erp-alert-error-list-card">
+            <div class="erp-alert-error-header">
+                <i class="fa-solid fa-triangle-exclamation"></i> Please correct the following errors:
             </div>
-            <ul style="margin: 0; padding-left: 1.25rem;">
+            <ul class="erp-alert-error-ul">
                 @foreach($errors->all() as $error)
                     <li>{{ $error }}</li>
                 @endforeach
@@ -52,149 +52,153 @@
     <form action="{{ route('admin.masters.user.store') }}" method="POST" id="user-create-form">
         @csrf
 
-        <div class="form-grid-layout" style="display: grid; grid-template-columns: 1fr 340px; gap: 1.5rem; align-items: start;">
+        <div class="erp-form-layout-2col">
             <!-- Left Main Form Column -->
-            <div class="form-main-col" style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <div class="erp-form-main-col">
 
                 <!-- 1. Personal & Contact Details -->
-                <div class="card" style="box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04); border-radius: 16px; overflow: hidden; border: 1px solid var(--border-color);">
-                    <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-color); background: #FCFDFB; display: flex; align-items: center; gap: 0.75rem;">
-                        <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(91, 132, 30, 0.1); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 1rem;">
-                            <i class="fa-solid fa-id-card"></i>
-                        </div>
-                        <div>
-                            <h3 style="margin: 0; font-size: 1.05rem; font-weight: 700; color: var(--text-primary);">1. Personal & Contact Details</h3>
-                            <p style="margin: 0.15rem 0 0; font-size: 0.8rem; color: var(--text-muted);">Operator's legal full name, communication phone and email</p>
+                <div class="card erp-form-section-card">
+                    <div class="erp-form-section-header">
+                        <div class="erp-form-section-header-left">
+                            <div class="erp-form-section-icon-box erp-form-icon-primary">
+                                <i class="fa-solid fa-id-card"></i>
+                            </div>
+                            <div>
+                                <h3 class="erp-form-section-title">1. Personal &amp; Contact Details</h3>
+                                <p class="erp-form-section-desc">Operator's legal full name, communication phone and email</p>
+                            </div>
                         </div>
                     </div>
 
-                    <div style="padding: 1.5rem; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem;">
-                        <div class="form-group" style="grid-column: 1 / -1;">
-                            <label class="form-label" style="font-weight: 600; font-size: 0.88rem; margin-bottom: 0.4rem; display: block;">
-                                Full Name <span style="color: #EF4444;">*</span>
+                    <div class="erp-form-section-body">
+                        <div class="form-group erp-form-col-full">
+                            <label class="erp-field-label">
+                                Full Name <span class="erp-req-star">*</span>
                             </label>
-                            <div style="position: relative;">
-                                <i class="fa-solid fa-user" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.9rem;"></i>
-                                <input type="text" name="name" id="field-name" class="form-control" placeholder="e.g. Navneet Sharma" value="{{ old('name') }}" required autofocus style="padding-left: 2.5rem; height: 42px; border-radius: 8px;" oninput="updateLivePreview()">
+                            <div class="erp-field-icon-wrap">
+                                <i class="fa-solid fa-user erp-field-icon"></i>
+                                <input type="text" name="name" id="field-name" class="form-control erp-field-input-iconified" placeholder="e.g. Navneet Sharma" value="{{ old('name') }}" required autofocus oninput="updateLivePreview()">
                             </div>
-                            <span style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem; display: block;">Enter the employee's official full name</span>
+                            <span class="erp-field-hint">Enter the employee's official full name</span>
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label" style="font-weight: 600; font-size: 0.88rem; margin-bottom: 0.4rem; display: block;">
-                                Email Address <span style="color: #EF4444;">*</span>
+                            <label class="erp-field-label">
+                                Email Address <span class="erp-req-star">*</span>
                             </label>
-                            <div style="position: relative;">
-                                <i class="fa-regular fa-envelope" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.9rem;"></i>
-                                <input type="email" name="email" id="field-email" class="form-control" placeholder="e.g. navneet@vikasudhyog.com" value="{{ old('email') }}" required style="padding-left: 2.5rem; height: 42px; border-radius: 8px;" oninput="updateLivePreview()">
+                            <div class="erp-field-icon-wrap">
+                                <i class="fa-regular fa-envelope erp-field-icon"></i>
+                                <input type="email" name="email" id="field-email" class="form-control erp-field-input-iconified" placeholder="e.g. navneet@vikasudhyog.com" value="{{ old('email') }}" required oninput="updateLivePreview()">
                             </div>
-                            <span style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem; display: block;">Used for system notifications &amp; password recovery</span>
+                            <span class="erp-field-hint">Used for system notifications &amp; password recovery</span>
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label" style="font-weight: 600; font-size: 0.88rem; margin-bottom: 0.4rem; display: block;">
+                            <label class="erp-field-label">
                                 Mobile Number
                             </label>
-                            <div style="position: relative;">
-                                <i class="fa-solid fa-phone" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.9rem;"></i>
-                                <input type="text" name="phone" id="field-phone" class="form-control" placeholder="e.g. +91 98290 12345" value="{{ old('phone') }}" style="padding-left: 2.5rem; height: 42px; border-radius: 8px;" oninput="updateLivePreview()">
+                            <div class="erp-field-icon-wrap">
+                                <i class="fa-solid fa-phone erp-field-icon"></i>
+                                <input type="text" name="phone" id="field-phone" class="form-control erp-field-input-iconified" placeholder="e.g. +91 98290 12345" value="{{ old('phone') }}" oninput="updateLivePreview()">
                             </div>
-                            <span style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem; display: block;">Optional mobile contact number</span>
+                            <span class="erp-field-hint">Optional mobile contact number</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- 2. Login Credentials & Security -->
-                <div class="card" style="box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04); border-radius: 16px; overflow: hidden; border: 1px solid var(--border-color);">
-                    <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-color); background: #FCFDFB; display: flex; align-items: center; justify-content: space-between;">
-                        <div style="display: flex; align-items: center; gap: 0.75rem;">
-                            <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(59, 130, 246, 0.1); color: #2563EB; display: flex; align-items: center; justify-content: center; font-size: 1rem;">
+                <div class="card erp-form-section-card">
+                    <div class="erp-form-section-header">
+                        <div class="erp-form-section-header-left">
+                            <div class="erp-form-section-icon-box erp-form-icon-blue">
                                 <i class="fa-solid fa-key"></i>
                             </div>
                             <div>
-                                <h3 style="margin: 0; font-size: 1.05rem; font-weight: 700; color: var(--text-primary);">2. Login Credentials &amp; Security</h3>
-                                <p style="margin: 0.15rem 0 0; font-size: 0.8rem; color: var(--text-muted);">Unique login handle and authentication password</p>
+                                <h3 class="erp-form-section-title">2. Login Credentials &amp; Security</h3>
+                                <p class="erp-form-section-desc">Unique login handle and authentication password</p>
                             </div>
                         </div>
 
-                        <button type="button" class="btn btn-outline" style="font-size: 0.78rem; padding: 0.35rem 0.75rem; border-radius: 6px; color: #2563EB;" onclick="generateRandomPassword()" title="Generate Random Strong Password">
+                        <button type="button" class="btn btn-outline erp-btn-gen-pwd" onclick="generateRandomPassword()" title="Generate Random Strong Password">
                             <i class="fa-solid fa-dice"></i> Generate Password
                         </button>
                     </div>
 
-                    <div style="padding: 1.5rem; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem;">
-                        <div class="form-group" style="grid-column: 1 / -1;">
-                            <label class="form-label" style="display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 0.88rem; margin-bottom: 0.4rem;">
-                                <span>Username <span style="color: #EF4444;">*</span></span>
-                                <button type="button" onclick="suggestUsername()" style="background: none; border: none; color: var(--primary); font-size: 0.75rem; cursor: pointer; font-weight: 600; padding: 0;">
+                    <div class="erp-form-section-body">
+                        <div class="form-group erp-form-col-full">
+                            <label class="erp-field-label-flex">
+                                <span>Username <span class="erp-req-star">*</span></span>
+                                <button type="button" onclick="suggestUsername()" class="erp-btn-suggest">
                                     <i class="fa-solid fa-wand-magic-sparkles"></i> Auto-suggest from Name
                                 </button>
                             </label>
-                            <div style="position: relative;">
-                                <i class="fa-solid fa-at" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.9rem;"></i>
-                                <input type="text" name="username" id="field-username" class="form-control" placeholder="e.g. navneet" value="{{ old('username') }}" required style="padding-left: 2.5rem; height: 42px; border-radius: 8px; font-family: monospace;" oninput="this.value = this.value.toLowerCase().replace(/[^a-z0-9_.-]/g, ''); updateLivePreview();">
+                            <div class="erp-field-icon-wrap">
+                                <i class="fa-solid fa-at erp-field-icon"></i>
+                                <input type="text" name="username" id="field-username" class="form-control erp-field-input-iconified erp-field-input-mono" placeholder="e.g. navneet" value="{{ old('username') }}" required oninput="this.value = this.value.toLowerCase().replace(/[^a-z0-9_.-]/g, ''); updateLivePreview();">
                             </div>
-                            <span style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem; display: block;">Must be unique. Allowed characters: lowercase letters, numbers, dot, dash, underscore.</span>
+                            <span class="erp-field-hint">Must be unique. Allowed characters: lowercase letters, numbers, dot, dash, underscore.</span>
                         </div>
 
                         <!-- Password -->
                         <div class="form-group">
-                            <label class="form-label" style="font-weight: 600; font-size: 0.88rem; margin-bottom: 0.4rem; display: block;">
-                                Account Password <span style="color: #EF4444;">*</span>
+                            <label class="erp-field-label">
+                                Account Password <span class="erp-req-star">*</span>
                             </label>
-                            <div style="position: relative;">
-                                <i class="fa-solid fa-lock" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.9rem;"></i>
-                                <input type="password" name="password" id="field-password" class="form-control" placeholder="Minimum 6 characters" required style="padding-left: 2.5rem; padding-right: 2.5rem; height: 42px; border-radius: 8px;" oninput="checkPasswordStrength(this.value)">
-                                <button type="button" onclick="togglePasswordVisibility('field-password', this)" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 5px;" title="Show/Hide Password">
+                            <div class="erp-field-icon-wrap">
+                                <i class="fa-solid fa-lock erp-field-icon"></i>
+                                <input type="password" name="password" id="field-password" class="form-control erp-field-input-iconified-pwd" placeholder="Minimum 6 characters" required oninput="checkPasswordStrength(this.value)">
+                                <button type="button" onclick="togglePasswordVisibility('field-password', this)" class="erp-pwd-toggle-btn" title="Show/Hide Password">
                                     <i class="fa-regular fa-eye"></i>
                                 </button>
                             </div>
-                            <div style="margin-top: 0.4rem;">
-                                <div style="height: 4px; border-radius: 2px; background: #E2E8F0; overflow: hidden;">
-                                    <div id="pwd-strength-bar" style="height: 100%; width: 0%; background: #EF4444; transition: all 0.3s;"></div>
+                            <div>
+                                <div class="erp-pwd-strength-bar-wrap">
+                                    <div id="pwd-strength-bar" class="erp-pwd-strength-bar"></div>
                                 </div>
-                                <span id="pwd-strength-text" style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.2rem; display: block;">Password strength</span>
+                                <span id="pwd-strength-text" class="erp-pwd-strength-text">Password strength</span>
                             </div>
                         </div>
 
                         <!-- Confirm Password -->
                         <div class="form-group">
-                            <label class="form-label" style="font-weight: 600; font-size: 0.88rem; margin-bottom: 0.4rem; display: block;">
-                                Confirm Password <span style="color: #EF4444;">*</span>
+                            <label class="erp-field-label">
+                                Confirm Password <span class="erp-req-star">*</span>
                             </label>
-                            <div style="position: relative;">
-                                <i class="fa-solid fa-shield-check" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.9rem;"></i>
-                                <input type="password" name="password_confirmation" id="field-password-confirm" class="form-control" placeholder="Re-enter password" required style="padding-left: 2.5rem; padding-right: 2.5rem; height: 42px; border-radius: 8px;">
-                                <button type="button" onclick="togglePasswordVisibility('field-password-confirm', this)" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 5px;" title="Show/Hide Password">
+                            <div class="erp-field-icon-wrap">
+                                <i class="fa-solid fa-shield-check erp-field-icon"></i>
+                                <input type="password" name="password_confirmation" id="field-password-confirm" class="form-control erp-field-input-iconified-pwd" placeholder="Re-enter password" required>
+                                <button type="button" onclick="togglePasswordVisibility('field-password-confirm', this)" class="erp-pwd-toggle-btn" title="Show/Hide Password">
                                     <i class="fa-regular fa-eye"></i>
                                 </button>
                             </div>
-                            <span style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem; display: block;">Both passwords must match exactly</span>
+                            <span class="erp-field-hint">Both passwords must match exactly</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- 3. Role & Company Assignment -->
-                <div class="card" style="box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04); border-radius: 16px; overflow: hidden; border: 1px solid var(--border-color);">
-                    <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-color); background: #FCFDFB; display: flex; align-items: center; gap: 0.75rem;">
-                        <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(139, 92, 246, 0.1); color: #8B5CF6; display: flex; align-items: center; justify-content: center; font-size: 1rem;">
-                            <i class="fa-solid fa-user-shield"></i>
-                        </div>
-                        <div>
-                            <h3 style="margin: 0; font-size: 1.05rem; font-weight: 700; color: var(--text-primary);">3. Role &amp; Plant Assignment</h3>
-                            <p style="margin: 0.15rem 0 0; font-size: 0.8rem; color: var(--text-muted);">Assign module access permissions and manufacturing plant mapping</p>
+                <div class="card erp-form-section-card">
+                    <div class="erp-form-section-header">
+                        <div class="erp-form-section-header-left">
+                            <div class="erp-form-section-icon-box erp-form-icon-amber">
+                                <i class="fa-solid fa-user-shield"></i>
+                            </div>
+                            <div>
+                                <h3 class="erp-form-section-title">3. Role &amp; Plant Assignment</h3>
+                                <p class="erp-form-section-desc">Assign module access permissions and manufacturing plant mapping</p>
+                            </div>
                         </div>
                     </div>
 
-                    <div style="padding: 1.5rem; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem;">
+                    <div class="erp-form-section-body">
                         <!-- Role -->
                         <div class="form-group">
-                            <label class="form-label" style="font-weight: 600; font-size: 0.88rem; margin-bottom: 0.4rem; display: block;">
-                                System Role <span style="color: #EF4444;">*</span>
+                            <label class="erp-field-label">
+                                System Role <span class="erp-req-star">*</span>
                             </label>
-                            <div style="position: relative;">
-                                <i class="fa-solid fa-user-tag" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.9rem;"></i>
-                                <select name="role" id="field-role" class="form-control" required style="padding-left: 2.5rem; height: 42px; border-radius: 8px;" onchange="updateLivePreview()">
+                            <div class="erp-field-icon-wrap">
+                                <i class="fa-solid fa-user-tag erp-field-icon"></i>
+                                <select name="role" id="field-role" class="form-control erp-field-input-iconified" required onchange="updateLivePreview()">
                                     @foreach($roles as $roleKey => $roleDesc)
                                         <option value="{{ $roleKey }}" {{ old('role', 'Staff') === $roleKey ? 'selected' : '' }} data-desc="{{ $roleDesc }}">
                                             {{ $roleKey }}
@@ -202,19 +206,19 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div id="role-description-box" style="margin-top: 0.4rem; font-size: 0.75rem; color: #64748B; background: #F8FAFC; padding: 0.4rem 0.6rem; border-radius: 6px; border: 1px solid #E2E8F0;">
+                            <div id="role-description-box" class="erp-profile-mod-badge w-100 mt-2">
                                 Full data entry and operational privileges.
                             </div>
                         </div>
 
                         <!-- Company Assignment -->
                         <div class="form-group">
-                            <label class="form-label" style="font-weight: 600; font-size: 0.88rem; margin-bottom: 0.4rem; display: block;">
+                            <label class="erp-field-label">
                                 Company / Plant Assignment
                             </label>
-                            <div style="position: relative;">
-                                <i class="fa-solid fa-building" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.9rem;"></i>
-                                <select name="company_id" id="field-company" class="form-control" style="padding-left: 2.5rem; height: 42px; border-radius: 8px;" onchange="updateLivePreview()">
+                            <div class="erp-field-icon-wrap">
+                                <i class="fa-solid fa-building erp-field-icon"></i>
+                                <select name="company_id" id="field-company" class="form-control erp-field-input-iconified" onchange="updateLivePreview()">
                                     <option value="">-- All Companies / Multi-Plant Global --</option>
                                     @foreach($companies as $comp)
                                         <option value="{{ $comp->id }}" {{ old('company_id') == $comp->id ? 'selected' : '' }}>
@@ -223,7 +227,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <span style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem; display: block;">Leave blank to allow access across all registered company entities</span>
+                            <span class="erp-field-hint">Leave blank to allow access across all registered company entities</span>
                         </div>
                     </div>
                 </div>
@@ -231,53 +235,56 @@
             </div>
 
             <!-- Right Sidebar Column -->
-            <div class="form-sidebar-col" style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <div class="erp-form-side-col">
                 <input type="hidden" name="status" value="active">
 
                 <!-- Live Preview Card -->
-                <div class="card" style="box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04); border-radius: 16px; overflow: hidden; border: 1px solid var(--border-color); text-align: center;">
-                    <div style="padding: 1rem 1.25rem; border-bottom: 1px solid var(--border-color); background: #FCFDFB; font-weight: 700; font-size: 0.88rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">
+                <div class="card erp-preview-card">
+                    <div class="erp-preview-header">
                         Live Card Preview
                     </div>
-                    <div style="padding: 1.5rem 1.25rem;">
-                        <div id="preview-avatar" style="width: 64px; height: 64px; border-radius: 16px; background: linear-gradient(135deg, var(--primary) 0%, #3D5A14 100%); color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.5rem; margin-bottom: 0.85rem; box-shadow: 0 4px 12px rgba(91,132,30,0.3);">
+                    <div class="erp-preview-body">
+                        <div id="preview-avatar" class="erp-preview-avatar-circle">
                             VU
                         </div>
-                        <h4 id="preview-name" style="margin: 0; font-size: 1.1rem; font-weight: 700; color: var(--text-primary);">
+                        <h4 id="preview-name" class="erp-preview-name-text">
                             Full Name
                         </h4>
-                        <div id="preview-username" style="font-family: monospace; font-size: 0.82rem; color: #64748B; margin: 0.25rem 0 0.75rem;">
+                        <div id="preview-username" class="erp-user-username mb-2">
                             @username
                         </div>
 
-                        <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; flex-wrap: wrap;">
-                            <span id="preview-role" style="font-size: 0.75rem; font-weight: 700; padding: 0.25rem 0.6rem; border-radius: 6px; background: #FAF5FF; color: #7E22CE; border: 1px solid #E9D5FF;">
+                        <div>
+                            <span id="preview-role" class="erp-preview-role-pill">
                                 Staff
                             </span>
                         </div>
 
-                        <div id="preview-company" style="font-size: 0.78rem; color: var(--text-muted); margin-top: 0.85rem; padding-top: 0.75rem; border-top: 1px dashed var(--border-color); display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
-                            <i class="fa-solid fa-globe"></i> All Plants / Global
+                        <div id="preview-company" class="erp-preview-meta-list">
+                            <div class="erp-preview-meta-item">
+                                <i class="fa-solid fa-globe"></i>
+                                <span>All Plants / Global</span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Form Action Buttons -->
-                <div class="card" style="box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04); border-radius: 16px; overflow: hidden; border: 1px solid var(--border-color); padding: 1.25rem; display: flex; flex-direction: column; gap: 0.75rem;">
-                    <button type="submit" class="btn btn-primary" style="height: 44px; font-weight: 700; font-size: 0.95rem; border-radius: 10px; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                <div class="card erp-form-section-card p-3 d-flex flex-column gap-2">
+                    <button type="submit" class="btn btn-primary erp-btn-header-primary w-100 justify-content-center">
                         <i class="fa-solid fa-user-check"></i> Create User Account
                     </button>
-                    <a href="{{ route('admin.masters.user') }}" class="btn btn-outline" style="height: 42px; font-weight: 600; font-size: 0.9rem; border-radius: 10px; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                    <a href="{{ route('admin.masters.user') }}" class="btn btn-outline erp-btn-header-back w-100 justify-content-center">
                         Cancel
                     </a>
                 </div>
 
                 <!-- Info Box -->
-                <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 1rem; font-size: 0.78rem; color: #64748B;">
-                    <div style="font-weight: 700; color: #334155; margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.4rem;">
-                        <i class="fa-solid fa-circle-info" style="color: #3B82F6;"></i> Security Policy
+                <div class="erp-profile-mod-badge flex-column align-items-start p-3">
+                    <div class="erp-alert-error-header mb-1 text-primary">
+                        <i class="fa-solid fa-circle-info"></i> Security Policy
                     </div>
-                    <span>Users will use their <strong>Username</strong> or <strong>Email</strong> along with their password to access the ERP portal. Role permissions apply immediately upon account creation.</span>
+                    <span class="erp-field-hint mt-0">Users will use their <strong>Username</strong> or <strong>Email</strong> along with their password to access the ERP portal. Role permissions apply immediately upon account creation.</span>
                 </div>
 
             </div>
@@ -370,8 +377,6 @@ function updateLivePreview() {
     const roleDesc = selectedOption ? selectedOption.getAttribute('data-desc') : '';
     const companySelect = document.getElementById('field-company');
     const companyText = companySelect.options[companySelect.selectedIndex].text;
-    const statusRadio = document.querySelector('input[name="status"]:checked');
-    const status = statusRadio ? statusRadio.value : 'active';
 
     // Initials
     const words = name.split(/\s+/);
@@ -393,9 +398,9 @@ function updateLivePreview() {
 
     const previewCompany = document.getElementById('preview-company');
     if (companySelect.value) {
-        previewCompany.innerHTML = `<i class="fa-solid fa-building" style="color: var(--primary);"></i> ${companyText}`;
+        previewCompany.innerHTML = `<div class="erp-preview-meta-item"><i class="fa-solid fa-building"></i> <span>${companyText}</span></div>`;
     } else {
-        previewCompany.innerHTML = `<i class="fa-solid fa-globe"></i> All Plants / Global`;
+        previewCompany.innerHTML = `<div class="erp-preview-meta-item"><i class="fa-solid fa-globe"></i> <span>All Plants / Global</span></div>`;
     }
 }
 
