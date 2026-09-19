@@ -67,10 +67,19 @@ const App = {
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('sidebar-overlay');
 
+        const sidebarCloseBtn = document.getElementById('sidebar-close-btn');
+
         if (sidebarToggle) {
             sidebarToggle.addEventListener('click', () => {
                 sidebar.classList.toggle('mobile-open');
                 overlay.classList.toggle('active');
+            });
+        }
+
+        if (sidebarCloseBtn) {
+            sidebarCloseBtn.addEventListener('click', () => {
+                sidebar.classList.remove('mobile-open');
+                if (overlay) overlay.classList.remove('active');
             });
         }
 

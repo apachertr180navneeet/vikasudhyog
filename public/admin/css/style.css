@@ -1447,3 +1447,352 @@ input:checked + .slider:before {
     flex-shrink: 0;
 }
 
+/* ==========================================================================
+   MODERN FORM DESIGN SYSTEM & ERP CARDS
+   ========================================================================== */
+
+.form-grid-layout {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 1.75rem;
+    align-items: start;
+}
+
+@media (max-width: 1024px) {
+    .form-grid-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+.erp-card {
+    background: #FFFFFF;
+    border-radius: 16px;
+    border: 1px solid rgba(229, 231, 235, 0.9);
+    box-shadow: 0 4px 20px -4px rgba(24, 58, 29, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+    transition: box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.erp-card:hover {
+    box-shadow: 0 8px 30px -4px rgba(24, 58, 29, 0.08);
+}
+
+.erp-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.15rem 1.75rem;
+    background: linear-gradient(180deg, #FAFAF7 0%, #F5F7F0 100%);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.erp-card-header-left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.erp-card-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: rgba(107, 142, 35, 0.12);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.05rem;
+    flex-shrink: 0;
+}
+
+.erp-card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--dark);
+    margin: 0;
+}
+
+.erp-card-subtitle {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+.erp-card-body {
+    padding: 1.75rem;
+}
+
+/* Form Groups & Inputs */
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+.form-group.no-margin {
+    margin-bottom: 0;
+}
+
+.form-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.84rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.45rem;
+    letter-spacing: 0.15px;
+}
+
+.form-label .req {
+    color: #EF4444;
+    margin-left: 2px;
+}
+
+.form-label .label-hint {
+    font-size: 0.75rem;
+    color: var(--text-light);
+    font-weight: 400;
+}
+
+.input-icon-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.input-icon-wrap i.input-icon {
+    position: absolute;
+    left: 1rem;
+    color: #9CA3AF;
+    font-size: 0.95rem;
+    pointer-events: none;
+    transition: color 0.2s ease;
+}
+
+.input-icon-wrap input.form-control,
+.input-icon-wrap select.form-control {
+    padding-left: 2.75rem;
+}
+
+.form-control {
+    width: 100%;
+    height: 44px;
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #1F2937;
+    background-color: #FFFFFF;
+    border: 1.5px solid #E5E7EB;
+    border-radius: 10px;
+    outline: none;
+    transition: all 0.2s ease-in-out;
+}
+
+textarea.form-control {
+    height: auto;
+    min-height: 88px;
+    padding: 0.75rem 1rem;
+    line-height: 1.5;
+    resize: vertical;
+}
+
+.form-control::placeholder {
+    color: #9CA3AF;
+    font-weight: 400;
+}
+
+.form-control:hover {
+    border-color: #CBD5E1;
+}
+
+.form-control:focus {
+    border-color: var(--primary);
+    background-color: #FFFFFF;
+    box-shadow: 0 0 0 3.5px rgba(107, 142, 35, 0.16);
+}
+
+.input-icon-wrap:focus-within i.input-icon {
+    color: var(--primary);
+}
+
+.form-control.uppercase-input {
+    text-transform: uppercase;
+    letter-spacing: 0.75px;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-weight: 600;
+}
+
+/* Two & Three column form fields inside card */
+.form-row-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+}
+
+.form-row-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1.25rem;
+}
+
+@media (max-width: 768px) {
+    .form-row-2, .form-row-3 {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Custom Interactive Switch */
+.switch-card {
+    background: #F9FAF5;
+    border: 1.5px solid rgba(107, 142, 35, 0.25);
+    border-radius: 12px;
+    padding: 1.15rem 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.switch-card:hover {
+    background: #F2F7E8;
+    border-color: var(--primary);
+}
+
+.switch-control {
+    position: relative;
+    display: inline-block;
+    width: 48px;
+    height: 26px;
+    flex-shrink: 0;
+}
+
+.switch-control input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.switch-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #D1D5DB;
+    transition: .3s;
+    border-radius: 34px;
+}
+
+.switch-slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .3s;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.switch-control input:checked + .switch-slider {
+    background-color: var(--primary);
+}
+
+.switch-control input:focus + .switch-slider {
+    box-shadow: 0 0 0 3px rgba(107, 142, 35, 0.25);
+}
+
+.switch-control input:checked + .switch-slider:before {
+    transform: translateX(22px);
+}
+
+/* Sticky Action Bar */
+.form-actions-bar {
+    position: sticky;
+    bottom: 1rem;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(229, 231, 235, 0.9);
+    border-radius: 14px;
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    z-index: 50;
+    margin-top: 1.5rem;
+}
+
+/* Sidebar Live Preview Card */
+.preview-company-card {
+    background: linear-gradient(135deg, #183A1D 0%, #25572C 100%);
+    color: #FFFFFF;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 10px 25px rgba(24, 58, 29, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.preview-company-card::before {
+    content: '';
+    position: absolute;
+    right: -30px;
+    top: -30px;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.preview-badge-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.25rem 0.65rem;
+    border-radius: 9999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.preview-badge-pill.default {
+    background: #FEF3C7;
+    color: #92400E;
+}
+
+.preview-badge-pill.status {
+    background: rgba(255, 255, 255, 0.2);
+    color: #FFFFFF;
+}
+
+.guideline-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 0.85rem;
+    font-size: 0.82rem;
+    color: #4B5563;
+    line-height: 1.45;
+}
+
+.guideline-item:last-child {
+    margin-bottom: 0;
+}
+
+.guideline-item i {
+    color: var(--primary);
+    font-size: 0.95rem;
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+

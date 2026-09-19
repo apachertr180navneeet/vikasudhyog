@@ -1,21 +1,34 @@
 /* ==========================================================================
-   VIKAS UDHYOG ERP - Responsive Stylesheet
+   VIKAS UDHYOG ERP - Comprehensive Mobile & Multi-Device Responsive System
    ========================================================================== */
 
-/* Laptop & Small Desktop */
-@media (max-width: 1200px) {
+/* --------------------------------------------------------------------------
+   1. Large Desktop & Laptop (<1280px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 1280px) {
     .charts-grid {
         grid-template-columns: 1fr;
     }
+    
     .kpi-grid {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.25rem;
+    }
+
+    .form-grid-layout {
+        grid-template-columns: 1fr 300px;
+        gap: 1.25rem;
     }
 }
 
-/* Tablet Layout */
-@media (max-width: 992px) {
+/* --------------------------------------------------------------------------
+   2. Tablets & Small Laptops (<1024px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 1024px) {
     .sidebar {
         transform: translateX(-100%);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 10px 0 30px rgba(0, 0, 0, 0.25);
     }
     
     .sidebar.mobile-open {
@@ -23,64 +36,339 @@
     }
 
     .main-wrapper {
-        margin-left: 0;
+        margin-left: 0 !important;
+        width: 100% !important;
+        min-width: 100%;
     }
 
     .sidebar-overlay {
         position: fixed;
         top: 0; left: 0; right: 0; bottom: 0;
-        background: rgba(0, 0, 0, 0.5);
+        background: rgba(0, 0, 0, 0.55);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
         z-index: 95;
         display: none;
+        opacity: 0;
+        transition: opacity 0.3s ease;
     }
 
     .sidebar-overlay.active {
         display: block;
+        opacity: 1;
     }
 
-    .kpi-grid {
-        grid-template-columns: repeat(2, 1fr);
+    .form-grid-layout {
+        grid-template-columns: 1fr;
     }
 
     .search-box-wrapper {
-        width: 200px;
+        width: 220px;
     }
 }
 
-/* Mobile Devices */
-@media (max-width: 640px) {
+/* --------------------------------------------------------------------------
+   3. Phablets & Portrait Tablets (<768px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+    /* Navbar */
     .top-navbar {
         padding: 0 1rem;
+        height: 62px;
+    }
+
+    .company-selector {
+        max-width: 160px;
+    }
+
+    .company-selector select {
+        font-size: 0.8rem;
+        padding-right: 1.25rem;
     }
 
     .search-box-wrapper {
         display: none;
     }
 
+    .user-info {
+        display: none !important;
+    }
+
+    .user-profile-menu {
+        gap: 0.25rem;
+        padding: 0.25rem 0.4rem;
+    }
+
+    .notification-drawer {
+        right: -50px;
+        width: calc(100vw - 2rem);
+        max-width: 360px;
+    }
+
+    .user-dropdown {
+        right: 0;
+        width: calc(100vw - 2rem);
+        max-width: 280px;
+    }
+
+    /* Content Area */
     .content-body {
+        padding: 1rem 0.85rem;
+    }
+
+    /* KPI Grid */
+    .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.85rem;
+    }
+
+    .stat-card, .kpi-card {
         padding: 1rem;
     }
 
+    .stat-value, .kpi-value {
+        font-size: 1.4rem;
+    }
+
+    /* Form Grids */
+    .form-grid, .form-grid-3, .form-row-2, .form-row-3 {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+    }
+
+    /* Card Panels */
+    .erp-card-header {
+        padding: 1rem 1.25rem;
+    }
+
+    .erp-card-body {
+        padding: 1.25rem;
+    }
+
+    /* Tables & Filter Toolbars */
+    .filter-bar, .table-toolbar {
+        flex-direction: column;
+        align-items: stretch !important;
+        gap: 0.75rem !important;
+    }
+
+    .filter-bar form, .table-toolbar form {
+        max-width: 100% !important;
+        width: 100% !important;
+        flex-direction: column;
+        align-items: stretch !important;
+    }
+
+    .filter-bar .form-control, .table-toolbar .form-control {
+        width: 100% !important;
+    }
+
+    .table-responsive {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        border-radius: 12px;
+        margin-bottom: 1rem;
+    }
+
+    .table-responsive table {
+        min-width: 650px;
+    }
+
+    /* Modals for Mobile */
+    .modal-card {
+        width: 96% !important;
+        max-width: 96% !important;
+        max-height: 92vh !important;
+        border-radius: 16px !important;
+        margin: auto;
+    }
+
+    .modal-header {
+        padding: 1rem 1.25rem !important;
+    }
+
+    .modal-body {
+        padding: 1.25rem !important;
+        max-height: calc(92vh - 130px) !important;
+    }
+
+    .modal-footer {
+        padding: 0.85rem 1.25rem !important;
+        flex-wrap: wrap;
+    }
+
+    .modal-footer .btn {
+        flex: 1;
+        text-align: center;
+        justify-content: center;
+    }
+
+    /* Sticky Action Bar */
+    .form-actions-bar {
+        position: sticky;
+        bottom: 0.5rem;
+        padding: 0.85rem 1rem;
+        flex-direction: column-reverse;
+        gap: 0.75rem;
+    }
+
+    .form-actions-bar .btn,
+    .form-actions-bar div {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .form-actions-bar button {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* View Profile / Letterhead */
+    .letterhead-card {
+        padding: 1.25rem !important;
+    }
+
+    .letterhead-header {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 1rem !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   4. Mobile Phones (<576px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 576px) {
+    /* Base typography */
+    body {
+        font-size: 14px;
+    }
+
+    .page-title {
+        font-size: 1.35rem !important;
+    }
+
+    .page-subtitle {
+        font-size: 0.8rem !important;
+    }
+
+    /* Topbar */
+    .top-navbar {
+        padding: 0 0.75rem;
+    }
+
+    .company-selector {
+        max-width: 130px;
+    }
+
+    .company-selector i {
+        display: none;
+    }
+
+    /* Single column KPI cards */
     .kpi-grid {
         grid-template-columns: 1fr;
     }
 
-    .form-grid, .form-grid-3 {
-        grid-template-columns: 1fr;
+    .kpi-card {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
     }
 
-    .page-header {
+    /* Switches */
+    .switch-card {
+        padding: 1rem;
         flex-direction: column;
         align-items: flex-start;
+        gap: 0.75rem;
     }
 
-    .page-actions {
-        width: 100%;
-        justify-content: flex-start;
+    .switch-control {
+        align-self: flex-end;
+    }
+
+    /* Action Buttons in tables */
+    .action-btns {
+        display: flex;
+        gap: 0.4rem;
         flex-wrap: wrap;
     }
 
-    .modal-card {
-        max-height: 95vh;
+    .btn-action {
+        width: 34px !important;
+        height: 34px !important;
+        font-size: 0.85rem !important;
+    }
+
+    /* Full-width primary buttons in headers */
+    .page-header-actions {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .page-header-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Toast Container */
+    .toast-container {
+        left: 1rem !important;
+        right: 1rem !important;
+        bottom: 1rem !important;
+        max-width: calc(100vw - 2rem) !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   5. Ultra Small Phones (<380px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 380px) {
+    .top-navbar {
+        padding: 0 0.5rem;
+    }
+
+    .company-selector {
+        display: none;
+    }
+
+    .btn-icon {
+        width: 36px;
+        height: 36px;
+    }
+
+    .content-body {
+        padding: 0.75rem 0.5rem;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   6. Touch Screen & Scroll Optimization Utilities
+   -------------------------------------------------------------------------- */
+@media (hover: none) and (pointer: coarse) {
+    /* Touch target minimum 44px for buttons and interactive controls */
+    .btn, button.btn-primary, button.btn-outline, a.btn {
+        min-height: 42px;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .submenu-link {
+        padding-top: 0.65rem;
+        padding-bottom: 0.65rem;
+    }
+
+    .nav-link {
+        padding-top: 0.75rem;
+        padding-bottom: 0.75rem;
+    }
+
+    /* Smooth Momentum Scrolling */
+    .sidebar, .modal-body, .table-responsive, .content-body {
+        -webkit-overflow-scrolling: touch;
     }
 }

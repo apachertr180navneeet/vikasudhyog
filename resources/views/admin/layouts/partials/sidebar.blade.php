@@ -1,6 +1,6 @@
 <!-- Sidebar Navigation Drawer -->
 <aside class="sidebar" id="sidebar">
-    <div class="sidebar-header">
+    <div class="sidebar-header" style="display: flex; align-items: center; justify-content: space-between;">
         <a href="{{ route('admin.dashboard') }}" style="display: flex; align-items: center; gap: 0.85rem; text-decoration: none;">
             <img src="{{ asset('admin/images/logo.png') }}" alt="Vikas Udhyog Logo" class="sidebar-logo">
             <div class="sidebar-brand">
@@ -8,6 +8,9 @@
                 <span class="sidebar-brand-subtitle">HERBAL ERP v2.4</span>
             </div>
         </a>
+        <button type="button" class="sidebar-mobile-close" id="sidebar-close-btn" style="display: none; background: none; border: none; color: #FFFFFF; font-size: 1.25rem; cursor: pointer; padding: 0.25rem 0.5rem;" title="Close Menu">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
     </div>
 
     <ul class="sidebar-menu">
