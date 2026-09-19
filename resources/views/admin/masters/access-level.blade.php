@@ -43,10 +43,10 @@
         <div class="card role-directory-card">
             <div class="role-directory-header">
                 <div class="role-directory-title">
-                    <i class="fa-solid fa-id-badge"></i> Roles (<span id="role-count-badge">8</span>)
+                    <i class="fa-solid fa-shield-halved" style="color: var(--primary);"></i> Roles <span id="role-count-badge" class="role-count-pill">8</span>
                 </div>
-                <button type="button" onclick="openAddRoleModal()" class="btn btn-outline role-directory-btn-new" title="Create New Role">
-                    <i class="fa-solid fa-plus"></i> New
+                <button type="button" onclick="openAddRoleModal()" class="btn btn-outline role-directory-btn-new" title="Create New Custom Role">
+                    <i class="fa-solid fa-plus"></i> New Role
                 </button>
             </div>
 
@@ -96,7 +96,7 @@
                     <div class="hero-actions-row">
                         <!-- Edit Role Button -->
                         <button type="button" class="btn hero-action-btn" onclick="openEditRoleModal()" title="Edit Role Details">
-                            <i class="fa-solid fa-pen-to-square"></i> Edit Role
+                            <i class="fa-solid fa-pen-to-square"></i> Edit
                         </button>
 
                         <!-- Toggle Role Status Button -->
@@ -105,7 +105,7 @@
                         </button>
 
                         <!-- Delete Role Button -->
-                        <button type="button" id="btn-delete-role" class="btn hero-delete-btn" onclick="confirmDeleteCurrentRole()" title="Delete this role">
+                        <button type="button" id="btn-delete-role" class="btn hero-delete-btn" onclick="confirmDeleteCurrentRole()" title="Delete this custom role">
                             <i class="fa-solid fa-trash-can"></i> Delete
                         </button>
                     </div>
@@ -115,7 +115,7 @@
                 <div class="perm-preset-bar">
                     <div class="perm-coverage-wrap">
                         <span class="perm-coverage-label">
-                            Sub-Permission Scope:
+                            <i class="fa-solid fa-chart-pie" style="color: var(--primary);"></i> Scope:
                         </span>
                         <span id="permission-ratio-text" class="perm-coverage-text">
                             140 / 140 Actions Granted (100%)
@@ -125,14 +125,20 @@
                         </div>
                     </div>
 
+                    <!-- Live Module Search Filter -->
+                    <div class="perm-search-box-wrap">
+                        <i class="fa-solid fa-magnifying-glass perm-search-box-icon"></i>
+                        <input type="text" id="perm-module-search" class="form-control perm-search-box-input" placeholder="Search modules (e.g. Sales, Ledger)..." oninput="filterPermissionsModules(this.value)">
+                    </div>
+
                     <div class="perm-preset-actions">
-                        <button type="button" class="btn btn-outline perm-preset-btn" onclick="toggleAllSubPermissions(true)">
-                            <i class="fa-solid fa-check-double"></i> Full Access
+                        <button type="button" class="btn btn-outline perm-preset-btn" onclick="toggleAllSubPermissions(true)" title="Grant all actions across all 28 modules">
+                            <i class="fa-solid fa-check-double" style="color: var(--status-success);"></i> Full Access
                         </button>
-                        <button type="button" class="btn btn-outline perm-preset-btn" onclick="setReadOnlyPreset()">
-                            <i class="fa-regular fa-eye"></i> Read Only
+                        <button type="button" class="btn btn-outline perm-preset-btn" onclick="setReadOnlyPreset()" title="Grant only View action across all modules">
+                            <i class="fa-regular fa-eye" style="color: var(--status-info);"></i> Read Only
                         </button>
-                        <button type="button" class="btn btn-outline perm-preset-btn-revoke" onclick="toggleAllSubPermissions(false)">
+                        <button type="button" class="btn btn-outline perm-preset-btn-revoke" onclick="toggleAllSubPermissions(false)" title="Revoke all actions">
                             <i class="fa-solid fa-ban"></i> Revoke All
                         </button>
                     </div>
@@ -162,7 +168,12 @@
                                 </span>
                                 1. Master Records &amp; Directory Permissions
                             </div>
-                            <span class="perm-group-count">9 Modules</span>
+                            <div class="perm-group-header-right">
+                                <span class="perm-group-count">9 Modules</span>
+                                <button type="button" class="btn perm-cat-btn" onclick="toggleCategoryGroup('masters', true)" title="Grant all 9 modules in Masters group">
+                                    <i class="fa-solid fa-check"></i> Grant Group
+                                </button>
+                            </div>
                         </div>
 
                         <div class="perm-modules-list">
@@ -238,7 +249,12 @@
                                 </span>
                                 2. Commercial Transactions &amp; Vouchers
                             </div>
-                            <span class="perm-group-count">8 Modules</span>
+                            <div class="perm-group-header-right">
+                                <span class="perm-group-count">8 Modules</span>
+                                <button type="button" class="btn perm-cat-btn" onclick="toggleCategoryGroup('transactions', true)" title="Grant all 8 modules in Transactions group">
+                                    <i class="fa-solid fa-check"></i> Grant Group
+                                </button>
+                            </div>
                         </div>
 
                         <div class="perm-modules-list">
@@ -313,7 +329,12 @@
                                 </span>
                                 3. Inventory &amp; Warehouse Control
                             </div>
-                            <span class="perm-group-count">4 Modules</span>
+                            <div class="perm-group-header-right">
+                                <span class="perm-group-count">4 Modules</span>
+                                <button type="button" class="btn perm-cat-btn" onclick="toggleCategoryGroup('inventory', true)" title="Grant all 4 modules in Inventory group">
+                                    <i class="fa-solid fa-check"></i> Grant Group
+                                </button>
+                            </div>
                         </div>
 
                         <div class="perm-modules-list">
@@ -384,7 +405,12 @@
                                 </span>
                                 4. Reports &amp; Financial Statements
                             </div>
-                            <span class="perm-group-count">4 Modules</span>
+                            <div class="perm-group-header-right">
+                                <span class="perm-group-count">4 Modules</span>
+                                <button type="button" class="btn perm-cat-btn" onclick="toggleCategoryGroup('reports', true)" title="Grant all 4 modules in Reports group">
+                                    <i class="fa-solid fa-check"></i> Grant Group
+                                </button>
+                            </div>
                         </div>
 
                         <div class="perm-modules-list">
@@ -455,7 +481,12 @@
                                 </span>
                                 5. System Administration &amp; Integration
                             </div>
-                            <span class="perm-group-count">3 Modules</span>
+                            <div class="perm-group-header-right">
+                                <span class="perm-group-count">3 Modules</span>
+                                <button type="button" class="btn perm-cat-btn" onclick="toggleCategoryGroup('settings', true)" title="Grant all 3 modules in Settings group">
+                                    <i class="fa-solid fa-check"></i> Grant Group
+                                </button>
+                            </div>
                         </div>
 
                         <div class="perm-modules-list">
@@ -806,7 +837,45 @@ function renderRolesList() {
     });
 
     container.innerHTML = html;
-    document.getElementById('role-count-badge').innerText = ROLE_DEFINITIONS.length;
+    const countBadge = document.getElementById('role-count-badge');
+    if (countBadge) countBadge.innerText = ROLE_DEFINITIONS.length;
+}
+
+const CATEGORY_MODULE_MAP = {
+    'masters': ['company', 'user', 'access_level', 'vendor', 'customer', 'broker', 'item', 'unit', 'account'],
+    'transactions': ['purchase_entry', 'wb_purchase_entry', 'sales_entry', 'wb_sales_entry', 'order_dispatch', 'sales_purchase_order', 'receipt_voucher', 'payment_voucher'],
+    'inventory': ['stock_overview', 'item_ledger', 'stock_adjustment', 'low_stock_alert'],
+    'reports': ['purchase_report', 'sales_report', 'order_report', 'cash_bank_register'],
+    'settings': ['company_settings', 'whatsapp_settings', 'backup_restore']
+};
+
+function toggleCategoryGroup(categoryKey, enableAll) {
+    if (currentRoleKey === 'Super Administrator') return;
+    const moduleList = CATEGORY_MODULE_MAP[categoryKey] || [];
+    moduleList.forEach(mod => {
+        toggleModuleAllActions(mod, enableAll);
+    });
+    toastr.info(`Updated privileges for ${categoryKey.toUpperCase()} category.`);
+}
+
+function filterPermissionsModules(query) {
+    const q = query.toLowerCase().trim();
+    ALL_MODULE_KEYS.forEach(mod => {
+        const card = document.getElementById(`card-mod-${mod}`);
+        if (!card) return;
+        if (!q) {
+            card.style.display = 'flex';
+        } else {
+            const text = card.innerText.toLowerCase();
+            card.style.display = text.includes(q) ? 'flex' : 'none';
+        }
+    });
+
+    // Check if any category is completely empty and hide empty categories during search
+    document.querySelectorAll('.perm-groups-container > div').forEach(group => {
+        const visibleCards = group.querySelectorAll('.perm-module-card:not([style*="display: none"])');
+        group.style.display = (q && visibleCards.length === 0) ? 'none' : 'block';
+    });
 }
 
 function filterRolesList(query) {
