@@ -125,9 +125,11 @@ class CompanyController extends Controller
             'bank_ifsc'       => 'nullable|string|max:25',
             'bank_branch'     => 'nullable|string|max:100',
             'tagline'         => 'nullable|string|max:255',
-            'status'          => 'required|in:active,inactive',
+            'status'          => 'nullable|in:active,inactive',
             'is_default'      => 'nullable|boolean',
         ]);
+
+        $validated['status'] = $validated['status'] ?? 'active';
 
         if (empty($validated['code'])) {
             $validated['code'] = Company::generateUniqueCode($validated['name']);
@@ -215,9 +217,13 @@ class CompanyController extends Controller
             'bank_ifsc'       => 'nullable|string|max:25',
             'bank_branch'     => 'nullable|string|max:100',
             'tagline'         => 'nullable|string|max:255',
-            'status'          => 'required|in:active,inactive',
+            'status'          => 'nullable|in:active,inactive',
             'is_default'      => 'nullable|boolean',
         ]);
+
+        if (!isset($validated['status'])) {
+            unset($validated['status']);
+        }
 
         if (empty($validated['code'])) {
             $validated['code'] = Company::generateUniqueCode($validated['name'], $company->id);

@@ -86,7 +86,7 @@
                             </div>
                         </div>
 
-                        <div class="form-row-3">
+                        <div class="form-row-2">
                             <div class="form-group">
                                 <label class="form-label" style="display: flex; justify-content: space-between; align-items: center;">
                                     <span>Short Code / Prefix</span>
@@ -103,20 +103,8 @@
 
                             <div class="form-group">
                                 <label class="form-label">
-                                    <span>Operational Status <span class="req">*</span></span>
-                                </label>
-                                <div class="input-icon-wrap">
-                                    <i class="fa-solid fa-circle-dot input-icon"></i>
-                                    <select name="status" id="field-status" class="form-control" required>
-                                        <option value="active" {{ old('status', $company->status) === 'active' ? 'selected' : '' }}>Active Operating</option>
-                                        <option value="inactive" {{ old('status', $company->status) === 'inactive' ? 'selected' : '' }}>Inactive / Dormant</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label">
                                     <span>Financial Year</span>
+                                    <span class="label-hint">Current accounting period</span>
                                 </label>
                                 <div class="input-icon-wrap">
                                     <i class="fa-solid fa-calendar-days input-icon"></i>
@@ -442,7 +430,6 @@
         const taglineInput = document.getElementById('field-tagline');
         const gstinInput = document.getElementById('field-gstin');
         const cityInput = document.getElementById('field-city');
-        const statusSelect = document.getElementById('field-status');
         const defaultCheck = document.getElementById('is_default');
 
         const prevName = document.getElementById('preview-name');
@@ -460,16 +447,6 @@
             if (prevGstin) prevGstin.textContent = gstinInput && gstinInput.value.trim() ? gstinInput.value.trim().toUpperCase() : 'Not Set';
             if (prevCity) prevCity.textContent = cityInput && cityInput.value.trim() ? cityInput.value.trim() : 'Sojat City';
 
-            if (statusSelect && prevStatusPill) {
-                const status = statusSelect.value;
-                prevStatusPill.innerHTML = `<i class="fa-solid fa-circle" style="font-size: 0.5rem;"></i> ${status.charAt(0).toUpperCase() + status.slice(1)}`;
-                if (status === 'active') {
-                    prevStatusPill.style.background = 'rgba(16, 185, 129, 0.3)';
-                } else {
-                    prevStatusPill.style.background = 'rgba(239, 68, 68, 0.3)';
-                }
-            }
-
             if (defaultCheck && prevDefaultPill) {
                 prevDefaultPill.style.display = defaultCheck.checked ? 'inline-flex' : 'none';
             }
@@ -479,7 +456,6 @@
             if (el) el.addEventListener('input', updatePreview);
         });
 
-        if (statusSelect) statusSelect.addEventListener('change', updatePreview);
         if (defaultCheck) defaultCheck.addEventListener('change', updatePreview);
 
         // Auto-generate Unique Short Code
