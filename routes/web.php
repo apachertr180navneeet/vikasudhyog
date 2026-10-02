@@ -34,6 +34,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // Dashboard
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        Route::post('/switch-company', [CompanyController::class, 'switchActive'])->name('switch-company');
 
         // Masters Routes
         Route::prefix('masters')->name('masters.')->group(function () {
@@ -48,6 +49,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::delete('/company/{company}', [CompanyController::class, 'destroy'])->name('company.destroy');
             Route::patch('/company/{company}/toggle-status', [CompanyController::class, 'toggleStatus'])->name('company.toggle-status');
             Route::patch('/company/{company}/set-default', [CompanyController::class, 'setDefault'])->name('company.set-default');
+            Route::post('/company/switch-active', [CompanyController::class, 'switchActive'])->name('company.switch-active');
 
             // User Master CRUD (Dedicated Pages)
             Route::get('/user', [UserController::class, 'index'])->name('user');

@@ -246,11 +246,57 @@ const App = {
     bindCompanySelector() {
         const select = document.getElementById('company-selector-dropdown');
         if (select) {
-            select.addEventListener('change', (e) => {
-                const selectedComp = e.target.value;
-                localStorage.setItem(STORAGE_KEYS.CURRENT_COMPANY, selectedComp);
-                App.showToast(`Switched active company to ${selectedComp}`, 'success');
-                if (this.currentView === 'dashboard') Dashboard.render();
+            select.addEventListener('change', async (e) => {
+                const companyId = e.target.value;
+                const companyName = e.target.options[e.target.selectedIndex]?.text || 'Company';
+                const switchUrl = select.getAttribute('data-switch-url') || '/admin/switch-company';
+                const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+                if (!companyId) return;
+
+                select.disabled = true;
+
+                try {
+                    const response = await fetch(switchUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken || ''
+                        },
+                        body: JSON.stringify({ company_id: companyId })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok && data.success) {
+                        localStorage.setItem(STORAGE_KEYS.CURRENT_COMPANY, companyName);
+                        localStorage.setItem('CURRENT_COMPANY_ID', companyId);
+                        
+                        if (typeof toastr !== 'undefined') {
+                            toastr.success(data.message || `Switched active company to ${companyName}`);
+                        } else if (typeof App !== 'undefined' && App.showToast) {
+                            App.showToast(data.message || `Switched active company to ${companyName}`, 'success');
+                        }
+
+                        // Reload page to reflect newly active company across all data widgets
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 400);
+                    } else {
+                        throw new Error(data.message || 'Failed to switch company');
+                    }
+                } catch (err) {
+                    console.error('Error switching active company:', err);
+                    if (typeof toastr !== 'undefined') {
+                        toastr.error(err.message || 'Failed to switch company');
+                    } else if (typeof App !== 'undefined' && App.showToast) {
+                        App.showToast(err.message || 'Failed to switch company', 'error');
+                    } else {
+                        alert(err.message || 'Failed to switch company');
+                    }
+                    select.disabled = false;
+                }
             });
         }
     },

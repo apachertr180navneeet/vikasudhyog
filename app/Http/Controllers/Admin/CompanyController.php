@@ -316,4 +316,37 @@ class CompanyController extends Controller
 
         return back()->with('success', 'Default company updated to "' . $company->name . '".');
     }
+
+    /**
+     * Switch active company in session and for authenticated user.
+     */
+    public function switchActive(Request $request)
+    {
+        $validated = $request->validate([
+            'company_id' => 'required|exists:companies,id',
+        ]);
+
+        $company = Company::where('status', 'active')->findOrFail($validated['company_id']);
+
+        session([
+            'active_company_id'   => $company->id,
+            'active_company_name' => $company->name,
+            'active_company_city' => $company->city,
+        ]);
+
+        if (auth()->check()) {
+            auth()->user()->update(['company_id' => $company->id]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Switched active company to ' . $company->name . ' (' . $company->city . ')',
+            'company' => [
+                'id'   => $company->id,
+                'name' => $company->name,
+                'city' => $company->city,
+                'code' => $company->code,
+            ],
+        ]);
+    }
 }

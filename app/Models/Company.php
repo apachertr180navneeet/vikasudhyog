@@ -45,6 +45,45 @@ class Company extends Model
     }
 
     /**
+     * Get currently active company from session or user or default.
+     */
+    public static function getActiveCompany(): ?self
+    {
+        $id = session('active_company_id');
+        if ($id) {
+            $company = static::where('status', 'active')->find($id);
+            if ($company) {
+                return $company;
+            }
+        }
+
+        if (auth()->check() && auth()->user()->company_id) {
+            $company = static::where('status', 'active')->find(auth()->user()->company_id);
+            if ($company) {
+                session([
+                    'active_company_id' => $company->id,
+                    'active_company_name' => $company->name,
+                    'active_company_city' => $company->city,
+                ]);
+                return $company;
+            }
+        }
+
+        $default = static::where('status', 'active')->where('is_default', true)->first()
+            ?? static::where('status', 'active')->first();
+
+        if ($default) {
+            session([
+                'active_company_id' => $default->id,
+                'active_company_name' => $default->name,
+                'active_company_city' => $default->city,
+            ]);
+        }
+
+        return $default;
+    }
+
+    /**
      * Set this company as the default and unset others.
      */
     public function makeDefault(): void

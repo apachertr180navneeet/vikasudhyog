@@ -4,17 +4,19 @@
         <button class="btn-icon" id="sidebar-toggle"><i class="fa-solid fa-bars"></i></button>
 
         @php
-            $activeCompanies = \App\Models\Company::where('status', 'active')->orderBy('is_default', 'desc')->get();
+            $activeCompanies = \App\Models\Company::where('status', 'active')->orderBy('is_default', 'desc')->orderBy('name', 'asc')->get();
+            $currentCompany = \App\Models\Company::getActiveCompany();
+            $currentCompanyId = $currentCompany?->id;
         @endphp
-        <div class="company-selector">
+        <div class="company-selector" title="Active Operating Company / Plant">
             <i class="fa-solid fa-building"></i>
-            <select id="company-selector-dropdown">
+            <select id="company-selector-dropdown" data-switch-url="{{ route('admin.switch-company') }}" aria-label="Select Operating Company">
                 @forelse($activeCompanies as $compItem)
-                    <option value="{{ $compItem->name }}" {{ $compItem->is_default ? 'selected' : '' }}>
+                    <option value="{{ $compItem->id }}" {{ $currentCompanyId == $compItem->id ? 'selected' : '' }}>
                         {{ $compItem->name }} ({{ $compItem->city }})
                     </option>
                 @empty
-                    <option value="Vikas Udhyog">Vikas Udhyog (Sojat)</option>
+                    <option value="" disabled selected>No Active Companies</option>
                 @endforelse
             </select>
         </div>
