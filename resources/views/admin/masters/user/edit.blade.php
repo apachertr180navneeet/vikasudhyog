@@ -297,12 +297,12 @@
                 </div>
 
                 <!-- Form Action Buttons -->
-                <div class="card erp-form-section-card p-3 d-flex flex-column gap-2">
-                    <button type="submit" class="btn btn-primary erp-btn-header-primary w-100 justify-content-center">
+                <div class="card erp-sidebar-actions-card">
+                    <button type="submit" class="erp-btn-action-submit">
                         <i class="fa-solid fa-floppy-disk"></i> Save Changes
                     </button>
-                    <a href="{{ route('admin.masters.user') }}" class="btn btn-outline erp-btn-header-back w-100 justify-content-center">
-                        Cancel
+                    <a href="{{ route('admin.masters.user') }}" class="erp-btn-action-cancel">
+                        <i class="fa-solid fa-xmark"></i> Cancel
                     </a>
                 </div>
 
@@ -313,7 +313,7 @@
                             <i class="fa-solid fa-triangle-exclamation"></i> Danger Zone
                         </div>
                         <p class="erp-field-hint mt-0 mb-2">Soft deletes this user account and immediately prevents login.</p>
-                        <button type="button" class="btn btn-danger erp-btn-header-back w-100 justify-content-center" onclick="confirmDeleteUser({{ $user->id }}, '{{ addslashes($user->name) }}', '{{ $user->username }}')">
+                        <button type="button" class="erp-btn-action-danger" onclick="confirmDeleteUser({{ $user->id }}, '{{ addslashes($user->name) }}', '{{ $user->username }}')">
                             <i class="fa-solid fa-trash-can"></i> Delete User Account
                         </button>
                     </div>

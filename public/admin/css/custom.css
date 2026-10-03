@@ -2149,3 +2149,120 @@
     color: rgba(255, 255, 255, 0.6);
 }
 
+/* --------------------------------------------------------------------------
+   14. Form Actions Sidebar Cards & Buttons (User Add & Edit)
+   -------------------------------------------------------------------------- */
+.erp-sidebar-actions-card {
+    background: #FFFFFF;
+    border-radius: 16px;
+    border: 1px solid var(--border-color, #E2E8F0);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+    padding: 1.25rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.75rem !important;
+    box-sizing: border-box;
+}
+
+.erp-btn-action-submit {
+    width: 100% !important;
+    height: 46px !important;
+    border-radius: 10px !important;
+    font-weight: 700 !important;
+    font-size: 0.95rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.5rem !important;
+    background: var(--primary, #6B8E23) !important;
+    color: #FFFFFF !important;
+    border: none !important;
+    box-shadow: 0 4px 14px rgba(107, 142, 35, 0.35) !important;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none !important;
+    box-sizing: border-box !important;
+}
+
+.erp-btn-action-submit:hover {
+    background: var(--primary-dark, #556B2F) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(107, 142, 35, 0.45) !important;
+    color: #FFFFFF !important;
+}
+
+.erp-btn-action-cancel {
+    width: 100% !important;
+    height: 42px !important;
+    border-radius: 10px !important;
+    font-weight: 600 !important;
+    font-size: 0.92rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.5rem !important;
+    background: #FFFFFF !important;
+    color: var(--text-secondary, #475569) !important;
+    border: 1px solid #CBD5E1 !important;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none !important;
+    box-sizing: border-box !important;
+}
+
+.erp-btn-action-cancel:hover {
+    background: #F8FAFC !important;
+    color: var(--text-primary, #0F172A) !important;
+    border-color: #94A3B8 !important;
+}
+
+.erp-btn-action-danger {
+    width: 100% !important;
+    height: 42px !important;
+    border-radius: 10px !important;
+    font-weight: 600 !important;
+    font-size: 0.92rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.5rem !important;
+    background: #DC2626 !important;
+    color: #FFFFFF !important;
+    border: none !important;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none !important;
+    box-sizing: border-box !important;
+}
+
+.erp-btn-action-danger:hover {
+    background: #B91C1C !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3) !important;
+    color: #FFFFFF !important;
+}
+
+/* --------------------------------------------------------------------------
+   15. Generic Layout & Utility Helpers
+   -------------------------------------------------------------------------- */
+.d-flex { display: flex !important; }
+.flex-column { flex-direction: column !important; }
+.align-items-start { align-items: flex-start !important; }
+.align-items-center { align-items: center !important; }
+.justify-content-between { justify-content: space-between !important; }
+.justify-content-center { justify-content: center !important; }
+.w-100 { width: 100% !important; }
+.gap-1 { gap: 0.25rem !important; }
+.gap-2 { gap: 0.5rem !important; }
+.gap-3 { gap: 1rem !important; }
+.p-2 { padding: 0.5rem !important; }
+.p-3 { padding: 1rem !important; }
+.mb-1 { margin-bottom: 0.25rem !important; }
+.mb-2 { margin-bottom: 0.5rem !important; }
+.mt-0 { margin-top: 0 !important; }
+.mt-2 { margin-top: 0.5rem !important; }
+.text-muted { color: var(--text-muted, #64748B) !important; }
+.text-dark { color: var(--text-primary, #0F172A) !important; }
+.text-primary { color: var(--primary, #6B8E23) !important; }
+.font-monospace { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important; }
+
