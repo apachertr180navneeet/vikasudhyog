@@ -99,7 +99,7 @@ Every index view must follow this exact sequential layout:
 
         <button type="submit" class="btn btn-outline erp-btn-filter"><i class="fa-solid fa-filter"></i> Filter</button>
         @if(!empty($filters['search']) || $filters['status'] !== 'all')
-            <a href="{{ route('admin.[module]') }}" class="btn btn-outline erp-btn-filter-clear" title="Clear Filters"><i class="fa-solid fa-xmark"></i></a>
+            <a href="{{ route('admin.[module]') }}" class="btn btn-outline erp-btn-filter-clear" title="Clear Filters"><i class="fa-solid fa-xmark"></i> Clear</a>
         @endif
     </form>
     <div class="erp-table-summary-count">
@@ -191,6 +191,15 @@ All data entry forms must use the **2-Column Responsive Layout**:
 | `.erp-kpi-primary` | Olive green accent border & icon box |
 | `.erp-kpi-success` | Emerald green accent border & icon box |
 | `.erp-kpi-purple` | Vibrant purple accent border & icon box |
+| `.erp-table-filter-header` | Flexbox container for table toolbar filters and summary counter |
+| `.erp-filter-form` | Inline flex form keeping search, selects, and action buttons aligned |
+| `.erp-search-wrap` | Relative container positioning the magnifying glass icon inside the input |
+| `.erp-search-icon` | Absolutely centered search icon with focus highlight transitions |
+| `.erp-search-input` | Padded search input with custom focus rings and placeholder styles |
+| `.erp-filter-select` | Compact dropdown select with custom SVG chevron and auto width |
+| `.erp-btn-filter` | Filter submit button with border, icon, and hover elevation |
+| `.erp-btn-filter-clear` | Clear filter action button with soft red accent styling |
+| `.erp-table-summary-count` | Right-aligned pill badge displaying `Showing X of Y ...` count |
 | `.erp-status-btn` | Modern pill button for active/inactive status display & toggle |
 | `.erp-status-btn-active` | Mint background (`#DCFCE7`), green text (`#15803D`), green border |
 | `.erp-status-btn-inactive`| Soft red background (`#FEE2E2`), dark red text (`#B91C1C`), red border |
@@ -202,3 +211,4 @@ All data entry forms must use the **2-Column Responsive Layout**:
 | `.erp-btn-action-cancel` | Full-width secondary cancel button |
 | `.erp-field-icon-wrap` | Input wrapper positioning the left field icon |
 | `.erp-field-hint` | Muted subtitle text directly beneath input fields |
+

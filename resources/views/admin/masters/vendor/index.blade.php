@@ -128,7 +128,7 @@
 
                 @if(!empty($filters['search']) || ($filters['status'] ?? 'all') !== 'all' || ($filters['city'] ?? 'all') !== 'all')
                     <a href="{{ route('admin.masters.vendor') }}" class="btn btn-outline erp-btn-filter-clear" title="Clear Filters">
-                        <i class="fa-solid fa-xmark"></i>
+                        <i class="fa-solid fa-xmark"></i> Clear
                     </a>
                 @endif
             </form>

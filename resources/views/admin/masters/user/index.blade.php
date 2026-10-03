@@ -143,6 +143,10 @@
                     </a>
                 @endif
             </form>
+
+            <div class="erp-table-summary-count">
+                Showing <strong>{{ $users->count() }}</strong> of <strong>{{ $users->total() }}</strong> users
+            </div>
         </div>
 
         <!-- Users Table -->

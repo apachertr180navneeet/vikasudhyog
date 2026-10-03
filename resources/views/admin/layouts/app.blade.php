@@ -19,9 +19,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Admin Styles -->
-    <link rel="stylesheet" href="{{ asset('admin/css/style.css') }}">
-    <link rel="stylesheet" href="{{ asset('admin/css/custom.css') }}">
-    <link rel="stylesheet" href="{{ asset('admin/css/responsive.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/css/style.css') }}?v={{ @filemtime(public_path('admin/css/style.css')) }}">
+    <link rel="stylesheet" href="{{ asset('admin/css/custom.css') }}?v={{ @filemtime(public_path('admin/css/custom.css')) }}">
+    <link rel="stylesheet" href="{{ asset('admin/css/responsive.css') }}?v={{ @filemtime(public_path('admin/css/responsive.css')) }}">
 
     <!-- Toastr & SweetAlert2 CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
