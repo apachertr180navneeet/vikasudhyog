@@ -127,13 +127,17 @@
 
                     <div class="erp-form-section-body">
                         <div class="form-group erp-form-col-full">
-                            <label class="erp-field-label">
-                                Username <span class="erp-req-star">*</span>
+                            <label class="erp-field-label-flex">
+                                <span>Username <span class="erp-req-star">*</span></span>
+                                <button type="button" onclick="suggestUsername()" class="erp-btn-suggest">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i> Auto-suggest from Name
+                                </button>
                             </label>
                             <div class="erp-field-icon-wrap">
                                 <i class="fa-solid fa-at erp-field-icon"></i>
-                                <input type="text" name="username" id="field-username" class="form-control erp-field-input-iconified erp-field-input-mono" placeholder="Enter username" value="{{ old('username', $user->username) }}" required oninput="this.value = this.value.toLowerCase().replace(/[^a-z0-9_.-]/g, ''); updateLivePreview();">
+                                <input type="text" name="username" id="field-username" class="form-control erp-field-input-iconified erp-field-input-mono" placeholder="Enter username" value="{{ old('username', $user->username) }}" required oninput="this.value = this.value.toLowerCase().replace(/[^a-z0-9_-]/g, ''); updateLivePreview();">
                             </div>
+                            <span class="erp-field-hint">Must be unique. Allowed characters: lowercase letters, numbers, dash, underscore.</span>
                         </div>
 
                         <!-- Password -->
@@ -343,6 +347,29 @@ function togglePasswordVisibility(fieldId, btn) {
         input.type = 'password';
         icon.classList.remove('fa-eye-slash');
         icon.classList.add('fa-eye');
+    }
+}
+
+function suggestUsername() {
+    const name = document.getElementById('field-name').value.trim();
+    if (!name) {
+        if (typeof toastr !== 'undefined') toastr.info('Please type a Full Name first.');
+        return;
+    }
+    const clean = name.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim().split(/\s+/).filter(Boolean);
+    let username = '';
+    if (clean.length === 0) {
+        username = 'user';
+    } else if (clean.length === 1) {
+        username = clean[0];
+    } else {
+        username = clean[0] + '_' + clean[clean.length - 1];
+    }
+    username = username.substring(0, 50);
+    document.getElementById('field-username').value = username;
+    updateLivePreview();
+    if (typeof toastr !== 'undefined') {
+        toastr.success('Username suggested: @' + username);
     }
 }
 

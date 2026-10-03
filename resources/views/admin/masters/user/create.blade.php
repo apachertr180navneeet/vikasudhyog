@@ -134,9 +134,9 @@
                             </label>
                             <div class="erp-field-icon-wrap">
                                 <i class="fa-solid fa-at erp-field-icon"></i>
-                                <input type="text" name="username" id="field-username" class="form-control erp-field-input-iconified erp-field-input-mono" placeholder="Enter username" value="{{ old('username') }}" required oninput="this.value = this.value.toLowerCase().replace(/[^a-z0-9_.-]/g, ''); updateLivePreview();">
+                                <input type="text" name="username" id="field-username" class="form-control erp-field-input-iconified erp-field-input-mono" placeholder="Enter username" value="{{ old('username') }}" required oninput="this.value = this.value.toLowerCase().replace(/[^a-z0-9_-]/g, ''); updateLivePreview();">
                             </div>
-                            <span class="erp-field-hint">Must be unique. Allowed characters: lowercase letters, numbers, dot, dash, underscore.</span>
+                            <span class="erp-field-hint">Must be unique. Allowed characters: lowercase letters, numbers, dash, underscore.</span>
                         </div>
 
                         <!-- Password -->
@@ -311,18 +311,24 @@ function togglePasswordVisibility(fieldId, btn) {
 function suggestUsername() {
     const name = document.getElementById('field-name').value.trim();
     if (!name) {
-        toastr.info('Please type a Full Name first.');
+        if (typeof toastr !== 'undefined') toastr.info('Please type a Full Name first.');
         return;
     }
-    const clean = name.toLowerCase().replace(/[^a-z0-9\s]/g, '').split(/\s+/);
+    const clean = name.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim().split(/\s+/).filter(Boolean);
     let username = '';
-    if (clean.length === 1) {
+    if (clean.length === 0) {
+        username = 'user';
+    } else if (clean.length === 1) {
         username = clean[0];
     } else {
-        username = clean[0] + '.' + clean[clean.length - 1];
+        username = clean[0] + '_' + clean[clean.length - 1];
     }
+    username = username.substring(0, 50);
     document.getElementById('field-username').value = username;
     updateLivePreview();
+    if (typeof toastr !== 'undefined') {
+        toastr.success('Username suggested: @' + username);
+    }
 }
 
 function generateRandomPassword() {
