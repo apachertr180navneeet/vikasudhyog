@@ -128,7 +128,7 @@
                     <!-- Live Module Search Filter -->
                     <div class="perm-search-box-wrap">
                         <i class="fa-solid fa-magnifying-glass perm-search-box-icon"></i>
-                        <input type="text" id="perm-module-search" class="form-control perm-search-box-input" placeholder="Search modules (e.g. Sales, Ledger)..." oninput="filterPermissionsModules(this.value)">
+                        <input type="text" id="perm-module-search" class="form-control perm-search-box-input" placeholder="Search modules..." oninput="filterPermissionsModules(this.value)">
                     </div>
 
                     <div class="perm-preset-actions">
@@ -569,14 +569,14 @@
                     <label class="custom-modal-label">
                         Role Title <span class="erp-req-star">*</span>
                     </label>
-                    <input type="text" id="new-role-name" class="form-control custom-modal-input" placeholder="e.g. Quality Inspector, Dispatch Supervisor" required maxlength="60">
+                    <input type="text" id="new-role-name" class="form-control custom-modal-input" placeholder="Enter role title" required maxlength="60">
                 </div>
 
                 <div class="custom-modal-form-group">
                     <label class="custom-modal-label">
                         Role Description
                     </label>
-                    <input type="text" id="new-role-desc" class="form-control custom-modal-input" placeholder="Short summary of role scope" maxlength="255">
+                    <input type="text" id="new-role-desc" class="form-control custom-modal-input" placeholder="Enter role description" maxlength="255">
                 </div>
 
                 <div class="custom-modal-form-group-lg">

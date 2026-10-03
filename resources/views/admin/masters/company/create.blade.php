@@ -77,7 +77,7 @@
                                 </label>
                                 <div class="input-icon-wrap">
                                     <i class="fa-solid fa-building input-icon"></i>
-                                    <input type="text" name="name" id="field-name" class="form-control" placeholder="e.g. Vikas Udhyog Herbal Formulations" value="{{ old('name') }}" required autofocus>
+                                    <input type="text" name="name" id="field-name" class="form-control" placeholder="Enter company legal name" value="{{ old('name') }}" required autofocus>
                                 </div>
                             </div>
                         </div>
@@ -90,7 +90,7 @@
                                 </label>
                                 <div class="input-icon-wrap" style="position: relative;">
                                     <i class="fa-solid fa-hashtag input-icon"></i>
-                                    <input type="text" name="code" id="field-code" class="form-control uppercase-input" placeholder="e.g. VU" value="{{ old('code') }}" maxlength="30" style="padding-right: 2.5rem; text-transform: uppercase;" autocomplete="off">
+                                    <input type="text" name="code" id="field-code" class="form-control uppercase-input" placeholder="Enter company code" value="{{ old('code') }}" maxlength="30" style="padding-right: 2.5rem; text-transform: uppercase;" autocomplete="off">
                                     <button type="button" id="btn-regenerate-code" title="Generate unique short code from name" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 5px 8px; font-size: 0.85rem; border-radius: 6px; transition: all 0.2s;" onmouseover="this.style.color='var(--primary)'; this.style.background='rgba(107, 142, 35, 0.1)'" onmouseout="this.style.color='var(--text-muted)'; this.style.background='none'">
                                         <i class="fa-solid fa-arrows-rotate"></i>
                                     </button>
@@ -104,7 +104,7 @@
                                 </label>
                                 <div class="input-icon-wrap">
                                     <i class="fa-solid fa-calendar-days input-icon"></i>
-                                    <input type="text" name="financial_year" class="form-control" placeholder="2026-2027" value="{{ old('financial_year', '2026-2027') }}">
+                                    <input type="text" name="financial_year" class="form-control" placeholder="Enter financial year" value="{{ old('financial_year', '2026-2027') }}">
                                 </div>
                             </div>
                         </div>
@@ -116,7 +116,7 @@
                             </label>
                             <div class="input-icon-wrap">
                                 <i class="fa-solid fa-quote-left input-icon"></i>
-                                <input type="text" name="tagline" id="field-tagline" class="form-control" placeholder="e.g. Leading Manufacturer of Pure Sojat Henna Powder &amp; Natural Herbal Extracts" value="{{ old('tagline') }}">
+                                <input type="text" name="tagline" id="field-tagline" class="form-control" placeholder="Enter company tagline" value="{{ old('tagline') }}">
                             </div>
                         </div>
                     </div>
@@ -144,7 +144,7 @@
                                 </label>
                                 <div class="input-icon-wrap">
                                     <i class="fa-solid fa-receipt input-icon"></i>
-                                    <input type="text" name="gstin" id="field-gstin" class="form-control uppercase-input" placeholder="08AABCV1234F1Z5" maxlength="20" value="{{ old('gstin') }}">
+                                    <input type="text" name="gstin" id="field-gstin" class="form-control uppercase-input" placeholder="Enter GSTIN number" maxlength="20" value="{{ old('gstin') }}">
                                 </div>
                             </div>
 
@@ -155,7 +155,7 @@
                                 </label>
                                 <div class="input-icon-wrap">
                                     <i class="fa-solid fa-id-card input-icon"></i>
-                                    <input type="text" name="pan" id="field-pan" class="form-control uppercase-input" placeholder="AABCV1234F" maxlength="15" value="{{ old('pan') }}">
+                                    <input type="text" name="pan" id="field-pan" class="form-control uppercase-input" placeholder="Enter PAN number" maxlength="15" value="{{ old('pan') }}">
                                 </div>
                             </div>
                         </div>
@@ -183,7 +183,7 @@
                                 </label>
                                 <div class="input-icon-wrap">
                                     <i class="fa-solid fa-phone input-icon"></i>
-                                    <input type="text" name="phone" class="form-control" placeholder="+91 94140 12345" value="{{ old('phone') }}">
+                                    <input type="text" name="phone" class="form-control" placeholder="Enter official phone number" value="{{ old('phone') }}">
                                 </div>
                             </div>
 
@@ -193,7 +193,7 @@
                                 </label>
                                 <div class="input-icon-wrap">
                                     <i class="fa-solid fa-envelope input-icon"></i>
-                                    <input type="email" name="email" class="form-control" placeholder="contact@vikasudhyog.com" value="{{ old('email') }}">
+                                    <input type="email" name="email" class="form-control" placeholder="Enter official email address" value="{{ old('email') }}">
                                 </div>
                             </div>
 
@@ -203,7 +203,7 @@
                                 </label>
                                 <div class="input-icon-wrap">
                                     <i class="fa-solid fa-globe input-icon"></i>
-                                    <input type="text" name="website" class="form-control" placeholder="https://vikasudhyog.com" value="{{ old('website') }}">
+                                    <input type="text" name="website" class="form-control" placeholder="Enter website domain URL" value="{{ old('website') }}">
                                 </div>
                             </div>
                         </div>
@@ -212,7 +212,7 @@
                             <label class="form-label">
                                 <span>Plant / Registered Premises Address</span>
                             </label>
-                            <textarea name="address" rows="2" class="form-control" placeholder="Plot No. 12-15, Mandi Yard Road, Industrial Area">{{ old('address') }}</textarea>
+                            <textarea name="address" rows="2" class="form-control" placeholder="Enter plant or registered address">{{ old('address') }}</textarea>
                         </div>
 
                         <div class="form-row-3">
@@ -222,7 +222,7 @@
                                 </label>
                                 <div class="input-icon-wrap">
                                     <i class="fa-solid fa-city input-icon"></i>
-                                    <input type="text" name="city" id="field-city" class="form-control" placeholder="Sojat City" value="{{ old('city', 'Sojat City') }}" required>
+                                    <input type="text" name="city" id="field-city" class="form-control" placeholder="Enter city" value="{{ old('city', 'Sojat City') }}" required>
                                 </div>
                             </div>
 
@@ -232,7 +232,7 @@
                                 </label>
                                 <div class="input-icon-wrap">
                                     <i class="fa-solid fa-map-pin input-icon"></i>
-                                    <input type="text" name="state" class="form-control" placeholder="Rajasthan" value="{{ old('state', 'Rajasthan') }}" required>
+                                    <input type="text" name="state" class="form-control" placeholder="Enter state" value="{{ old('state', 'Rajasthan') }}" required>
                                 </div>
                             </div>
 
@@ -242,7 +242,7 @@
                                 </label>
                                 <div class="input-icon-wrap">
                                     <i class="fa-solid fa-envelope-open-text input-icon"></i>
-                                    <input type="text" name="pincode" class="form-control" placeholder="306104" maxlength="10" value="{{ old('pincode') }}">
+                                    <input type="text" name="pincode" class="form-control" placeholder="Enter postal pincode" maxlength="10" value="{{ old('pincode') }}">
                                 </div>
                             </div>
                         </div>
@@ -270,7 +270,7 @@
                                 </label>
                                 <div class="input-icon-wrap">
                                     <i class="fa-solid fa-landmark input-icon"></i>
-                                    <input type="text" name="bank_name" class="form-control" placeholder="State Bank of India / HDFC Bank" value="{{ old('bank_name') }}">
+                                    <input type="text" name="bank_name" class="form-control" placeholder="Enter bank name" value="{{ old('bank_name') }}">
                                 </div>
                             </div>
 
@@ -280,7 +280,7 @@
                                 </label>
                                 <div class="input-icon-wrap">
                                     <i class="fa-solid fa-money-check input-icon"></i>
-                                    <input type="text" name="bank_account_no" class="form-control" placeholder="38491029384" value="{{ old('bank_account_no') }}">
+                                    <input type="text" name="bank_account_no" class="form-control" placeholder="Enter bank account number" value="{{ old('bank_account_no') }}">
                                 </div>
                             </div>
                         </div>
@@ -292,7 +292,7 @@
                                 </label>
                                 <div class="input-icon-wrap">
                                     <i class="fa-solid fa-shield input-icon"></i>
-                                    <input type="text" name="bank_ifsc" class="form-control uppercase-input" placeholder="SBIN0031204" maxlength="25" value="{{ old('bank_ifsc') }}">
+                                    <input type="text" name="bank_ifsc" class="form-control uppercase-input" placeholder="Enter IFSC code" maxlength="25" value="{{ old('bank_ifsc') }}">
                                 </div>
                             </div>
 
@@ -302,7 +302,7 @@
                                 </label>
                                 <div class="input-icon-wrap">
                                     <i class="fa-solid fa-location-dot input-icon"></i>
-                                    <input type="text" name="bank_branch" class="form-control" placeholder="Main Branch, Sojat City" value="{{ old('bank_branch') }}">
+                                    <input type="text" name="bank_branch" class="form-control" placeholder="Enter branch location" value="{{ old('bank_branch') }}">
                                 </div>
                             </div>
                         </div>

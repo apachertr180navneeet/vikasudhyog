@@ -23,7 +23,7 @@
 
         <div class="search-box-wrapper">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="global-search-input" placeholder="Search anything (Mehndi, Invoices, Customers)..." autocomplete="off">
+            <input type="text" id="global-search-input" placeholder="Search anything..." autocomplete="off">
             <div class="search-results-dropdown" id="global-search-dropdown"></div>
         </div>
     </div>

@@ -77,7 +77,7 @@
                             </label>
                             <div class="erp-field-icon-wrap">
                                 <i class="fa-solid fa-user erp-field-icon"></i>
-                                <input type="text" name="name" id="field-name" class="form-control erp-field-input-iconified" placeholder="e.g. Navneet Sharma" value="{{ old('name') }}" required autofocus oninput="updateLivePreview()">
+                                <input type="text" name="name" id="field-name" class="form-control erp-field-input-iconified" placeholder="Enter full name" value="{{ old('name') }}" required autofocus oninput="updateLivePreview()">
                             </div>
                             <span class="erp-field-hint">Enter the employee's official full name</span>
                         </div>
@@ -88,7 +88,7 @@
                             </label>
                             <div class="erp-field-icon-wrap">
                                 <i class="fa-regular fa-envelope erp-field-icon"></i>
-                                <input type="email" name="email" id="field-email" class="form-control erp-field-input-iconified" placeholder="e.g. navneet@vikasudhyog.com" value="{{ old('email') }}" required oninput="updateLivePreview()">
+                                <input type="email" name="email" id="field-email" class="form-control erp-field-input-iconified" placeholder="Enter email address" value="{{ old('email') }}" required oninput="updateLivePreview()">
                             </div>
                             <span class="erp-field-hint">Used for system notifications &amp; password recovery</span>
                         </div>
@@ -99,7 +99,7 @@
                             </label>
                             <div class="erp-field-icon-wrap">
                                 <i class="fa-solid fa-phone erp-field-icon"></i>
-                                <input type="text" name="phone" id="field-phone" class="form-control erp-field-input-iconified" placeholder="e.g. +91 98290 12345" value="{{ old('phone') }}" oninput="updateLivePreview()">
+                                <input type="text" name="phone" id="field-phone" class="form-control erp-field-input-iconified" placeholder="Enter mobile number" value="{{ old('phone') }}" oninput="updateLivePreview()">
                             </div>
                             <span class="erp-field-hint">Optional mobile contact number</span>
                         </div>
@@ -134,7 +134,7 @@
                             </label>
                             <div class="erp-field-icon-wrap">
                                 <i class="fa-solid fa-at erp-field-icon"></i>
-                                <input type="text" name="username" id="field-username" class="form-control erp-field-input-iconified erp-field-input-mono" placeholder="e.g. navneet" value="{{ old('username') }}" required oninput="this.value = this.value.toLowerCase().replace(/[^a-z0-9_.-]/g, ''); updateLivePreview();">
+                                <input type="text" name="username" id="field-username" class="form-control erp-field-input-iconified erp-field-input-mono" placeholder="Enter username" value="{{ old('username') }}" required oninput="this.value = this.value.toLowerCase().replace(/[^a-z0-9_.-]/g, ''); updateLivePreview();">
                             </div>
                             <span class="erp-field-hint">Must be unique. Allowed characters: lowercase letters, numbers, dot, dash, underscore.</span>
                         </div>
@@ -146,7 +146,7 @@
                             </label>
                             <div class="erp-field-icon-wrap">
                                 <i class="fa-solid fa-lock erp-field-icon"></i>
-                                <input type="password" name="password" id="field-password" class="form-control erp-field-input-iconified-pwd" placeholder="Minimum 6 characters" required oninput="checkPasswordStrength(this.value)">
+                                <input type="password" name="password" id="field-password" class="form-control erp-field-input-iconified-pwd" placeholder="Enter password" required oninput="checkPasswordStrength(this.value)">
                                 <button type="button" onclick="togglePasswordVisibility('field-password', this)" class="erp-pwd-toggle-btn" title="Show/Hide Password">
                                     <i class="fa-regular fa-eye"></i>
                                 </button>

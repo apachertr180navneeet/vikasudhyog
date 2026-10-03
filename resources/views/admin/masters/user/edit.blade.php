@@ -81,7 +81,7 @@
                             </label>
                             <div class="erp-field-icon-wrap">
                                 <i class="fa-solid fa-user erp-field-icon"></i>
-                                <input type="text" name="name" id="field-name" class="form-control erp-field-input-iconified" placeholder="e.g. Navneet Sharma" value="{{ old('name', $user->name) }}" required oninput="updateLivePreview()">
+                                <input type="text" name="name" id="field-name" class="form-control erp-field-input-iconified" placeholder="Enter full name" value="{{ old('name', $user->name) }}" required oninput="updateLivePreview()">
                             </div>
                         </div>
 
@@ -91,7 +91,7 @@
                             </label>
                             <div class="erp-field-icon-wrap">
                                 <i class="fa-regular fa-envelope erp-field-icon"></i>
-                                <input type="email" name="email" id="field-email" class="form-control erp-field-input-iconified" placeholder="e.g. navneet@vikasudhyog.com" value="{{ old('email', $user->email) }}" required oninput="updateLivePreview()">
+                                <input type="email" name="email" id="field-email" class="form-control erp-field-input-iconified" placeholder="Enter email address" value="{{ old('email', $user->email) }}" required oninput="updateLivePreview()">
                             </div>
                         </div>
 
@@ -101,7 +101,7 @@
                             </label>
                             <div class="erp-field-icon-wrap">
                                 <i class="fa-solid fa-phone erp-field-icon"></i>
-                                <input type="text" name="phone" id="field-phone" class="form-control erp-field-input-iconified" placeholder="e.g. +91 98290 12345" value="{{ old('phone', $user->phone) }}" oninput="updateLivePreview()">
+                                <input type="text" name="phone" id="field-phone" class="form-control erp-field-input-iconified" placeholder="Enter mobile number" value="{{ old('phone', $user->phone) }}" oninput="updateLivePreview()">
                             </div>
                         </div>
                     </div>
@@ -132,7 +132,7 @@
                             </label>
                             <div class="erp-field-icon-wrap">
                                 <i class="fa-solid fa-at erp-field-icon"></i>
-                                <input type="text" name="username" id="field-username" class="form-control erp-field-input-iconified erp-field-input-mono" placeholder="e.g. navneet" value="{{ old('username', $user->username) }}" required oninput="this.value = this.value.toLowerCase().replace(/[^a-z0-9_.-]/g, ''); updateLivePreview();">
+                                <input type="text" name="username" id="field-username" class="form-control erp-field-input-iconified erp-field-input-mono" placeholder="Enter username" value="{{ old('username', $user->username) }}" required oninput="this.value = this.value.toLowerCase().replace(/[^a-z0-9_.-]/g, ''); updateLivePreview();">
                             </div>
                         </div>
 

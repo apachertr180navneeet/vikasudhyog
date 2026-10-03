@@ -124,15 +124,15 @@
                 <input type="hidden" id="brk-id">
                 <input type="hidden" id="brk-code">
                 <div class="form-grid">
-                    <div class="form-group full-width"><label class="form-label">Broker / Agency Name *</label><input type="text" id="brk-name" class="form-control" placeholder="e.g. Rameshwar Brokerage" required></div>
-                    <div class="form-group"><label class="form-label">Contact Person</label><input type="text" id="brk-contact" class="form-control" placeholder="Primary contact"></div>
-                    <div class="form-group"><label class="form-label">Mobile Number</label><input type="text" id="brk-phone" class="form-control" placeholder="10-digit mobile"></div>
-                    <div class="form-group"><label class="form-label">Email</label><input type="email" id="brk-email" class="form-control" placeholder="broker@gmail.com"></div>
-                    <div class="form-group"><label class="form-label">GSTIN / PAN</label><input type="text" id="brk-gstin" class="form-control" placeholder="08AAAAA1234A1Z1"></div>
-                    <div class="form-group"><label class="form-label">City</label><input type="text" id="brk-city" class="form-control" placeholder="Sojat / Jodhpur"></div>
+                    <div class="form-group full-width"><label class="form-label">Broker / Agency Name *</label><input type="text" id="brk-name" class="form-control" placeholder="Enter broker or agency name" required></div>
+                    <div class="form-group"><label class="form-label">Contact Person</label><input type="text" id="brk-contact" class="form-control" placeholder="Enter contact person"></div>
+                    <div class="form-group"><label class="form-label">Mobile Number</label><input type="text" id="brk-phone" class="form-control" placeholder="Enter mobile number"></div>
+                    <div class="form-group"><label class="form-label">Email</label><input type="email" id="brk-email" class="form-control" placeholder="Enter email address"></div>
+                    <div class="form-group"><label class="form-label">GSTIN / PAN</label><input type="text" id="brk-gstin" class="form-control" placeholder="Enter GSTIN or PAN"></div>
+                    <div class="form-group"><label class="form-label">City</label><input type="text" id="brk-city" class="form-control" placeholder="Enter city"></div>
                     <div class="form-group"><label class="form-label">Commission Rate (%)</label><input type="number" step="0.1" id="brk-commission" class="form-control" value="1.5"></div>
                     <div class="form-group"><label class="form-label">Status</label><select id="brk-status" class="form-control"><option value="Active">Active</option><option value="Inactive">Inactive</option></select></div>
-                    <div class="form-group full-width"><label class="form-label">Remarks / Description</label><input type="text" id="brk-remarks" class="form-control" placeholder="Mandi agent details or notes"></div>
+                    <div class="form-group full-width"><label class="form-label">Remarks / Description</label><input type="text" id="brk-remarks" class="form-control" placeholder="Enter remarks or notes"></div>
                 </div>
                 <div class="modal-footer" style="padding-left:0; padding-right:0; margin-top:1.5rem;">
                     <button type="button" class="btn btn-outline modal-close">Cancel</button>
@@ -179,7 +179,7 @@
                     <div class="form-group"><label class="form-label">Purchase Rate (₹)</label><input type="number" id="itm-purchase-rate" class="form-control" value="100"></div>
                     <div class="form-group"><label class="form-label">Selling Price (₹)</label><input type="number" id="itm-sale-rate" class="form-control" value="150"></div>
                     <div class="form-group"><label class="form-label">GST Tax (%)</label><input type="number" id="itm-gst" class="form-control" value="18"></div>
-                    <div class="form-group"><label class="form-label">HSN Code</label><input type="text" id="itm-hsn" class="form-control" value="1404" placeholder="e.g. 1404"></div>
+                    <div class="form-group"><label class="form-label">HSN Code</label><input type="text" id="itm-hsn" class="form-control" value="1404" placeholder="Enter HSN code"></div>
                     <div class="form-group"><label class="form-label">Opening Stock</label><input type="number" id="itm-stock" class="form-control" value="100"></div>
                     <div class="form-group"><label class="form-label">Minimum Stock Alert</label><input type="number" id="itm-min-stock" class="form-control" value="30"></div>
                     <div class="form-group"><label class="form-label">Batch No</label><input type="text" id="itm-batch" class="form-control" value="B-2026-08"></div>
@@ -557,9 +557,9 @@
             <div class="form-grid">
                 <div class="form-group"><label class="form-label">Order Number</label><input type="text" id="dsp-order-no" class="form-control" readonly></div>
                 <div class="form-group"><label class="form-label">Customer</label><input type="text" id="dsp-customer" class="form-control" readonly></div>
-                <div class="form-group"><label class="form-label">Vehicle Number</label><input type="text" id="dsp-vehicle" class="form-control" placeholder="RJ-19-GA-1234"></div>
-                <div class="form-group"><label class="form-label">Driver Name</label><input type="text" id="dsp-driver" class="form-control" placeholder="Driver name"></div>
-                <div class="form-group full-width"><label class="form-label">Transporter / Courier</label><input type="text" id="dsp-transporter" class="form-control" placeholder="Vikas Logistics / VRL Logistics"></div>
+                <div class="form-group"><label class="form-label">Vehicle Number</label><input type="text" id="dsp-vehicle" class="form-control" placeholder="Enter vehicle number"></div>
+                <div class="form-group"><label class="form-label">Driver Name</label><input type="text" id="dsp-driver" class="form-control" placeholder="Enter driver name"></div>
+                <div class="form-group full-width"><label class="form-label">Transporter / Courier</label><input type="text" id="dsp-transporter" class="form-control" placeholder="Enter transporter or courier name"></div>
             </div>
             <div class="modal-footer" style="padding-left:0; padding-right:0; margin-top:1.5rem;">
                 <button type="button" class="btn btn-outline modal-close">Cancel</button>

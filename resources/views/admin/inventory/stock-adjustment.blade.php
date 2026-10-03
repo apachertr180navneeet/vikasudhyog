@@ -1,4 +1,4 @@
-﻿@extends('admin.layouts.app')
+@extends('admin.layouts.app')
 
 @section('title', 'Stock Adjustment - VIKAS UDHYOG ERP')
 @section('page_code', 'inv-adjustment')
@@ -34,7 +34,7 @@
                                 </div>
                                 <div class="form-group" style="margin-bottom: 1.5rem;">
                                     <label class="form-label">Reason / Audit Remark</label>
-                                    <input type="text" id="adj-reason-page" class="form-control" placeholder="e.g. Monthly Physical Verification">
+                                    <input type="text" id="adj-reason-page" class="form-control" placeholder="Enter adjustment reason">
                                 </div>
                                 <button type="submit" class="btn btn-primary" style="width: 100%;"><i class="fa-solid fa-arrows-rotate"></i> Update Stock Balance</button>
                             </form>
