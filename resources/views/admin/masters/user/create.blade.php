@@ -236,7 +236,6 @@
 
             <!-- Right Sidebar Column -->
             <div class="erp-form-side-col">
-                <input type="hidden" name="status" value="active">
 
                 <!-- Live Preview Card -->
                 <div class="card erp-preview-card">

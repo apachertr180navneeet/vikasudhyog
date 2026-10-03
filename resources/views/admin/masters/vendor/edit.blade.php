@@ -262,9 +262,21 @@
                             </label>
                             <div class="erp-field-icon-wrap">
                                 <i class="fa-solid fa-indian-rupee-sign erp-field-icon"></i>
-                                <input type="number" step="0.01" name="opening_balance" id="field-balance" class="form-control erp-field-input-iconified font-monospace" placeholder="Enter opening balance" value="{{ old('opening_balance', $vendor->opening_balance) }}" oninput="updateLivePreview()">
+                                <input type="number" step="0.01" name="opening_balance" id="field-opening-balance" class="form-control erp-field-input-iconified font-monospace" placeholder="Enter opening balance" value="{{ old('opening_balance', $vendor->opening_balance) }}" oninput="syncOpeningBalance()">
                             </div>
-                            <span class="erp-field-hint">Initial outstanding ledger balance payable to vendor</span>
+                            <span class="erp-field-hint">Initial registered ledger opening balance</span>
+                        </div>
+
+                        <!-- Current Balance (Payable) -->
+                        <div class="form-group">
+                            <label class="erp-field-label">
+                                Current Balance (₹ Payable)
+                            </label>
+                            <div class="erp-field-icon-wrap">
+                                <i class="fa-solid fa-money-bill-wave erp-field-icon"></i>
+                                <input type="number" step="0.01" name="current_balance" id="field-balance" class="form-control erp-field-input-iconified font-monospace" placeholder="Enter current balance" value="{{ old('current_balance', $vendor->current_balance) }}" oninput="this.dataset.touched='true'; updateLivePreview();">
+                            </div>
+                            <span class="erp-field-hint">Active outstanding ledger balance payable to vendor</span>
                         </div>
 
                         <!-- Payment Terms -->
@@ -305,19 +317,6 @@
                             <span class="erp-field-hint">Restrict vendor to a specific plant or leave global</span>
                         </div>
 
-                        <!-- Status -->
-                        <div class="form-group">
-                            <label class="erp-field-label">
-                                Account Status
-                            </label>
-                            <div class="erp-field-icon-wrap">
-                                <i class="fa-solid fa-circle-check erp-field-icon"></i>
-                                <select name="status" class="form-control erp-field-input-iconified">
-                                    <option value="active" {{ old('status', $vendor->status) === 'active' ? 'selected' : '' }}>Active (Enabled for entries)</option>
-                                    <option value="inactive" {{ old('status', $vendor->status) === 'inactive' ? 'selected' : '' }}>Inactive (Temporarily suspended)</option>
-                                </select>
-                            </div>
-                        </div>
 
                         <!-- Notes -->
                         <div class="form-group erp-form-col-full">
@@ -556,6 +555,15 @@ function generateVendorCode() {
     });
 }
 
+function syncOpeningBalance() {
+    const openingInput = document.getElementById('field-opening-balance');
+    const currentInput = document.getElementById('field-balance');
+    if (openingInput && currentInput && currentInput.dataset.touched !== 'true') {
+        currentInput.value = openingInput.value;
+    }
+    updateLivePreview();
+}
+
 function updateLivePreview() {
     const name = document.getElementById('field-name').value.trim() || 'Vendor Firm Name';
     const code = document.getElementById('field-code').value.trim() || 'VND-00';
@@ -565,6 +573,9 @@ function updateLivePreview() {
     const city = document.getElementById('field-city').value.trim() || 'City';
     const state = document.getElementById('field-state').value.trim() || 'State';
     const terms = document.getElementById('field-terms').value || '30 Days';
+
+    const balanceInput = document.getElementById('field-balance');
+    const balance = balanceInput ? (Number(balanceInput.value) || 0) : 0;
 
     const companySelect = document.getElementById('field-company');
     const companyText = companySelect.options[companySelect.selectedIndex].text;
@@ -582,6 +593,11 @@ function updateLivePreview() {
     document.getElementById('preview-name').innerText = name;
     document.getElementById('preview-code').innerText = code;
     document.getElementById('preview-terms').innerText = terms;
+
+    const previewBal = document.getElementById('preview-balance');
+    if (previewBal) {
+        previewBal.innerText = '₹' + balance.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
 
     document.getElementById('preview-contact').innerText = contact;
     document.getElementById('preview-phone').innerText = phone;

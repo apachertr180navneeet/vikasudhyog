@@ -81,5 +81,6 @@ Each module must follow a RESTful, 4-view CRUD structure under `resources/views/
 ## 3. Formatting & Behavioral Rules
 - **Brand Colors**: Primary `#5B841E` (Olive Green) / Hover `#4A6D18`. Accent colors: `#10B981` (Emerald), `#8B5CF6` (Purple), `#3B82F6` (Blue).
 - **Placeholder Rule**: Strictly use `Enter [Field Name]` (e.g. `Enter full name`, `Enter PAN number`). NEVER write mock example text (e.g. `e.g. Navneet Sharma` or dummy numbers).
+- **No Status Field in Forms**: Status must **NEVER** appear as an input, select dropdown, or editable field in `create.blade.php` or `edit.blade.php`. All new records automatically default to `active` on the backend. Status is exclusively toggled via the Table List status button (`PATCH toggle-status`) and the Danger Zone / Archive action.
 - **Codes & Financials**: Always render codes, GSTIN, PAN, Bank Accounts, IFSC, and amounts using monospace typography.
 - **Reference Specification**: Refer to `docs/ERP_UI_DESIGN_SYSTEM.md` for complete code snippets and markup blueprints.

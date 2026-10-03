@@ -228,13 +228,13 @@ class VendorController extends Controller
             'state'           => 'nullable|string|max:100',
             'pincode'         => 'nullable|string|max:15',
             'opening_balance' => 'nullable|numeric|min:0',
+            'current_balance' => 'nullable|numeric|min:0',
             'payment_terms'   => 'nullable|string|max:50',
             'bank_name'       => 'nullable|string|max:100',
             'bank_account_no' => 'nullable|string|max:50',
             'bank_ifsc'       => 'nullable|string|max:25',
             'bank_branch'     => 'nullable|string|max:100',
             'company_id'      => 'nullable|exists:companies,id',
-            'status'          => 'nullable|in:active,inactive',
             'notes'           => 'nullable|string|max:1000',
         ]);
 
@@ -244,6 +244,15 @@ class VendorController extends Controller
         }
         if (!empty($validated['pan'])) {
             $validated['pan'] = strtoupper(trim($validated['pan']));
+        }
+        if (isset($validated['opening_balance'])) {
+            $validated['opening_balance'] = (float)$validated['opening_balance'];
+        }
+        if (isset($validated['current_balance'])) {
+            $validated['current_balance'] = (float)$validated['current_balance'];
+        } elseif (isset($validated['opening_balance'])) {
+            $diff = (float)$validated['opening_balance'] - (float)$vendor->opening_balance;
+            $validated['current_balance'] = max(0, (float)$vendor->current_balance + $diff);
         }
 
         $vendor->update($validated);

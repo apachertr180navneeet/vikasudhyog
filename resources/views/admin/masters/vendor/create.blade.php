@@ -377,7 +377,6 @@
 
             <!-- Right Sidebar Column -->
             <div class="erp-form-side-col">
-                <input type="hidden" name="status" value="active">
 
                 <!-- Live Preview Card -->
                 <div class="card erp-preview-card">
@@ -402,7 +401,7 @@
 
                         <!-- Balance Pill -->
                         <div class="p-2 mb-3" style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px;">
-                            <div style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;">Payable Balance</div>
+                            <div style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;">Current Balance (Payable)</div>
                             <div id="preview-balance" style="font-size: 1.25rem; font-weight: 800; color: #B45309;">
                                 ₹0.00
                             </div>

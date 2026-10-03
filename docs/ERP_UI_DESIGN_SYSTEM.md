@@ -163,6 +163,10 @@ All data entry forms must use the **2-Column Responsive Layout**:
   4. **Danger Zone Card** (in Edit mode): Distinct red-bordered card for soft-deleting/archiving with SweetAlert2 confirmation.
   5. **Policy / Info Box**: Outlines immediate operational permissions and business rules.
 
+> [!IMPORTANT]
+> **No Status Field in Forms**: Forms (`create.blade.php` and `edit.blade.php`) must **NEVER** contain an editable Status dropdown or input field. All newly created records automatically default to `active` on the backend. Status is exclusively toggled via the Table List status toggle button (`PATCH toggle-status`) and the Danger Zone / Archive action.
+
+
 ---
 
 ## 4. Standard Show / Profile Page Structure

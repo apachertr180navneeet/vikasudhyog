@@ -19,3 +19,10 @@ Whenever creating or updating ANY module in this ERP (Masters, Transactions, Inv
    - Filters: Always inline flex (`.erp-filter-form`), search icon positioned inside input (`.erp-search-wrap`), compact auto-width selects (`.erp-filter-select`), and right-aligned counter badge (`.erp-table-summary-count`).
    - Placeholders: Strictly use `Enter [Field Name]` format. Never include dummy/example names or numbers.
    - Monospace: Always use monospace font for codes, GSTIN, PAN, Bank Accounts, and monetary values.
+
+4. **No Status Field in Any Form (Create or Edit)**:
+   - Status must **NEVER** appear as an input, select dropdown, or editable field in `create.blade.php` or `edit.blade.php`.
+   - Every new record automatically defaults to `active` on the backend upon creation.
+   - Status toggling is handled strictly via the vibrant status button on the table list (`PATCH toggle-status`) and the Danger Zone / Archive actions.
+   - Live preview cards may display status as a read-only badge, but forms must not contain an editable status field.
+
