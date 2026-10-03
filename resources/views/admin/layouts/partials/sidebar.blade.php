@@ -32,7 +32,7 @@
                 <li><a href="{{ route('admin.masters.company') }}" class="submenu-link {{ request()->routeIs('admin.masters.company*') ? 'active' : '' }}" data-view="master-company">Company Master</a></li>
                 <li><a href="{{ route('admin.masters.user') }}" class="submenu-link {{ request()->routeIs('admin.masters.user*') ? 'active' : '' }}" data-view="master-user">User Master</a></li>
                 <li><a href="{{ route('admin.masters.access-level') }}" class="submenu-link {{ request()->routeIs('admin.masters.access-level') ? 'active' : '' }}" data-view="master-access">Access Level</a></li>
-                <li><a href="{{ route('admin.masters.vendor') }}" class="submenu-link {{ request()->routeIs('admin.masters.vendor') ? 'active' : '' }}" data-view="master-vendor">Vendor Master</a></li>
+                <li><a href="{{ route('admin.masters.vendor') }}" class="submenu-link {{ request()->routeIs('admin.masters.vendor*') ? 'active' : '' }}" data-view="master-vendor">Vendor Master</a></li>
                 <li><a href="{{ route('admin.masters.customer') }}" class="submenu-link {{ request()->routeIs('admin.masters.customer') ? 'active' : '' }}" data-view="master-customer">Customer Master</a></li>
                 <li><a href="{{ route('admin.masters.broker') }}" class="submenu-link {{ request()->routeIs('admin.masters.broker') ? 'active' : '' }}" data-view="master-broker">Broker Master</a></li>
                 <li><a href="{{ route('admin.masters.item') }}" class="submenu-link {{ request()->routeIs('admin.masters.item') ? 'active' : '' }}" data-view="master-item">Item Master</a></li>

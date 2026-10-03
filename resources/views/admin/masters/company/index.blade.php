@@ -6,127 +6,127 @@
 @section('content')
 <section class="view-section active" id="view-master-company">
     <!-- Breadcrumb & Top Bar -->
-    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+    <div class="erp-page-top-bar">
         <div>
-            <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.25rem; display: flex; align-items: center; gap: 0.5rem;">
-                <a href="{{ route('admin.dashboard') }}" style="color: var(--text-muted); text-decoration: none;">Dashboard</a>
-                <i class="fa-solid fa-chevron-right" style="font-size: 0.65rem;"></i>
+            <div class="erp-breadcrumb-trail">
+                <a href="{{ route('admin.dashboard') }}">Dashboard</a>
+                <i class="fa-solid fa-chevron-right erp-breadcrumb-sep"></i>
                 <span>Masters</span>
-                <i class="fa-solid fa-chevron-right" style="font-size: 0.65rem;"></i>
-                <span style="color: var(--primary); font-weight: 600;">Company Master</span>
+                <i class="fa-solid fa-chevron-right erp-breadcrumb-sep"></i>
+                <span class="erp-breadcrumb-active">Company Master</span>
             </div>
-            <h1 class="page-title" style="margin: 0; font-size: 1.6rem; font-weight: 800; color: var(--text-primary); display: flex; align-items: center; gap: 0.6rem;">
-                <i class="fa-solid fa-building" style="color: var(--primary);"></i> Company Master
+            <h1 class="erp-page-title">
+                <i class="fa-solid fa-building text-primary"></i> Company Master
             </h1>
-            <p class="page-subtitle" style="margin: 0.2rem 0 0; color: var(--text-muted); font-size: 0.88rem;">
+            <p class="erp-page-subtitle">
                 Manage multi-company corporate profiles, GSTIN tax registrations, bank accounts &amp; default plant settings.
             </p>
         </div>
 
-        <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <div class="erp-header-actions">
             <button type="button" class="btn btn-outline" onclick="window.print()" title="Print Company List">
                 <i class="fa-solid fa-print"></i> Print List
             </button>
-            <a href="{{ route('admin.masters.company.create') }}" class="btn btn-primary">
+            <a href="{{ route('admin.masters.company.create') }}" class="btn btn-primary erp-btn-header-primary">
                 <i class="fa-solid fa-plus"></i> Add New Company
             </a>
         </div>
     </div>
 
     <!-- KPI Summary Cards -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; margin-bottom: 1.5rem;">
-        <div class="card" style="padding: 1.25rem; display: flex; align-items: center; gap: 1rem; border-left: 4px solid var(--primary);">
-            <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(91, 132, 30, 0.12); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 1.4rem;">
+    <div class="erp-kpi-grid">
+        <div class="card erp-kpi-card erp-kpi-primary">
+            <div class="erp-kpi-icon-box erp-kpi-icon-primary">
                 <i class="fa-solid fa-building-flag"></i>
             </div>
             <div>
-                <div style="font-size: 0.78rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Total Companies</div>
-                <div style="font-size: 1.6rem; font-weight: 800; color: var(--text-primary); line-height: 1.2;">{{ $stats['total'] ?? 0 }}</div>
+                <div class="erp-kpi-label">Total Companies</div>
+                <div class="erp-kpi-val">{{ $stats['total'] ?? 0 }}</div>
             </div>
         </div>
 
-        <div class="card" style="padding: 1.25rem; display: flex; align-items: center; gap: 1rem; border-left: 4px solid var(--status-success);">
-            <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(16, 185, 129, 0.12); color: var(--status-success); display: flex; align-items: center; justify-content: center; font-size: 1.4rem;">
+        <div class="card erp-kpi-card erp-kpi-success">
+            <div class="erp-kpi-icon-box erp-kpi-icon-success">
                 <i class="fa-solid fa-circle-check"></i>
             </div>
             <div>
-                <div style="font-size: 0.78rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Active Profiles</div>
-                <div style="font-size: 1.6rem; font-weight: 800; color: var(--status-success); line-height: 1.2;">{{ $stats['active'] ?? 0 }}</div>
+                <div class="erp-kpi-label">Active Profiles</div>
+                <div class="erp-kpi-val erp-kpi-val-success">{{ $stats['active'] ?? 0 }}</div>
             </div>
         </div>
 
-        <div class="card" style="padding: 1.25rem; display: flex; align-items: center; gap: 1rem; border-left: 4px solid #D4A017;">
-            <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(212, 160, 23, 0.12); color: #B45309; display: flex; align-items: center; justify-content: center; font-size: 1.4rem;">
+        <div class="card erp-kpi-card" style="border-left: 4px solid #D4A017;">
+            <div class="erp-kpi-icon-box" style="background: rgba(212, 160, 23, 0.12); color: #B45309;">
                 <i class="fa-solid fa-crown"></i>
             </div>
             <div>
-                <div style="font-size: 0.78rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Primary Active Unit</div>
-                <div style="font-size: 1.05rem; font-weight: 800; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px;" title="{{ $stats['default']->name ?? 'None' }}">
+                <div class="erp-kpi-label">Primary Active Unit</div>
+                <div class="erp-kpi-val" style="font-size: 1.05rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px;" title="{{ $stats['default']->name ?? 'None' }}">
                     {{ $stats['default']->name ?? 'Not Configured' }}
                 </div>
             </div>
         </div>
 
-        <div class="card" style="padding: 1.25rem; display: flex; align-items: center; gap: 1rem; border-left: 4px solid #3B82F6;">
-            <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(59, 130, 246, 0.12); color: #2563EB; display: flex; align-items: center; justify-content: center; font-size: 1.4rem;">
+        <div class="card erp-kpi-card" style="border-left: 4px solid #3B82F6;">
+            <div class="erp-kpi-icon-box" style="background: rgba(59, 130, 246, 0.12); color: #2563EB;">
                 <i class="fa-solid fa-location-dot"></i>
             </div>
             <div>
-                <div style="font-size: 0.78rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Base Hub</div>
-                <div style="font-size: 1.05rem; font-weight: 800; color: var(--text-primary);">Sojat City, RJ</div>
+                <div class="erp-kpi-label">Base Hub</div>
+                <div class="erp-kpi-val" style="font-size: 1.05rem;">Sojat City, RJ</div>
             </div>
         </div>
     </div>
 
     <!-- Alert Notifications -->
     @if(session('success'))
-        <div class="alert alert-success" style="background: #F0FDF4; border: 1px solid #BBF7D0; border-left: 4px solid #16A34A; padding: 0.9rem 1.2rem; border-radius: 10px; color: #166534; font-size: 0.88rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between;">
-            <div style="display: flex; align-items: center; gap: 0.6rem;">
-                <i class="fa-solid fa-circle-check" style="font-size: 1.1rem; color: #16A34A;"></i>
+        <div class="alert erp-alert-success">
+            <div class="erp-alert-content">
+                <i class="fa-solid fa-circle-check erp-alert-icon-success"></i>
                 <span>{{ session('success') }}</span>
             </div>
-            <button type="button" onclick="this.parentElement.remove()" style="background: none; border: none; color: #166534; cursor: pointer; font-size: 1rem;">&times;</button>
+            <button type="button" class="erp-alert-close-btn" onclick="this.parentElement.remove()">&times;</button>
         </div>
     @endif
 
     @if(session('error'))
-        <div class="alert alert-danger" style="background: #FEF2F2; border: 1px solid #FECACA; border-left: 4px solid #EF4444; padding: 0.9rem 1.2rem; border-radius: 10px; color: #991B1B; font-size: 0.88rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between;">
-            <div style="display: flex; align-items: center; gap: 0.6rem;">
-                <i class="fa-solid fa-circle-exclamation" style="font-size: 1.1rem; color: #EF4444;"></i>
+        <div class="alert erp-alert-danger">
+            <div class="erp-alert-content">
+                <i class="fa-solid fa-circle-exclamation erp-alert-icon-danger"></i>
                 <span>{{ session('error') }}</span>
             </div>
-            <button type="button" onclick="this.parentElement.remove()" style="background: none; border: none; color: #991B1B; cursor: pointer; font-size: 1rem;">&times;</button>
+            <button type="button" class="erp-alert-close-btn" onclick="this.parentElement.remove()">&times;</button>
         </div>
     @endif
 
     <!-- Main Card -->
-    <div class="card" style="box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04); border-radius: 16px;">
+    <div class="card erp-main-card">
         <!-- Filter and Search Header -->
-        <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
-            <form action="{{ route('admin.masters.company') }}" method="GET" style="display: flex; align-items: center; gap: 0.75rem; flex: 1; max-width: 600px; flex-wrap: wrap;">
-                <div style="position: relative; flex: 1; min-width: 220px;">
-                    <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.85rem;"></i>
-                    <input type="text" name="search" value="{{ $filters['search'] ?? '' }}" placeholder="Search company name, GSTIN, PAN, city..." class="form-control" style="padding-left: 2.25rem; height: 40px; border-radius: 8px;">
+        <div class="erp-table-filter-header">
+            <form action="{{ route('admin.masters.company') }}" method="GET" class="erp-filter-form">
+                <div class="erp-search-wrap">
+                    <i class="fa-solid fa-magnifying-glass erp-search-icon"></i>
+                    <input type="text" name="search" value="{{ $filters['search'] ?? '' }}" placeholder="Search company name, GSTIN, PAN, city..." class="form-control erp-search-input">
                 </div>
 
-                <select name="status" class="form-control" style="width: 140px; height: 40px; border-radius: 8px;" onchange="this.form.submit()">
+                <select name="status" class="form-control erp-filter-select" onchange="this.form.submit()">
                     <option value="all" {{ ($filters['status'] ?? 'all') === 'all' ? 'selected' : '' }}>All Status</option>
                     <option value="active" {{ ($filters['status'] ?? '') === 'active' ? 'selected' : '' }}>Active</option>
                     <option value="inactive" {{ ($filters['status'] ?? '') === 'inactive' ? 'selected' : '' }}>Inactive</option>
                 </select>
 
-                <button type="submit" class="btn btn-outline" style="height: 40px; padding: 0 1rem; border-radius: 8px;">
+                <button type="submit" class="btn btn-outline erp-btn-filter">
                     <i class="fa-solid fa-filter"></i> Filter
                 </button>
 
                 @if(!empty($filters['search']) || ($filters['status'] ?? 'all') !== 'all')
-                    <a href="{{ route('admin.masters.company') }}" class="btn btn-outline" style="height: 40px; padding: 0 0.85rem; border-radius: 8px; color: var(--status-danger);" title="Clear Filters">
+                    <a href="{{ route('admin.masters.company') }}" class="btn btn-outline erp-btn-filter-clear" title="Clear Filters">
                         <i class="fa-solid fa-xmark"></i>
                     </a>
                 @endif
             </form>
 
-            <div style="font-size: 0.82rem; color: var(--text-muted);">
+            <div class="erp-table-summary-count">
                 Showing <strong>{{ $companies->count() }}</strong> of <strong>{{ $companies->total() }}</strong> companies
             </div>
         </div>
@@ -227,10 +227,10 @@
                                     @endif
                                 </div>
                             </td>
-                            <td>
-                                <button type="button" class="badge {{ $company->status === 'active' ? 'badge-success' : 'badge-danger' }} btn-toggle-status" data-id="{{ $company->id }}" data-name="{{ $company->name }}" data-url="{{ route('admin.masters.company.toggle-status', $company->id) }}" data-status="{{ $company->status }}" style="border: none; cursor: pointer; padding: 4px 10px; font-size: 0.75rem; border-radius: 20px; transition: all 0.2s ease;" title="Click to Toggle Status">
-                                    <i class="fa-solid {{ $company->status === 'active' ? 'fa-check' : 'fa-ban' }}" style="font-size: 0.65rem; margin-right: 3px;"></i>
-                                    {{ ucfirst($company->status) }}
+                            <td class="text-center">
+                                <button type="button" class="erp-status-btn {{ $company->status === 'active' ? 'erp-status-btn-active' : 'erp-status-btn-inactive' }} btn-toggle-status" data-id="{{ $company->id }}" data-name="{{ $company->name }}" data-url="{{ route('admin.masters.company.toggle-status', $company->id) }}" data-status="{{ $company->status }}" title="Click to Toggle Status">
+                                    <span class="{{ $company->status === 'active' ? 'erp-status-dot-green' : 'erp-status-dot-red' }}"></span>
+                                    <span>{{ ucfirst($company->status) }}</span>
                                 </button>
                             </td>
                             <td style="text-align: right;">

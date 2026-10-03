@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\MasterController;
 use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\VendorController;
 use App\Http\Controllers\Admin\AccessLevelController;
 use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Admin\InventoryController;
@@ -70,7 +71,16 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::post('/access-level/roles/{role}/permissions', [AccessLevelController::class, 'savePermissions'])->name('access-level.save-permissions');
             Route::post('/access-level/roles/{role}/reset-defaults', [AccessLevelController::class, 'resetDefaults'])->name('access-level.reset-defaults');
 
-            Route::get('/vendor', [MasterController::class, 'vendor'])->name('vendor');
+            // Vendor Master CRUD (Dedicated Pages)
+            Route::get('/vendor', [VendorController::class, 'index'])->name('vendor');
+            Route::get('/vendor/create', [VendorController::class, 'create'])->name('vendor.create');
+            Route::get('/vendor/generate-code', [VendorController::class, 'generateCode'])->name('vendor.generate-code');
+            Route::post('/vendor', [VendorController::class, 'store'])->name('vendor.store');
+            Route::get('/vendor/{vendor}', [VendorController::class, 'show'])->name('vendor.show');
+            Route::get('/vendor/{vendor}/edit', [VendorController::class, 'edit'])->name('vendor.edit');
+            Route::put('/vendor/{vendor}', [VendorController::class, 'update'])->name('vendor.update');
+            Route::delete('/vendor/{vendor}', [VendorController::class, 'destroy'])->name('vendor.destroy');
+            Route::patch('/vendor/{vendor}/toggle-status', [VendorController::class, 'toggleStatus'])->name('vendor.toggle-status');
             Route::get('/customer', [MasterController::class, 'customer'])->name('customer');
             Route::get('/broker', [MasterController::class, 'broker'])->name('broker');
             Route::get('/item', [MasterController::class, 'item'])->name('item');

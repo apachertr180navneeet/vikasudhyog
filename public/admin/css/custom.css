@@ -524,61 +524,110 @@
     border: 1px solid #BAE6FD;
 }
 
-.erp-status-btn {
+.erp-status-btn,
+.erp-status-toggle-btn {
     background: none;
-    border: none;
-    padding: 0.25rem 0.6rem;
-    border-radius: 20px;
+    border: 1px solid transparent;
+    padding: 0.32rem 0.75rem;
+    border-radius: 9999px;
     font-size: 0.76rem;
     font-weight: 700;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
-    gap: 0.35rem;
-    transition: all 0.2s ease;
+    justify-content: center;
+    gap: 0.4rem;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+    line-height: 1.2;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
-.erp-status-btn:hover {
-    opacity: 0.85;
+.erp-status-btn:hover,
+.erp-status-toggle-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
 }
 
-.erp-status-btn-active {
-    background: #DCFCE7;
-    color: #166534;
+.erp-status-btn:active,
+.erp-status-toggle-btn:active {
+    transform: translateY(0);
+}
+
+.erp-status-btn-active,
+.erp-status-active {
+    background: #DCFCE7 !important;
+    color: #15803D !important;
+    border: 1px solid #86EFAC !important;
+}
+
+.erp-status-btn-active:hover,
+.erp-status-active:hover {
+    background: #BBF7D0 !important;
+    color: #14532D !important;
+    border-color: #4ADE80 !important;
 }
 
 .erp-status-btn-suspended {
-    background: #FEF3C7;
-    color: #92400E;
+    background: #FEF3C7 !important;
+    color: #92400E !important;
+    border: 1px solid #FCD34D !important;
 }
 
-.erp-status-btn-inactive {
-    background: #FEE2E2;
-    color: #991B1B;
+.erp-status-btn-suspended:hover {
+    background: #FDE68A !important;
+    color: #78350F !important;
+}
+
+.erp-status-btn-inactive,
+.erp-status-inactive {
+    background: #FEE2E2 !important;
+    color: #B91C1C !important;
+    border: 1px solid #FECACA !important;
+}
+
+.erp-status-btn-inactive:hover,
+.erp-status-inactive:hover {
+    background: #FECACA !important;
+    color: #991B1B !important;
+    border-color: #F87171 !important;
 }
 
 .erp-status-dot-green {
-    width: 7px;
-    height: 7px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
     background: #16A34A;
     display: inline-block;
+    box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.3);
+    animation: erp-pulse-green 2s infinite ease-in-out;
 }
 
 .erp-status-dot-amber {
-    width: 7px;
-    height: 7px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
     background: #D97706;
     display: inline-block;
+    box-shadow: 0 0 0 2px rgba(217, 119, 6, 0.3);
 }
 
 .erp-status-dot-red {
-    width: 7px;
-    height: 7px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
     background: #DC2626;
     display: inline-block;
+    box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.3);
+}
+
+@keyframes erp-pulse-green {
+    0%, 100% {
+        box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.15);
+    }
 }
 
 .erp-actions-cell {

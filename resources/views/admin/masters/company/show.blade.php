@@ -52,8 +52,9 @@
             @endif
 
             <div style="margin-top: 0.5rem;">
-                <span class="badge {{ $company->status === 'active' ? 'badge-success' : 'badge-danger' }}" style="padding: 5px 12px; font-size: 0.78rem; border-radius: 20px;">
-                    {{ ucfirst($company->status) }}
+                <span class="erp-status-btn {{ $company->status === 'active' ? 'erp-status-btn-active' : 'erp-status-btn-inactive' }}" style="cursor: default;">
+                    <span class="{{ $company->status === 'active' ? 'erp-status-dot-green' : 'erp-status-dot-red' }}"></span>
+                    <span>{{ ucfirst($company->status) }}</span>
                 </span>
                 @if($company->is_default)
                     <span class="badge" style="background: rgba(212, 160, 23, 0.15); color: #B45309; border: 1px solid rgba(212, 160, 23, 0.3); padding: 5px 12px; font-size: 0.78rem; border-radius: 20px; margin-left: 0.35rem;">
