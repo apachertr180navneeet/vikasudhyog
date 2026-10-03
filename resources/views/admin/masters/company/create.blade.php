@@ -5,31 +5,28 @@
 
 @section('content')
 <section class="view-section active" id="view-master-company-create">
-    <!-- Top Header Bar -->
-    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.75rem; flex-wrap: wrap; gap: 1rem;">
+    <!-- Breadcrumb & Top Bar -->
+    <div class="erp-page-top-bar">
         <div>
-            <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.5rem;">
-                <a href="{{ route('admin.dashboard') }}" style="color: var(--text-muted); text-decoration: none;">Dashboard</a>
-                <i class="fa-solid fa-chevron-right" style="font-size: 0.65rem;"></i>
+            <div class="erp-breadcrumb-trail">
+                <a href="{{ route('admin.dashboard') }}">Dashboard</a>
+                <i class="fa-solid fa-chevron-right erp-breadcrumb-sep"></i>
                 <span>Masters</span>
-                <i class="fa-solid fa-chevron-right" style="font-size: 0.65rem;"></i>
-                <a href="{{ route('admin.masters.company') }}" style="color: var(--text-muted); text-decoration: none;">Company Master</a>
-                <i class="fa-solid fa-chevron-right" style="font-size: 0.65rem;"></i>
-                <span style="color: var(--primary); font-weight: 600;">Add New Entity</span>
+                <i class="fa-solid fa-chevron-right erp-breadcrumb-sep"></i>
+                <a href="{{ route('admin.masters.company') }}">Company Master</a>
+                <i class="fa-solid fa-chevron-right erp-breadcrumb-sep"></i>
+                <span class="erp-breadcrumb-active">Add New Entity</span>
             </div>
-            <h1 class="page-title" style="margin: 0; font-size: 1.65rem; font-weight: 800; color: var(--text-primary); display: flex; align-items: center; gap: 0.65rem;">
-                <span style="width: 40px; height: 40px; border-radius: 12px; background: rgba(107, 142, 35, 0.12); color: var(--primary); display: inline-flex; align-items: center; justify-content: center; font-size: 1.15rem;">
-                    <i class="fa-solid fa-building-circle-check"></i>
-                </span>
-                Add New Company Profile
+            <h1 class="erp-page-title">
+                <i class="fa-solid fa-building-circle-check text-primary"></i> Add New Company Profile
             </h1>
-            <p class="page-subtitle" style="margin: 0.25rem 0 0; color: var(--text-muted); font-size: 0.88rem;">
+            <p class="erp-page-subtitle">
                 Register a new herbal manufacturing plant, corporate unit, or trading entity.
             </p>
         </div>
 
-        <div style="display: flex; align-items: center; gap: 0.75rem;">
-            <a href="{{ route('admin.masters.company') }}" class="btn btn-outline" style="border-radius: 10px; height: 42px; padding: 0 1.25rem; font-weight: 600;">
+        <div class="erp-header-actions">
+            <a href="{{ route('admin.masters.company') }}" class="btn btn-outline">
                 <i class="fa-solid fa-arrow-left"></i> Back to Directory
             </a>
         </div>
@@ -385,6 +382,16 @@
                             <strong id="preview-city">Sojat City</strong>
                         </div>
                     </div>
+                </div>
+
+                <!-- Action Buttons Card -->
+                <div class="card erp-sidebar-actions-card" style="margin-bottom: 1.5rem;">
+                    <button type="submit" class="erp-btn-action-submit">
+                        <i class="fa-solid fa-floppy-disk"></i> Save Company Profile
+                    </button>
+                    <a href="{{ route('admin.masters.company') }}" class="erp-btn-action-cancel">
+                        <i class="fa-solid fa-xmark"></i> Cancel
+                    </a>
                 </div>
 
                 <!-- Guidelines Card -->

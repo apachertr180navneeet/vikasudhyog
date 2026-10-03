@@ -234,28 +234,27 @@
                                 </button>
                             </td>
                             <td style="text-align: right;">
-                                <div class="action-btns" style="justify-content: flex-end; gap: 0.35rem;">
+                                <div class="erp-actions-cell">
                                     <!-- View Page Link -->
-                                    <a href="{{ route('admin.masters.company.show', $company->id) }}" class="btn-action" style="color: var(--primary);" title="View Company Profile">
-                                        <i class="fa-solid fa-eye"></i>
+                                    <a href="{{ route('admin.masters.company.show', $company->id) }}" class="erp-table-action-icon" title="View Company Profile">
+                                        <i class="fa-regular fa-eye"></i>
                                     </a>
 
                                     <!-- Edit Page Link -->
-                                    <a href="{{ route('admin.masters.company.edit', $company->id) }}" class="btn-action edit" title="Edit Company">
-                                        <i class="fa-solid fa-pen"></i>
+                                    <a href="{{ route('admin.masters.company.edit', $company->id) }}" class="erp-table-action-icon" title="Edit Company Details">
+                                        <i class="fa-solid fa-pen-to-square"></i>
                                     </a>
 
                                     <!-- Make Primary/Default Button -->
                                     @if(!$company->is_default)
-                                        <button type="button" class="btn-action btn-set-default" data-id="{{ $company->id }}" data-name="{{ $company->name }}" data-url="{{ route('admin.masters.company.set-default', $company->id) }}" style="color: #D4A017; border: none; background: none; cursor: pointer;" title="Set as Primary Default Entity">
+                                        <button type="button" class="erp-table-action-icon btn-set-default" data-id="{{ $company->id }}" data-name="{{ $company->name }}" data-url="{{ route('admin.masters.company.set-default', $company->id) }}" style="color: #D4A017;" title="Set as Primary Default Entity">
                                             <i class="fa-regular fa-star"></i>
                                         </button>
+                                        <!-- Delete Button -->
+                                        <button type="button" class="erp-table-action-icon erp-table-action-icon-danger btn-delete-company" data-id="{{ $company->id }}" data-name="{{ $company->name }}" data-url="{{ route('admin.masters.company.destroy', $company->id) }}" title="Archive / Delete Company">
+                                            <i class="fa-regular fa-trash-can"></i>
+                                        </button>
                                     @endif
-
-                                    <!-- Delete Button -->
-                                    <button type="button" class="btn-action delete btn-delete-company" data-id="{{ $company->id }}" data-name="{{ $company->name }}" data-url="{{ route('admin.masters.company.destroy', $company->id) }}" style="border: none; background: none; cursor: pointer;" title="Delete Company">
-                                        <i class="fa-solid fa-trash"></i>
-                                    </button>
                                 </div>
                             </td>
                         </tr>

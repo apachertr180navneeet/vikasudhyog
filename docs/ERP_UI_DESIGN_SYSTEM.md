@@ -129,15 +129,15 @@ Every index view must follow this exact sequential layout:
 
 <!-- Table Actions Cell -->
 <td style="text-align: right;">
-    <div class="d-inline-flex align-items-center gap-1">
-        <button type="button" class="btn btn-icon btn-sm" onclick="openQuickView({{ $record->id }})" title="Quick View">
-            <i class="fa-regular fa-eye" style="color: #64748B;"></i>
-        </button>
-        <a href="{{ route('admin.[module].edit', $record->id) }}" class="btn btn-icon btn-sm" title="Edit">
-            <i class="fa-solid fa-pen-to-square" style="color: var(--primary);"></i>
+    <div class="erp-actions-cell">
+        <a href="{{ route('admin.[module].show', $record->id) }}" class="erp-table-action-icon" title="View Profile">
+            <i class="fa-regular fa-eye"></i>
         </a>
-        <button type="button" class="btn btn-icon btn-sm text-danger" onclick="confirmDelete({{ $record->id }}, '{{ addslashes($record->name) }}')" title="Delete / Archive">
-            <i class="fa-solid fa-trash-can"></i>
+        <a href="{{ route('admin.[module].edit', $record->id) }}" class="erp-table-action-icon" title="Edit Record">
+            <i class="fa-solid fa-pen-to-square"></i>
+        </a>
+        <button type="button" class="erp-table-action-icon erp-table-action-icon-danger" onclick="confirmDelete({{ $record->id }}, '{{ addslashes($record->name) }}')" title="Delete / Archive">
+            <i class="fa-regular fa-trash-can"></i>
         </button>
     </div>
 </td>

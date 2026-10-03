@@ -263,15 +263,15 @@
                                 </form>
                             </td>
                             <td style="text-align: right;">
-                                <div class="d-inline-flex align-items-center gap-1">
-                                    <button type="button" class="btn btn-icon btn-sm" onclick="openVendorDrawer({{ $vendor->id }})" title="Quick View Supplier">
-                                        <i class="fa-regular fa-eye" style="color: #64748B;"></i>
-                                    </button>
-                                    <a href="{{ route('admin.masters.vendor.edit', $vendor->id) }}" class="btn btn-icon btn-sm" title="Edit Vendor Details">
-                                        <i class="fa-solid fa-pen-to-square" style="color: var(--primary);"></i>
+                                <div class="erp-actions-cell">
+                                    <a href="{{ route('admin.masters.vendor.show', $vendor->id) }}" class="erp-table-action-icon" title="View Supplier Profile">
+                                        <i class="fa-regular fa-eye"></i>
                                     </a>
-                                    <button type="button" class="btn btn-icon btn-sm text-danger" onclick="confirmDeleteVendor({{ $vendor->id }}, '{{ addslashes($vendor->name) }}', '{{ $vendor->code }}')" title="Archive / Delete Vendor">
-                                        <i class="fa-solid fa-trash-can"></i>
+                                    <a href="{{ route('admin.masters.vendor.edit', $vendor->id) }}" class="erp-table-action-icon" title="Edit Vendor Details">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                    </a>
+                                    <button type="button" class="erp-table-action-icon erp-table-action-icon-danger" onclick="confirmDeleteVendor({{ $vendor->id }}, '{{ addslashes($vendor->name) }}', '{{ $vendor->code }}')" title="Archive / Delete Vendor">
+                                        <i class="fa-regular fa-trash-can"></i>
                                     </button>
                                 </div>
                             </td>

@@ -36,7 +36,7 @@ Each module must follow a RESTful, 4-view CRUD structure under `resources/views/
    - Status toggle pill:
      - Active: `.erp-status-btn.erp-status-btn-active` with emerald pulsing dot (`.erp-status-dot-green`)
      - Inactive: `.erp-status-btn.erp-status-btn-inactive` with red dot (`.erp-status-dot-red`)
-   - Actions: Quick View modal button, Edit button, Delete button (with SweetAlert2).
+   - Actions: Standard action icons wrapper (`.erp-actions-cell`) with individual buttons (`.erp-table-action-icon`, `.erp-table-action-icon-danger` for delete). Must include View, Edit, and Delete (with SweetAlert2).
 6. **Card Footer Pagination**:
    - Clean pagination links and per-page entries summary.
 

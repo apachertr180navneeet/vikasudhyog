@@ -5,34 +5,31 @@
 
 @section('content')
 <section class="view-section active" id="view-master-company-edit">
-    <!-- Top Header Bar -->
-    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.75rem; flex-wrap: wrap; gap: 1rem;">
+    <!-- Breadcrumb & Top Bar -->
+    <div class="erp-page-top-bar">
         <div>
-            <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.5rem;">
-                <a href="{{ route('admin.dashboard') }}" style="color: var(--text-muted); text-decoration: none;">Dashboard</a>
-                <i class="fa-solid fa-chevron-right" style="font-size: 0.65rem;"></i>
+            <div class="erp-breadcrumb-trail">
+                <a href="{{ route('admin.dashboard') }}">Dashboard</a>
+                <i class="fa-solid fa-chevron-right erp-breadcrumb-sep"></i>
                 <span>Masters</span>
-                <i class="fa-solid fa-chevron-right" style="font-size: 0.65rem;"></i>
-                <a href="{{ route('admin.masters.company') }}" style="color: var(--text-muted); text-decoration: none;">Company Master</a>
-                <i class="fa-solid fa-chevron-right" style="font-size: 0.65rem;"></i>
-                <span style="color: var(--primary); font-weight: 600;">Edit Profile</span>
+                <i class="fa-solid fa-chevron-right erp-breadcrumb-sep"></i>
+                <a href="{{ route('admin.masters.company') }}">Company Master</a>
+                <i class="fa-solid fa-chevron-right erp-breadcrumb-sep"></i>
+                <span class="erp-breadcrumb-active">Edit: {{ $company->name }}</span>
             </div>
-            <h1 class="page-title" style="margin: 0; font-size: 1.65rem; font-weight: 800; color: var(--text-primary); display: flex; align-items: center; gap: 0.65rem;">
-                <span style="width: 40px; height: 40px; border-radius: 12px; background: rgba(107, 142, 35, 0.12); color: var(--primary); display: inline-flex; align-items: center; justify-content: center; font-size: 1.15rem;">
-                    <i class="fa-solid fa-pen-to-square"></i>
-                </span>
-                Edit Company: {{ $company->name }}
+            <h1 class="erp-page-title">
+                <i class="fa-solid fa-pen-to-square text-primary"></i> Edit Company: {{ $company->name }}
             </h1>
-            <p class="page-subtitle" style="margin: 0.25rem 0 0; color: var(--text-muted); font-size: 0.88rem;">
+            <p class="erp-page-subtitle">
                 Update corporate details, tax numbers, factory premises, and bank settlement configurations.
             </p>
         </div>
 
-        <div style="display: flex; align-items: center; gap: 0.75rem;">
-            <a href="{{ route('admin.masters.company.show', $company->id) }}" class="btn btn-outline" style="border-radius: 10px; height: 42px; padding: 0 1.15rem; font-weight: 600;">
+        <div class="erp-header-actions">
+            <a href="{{ route('admin.masters.company.show', $company->id) }}" class="btn btn-outline">
                 <i class="fa-solid fa-eye"></i> View Profile
             </a>
-            <a href="{{ route('admin.masters.company') }}" class="btn btn-outline" style="border-radius: 10px; height: 42px; padding: 0 1.15rem; font-weight: 600;">
+            <a href="{{ route('admin.masters.company') }}" class="btn btn-outline">
                 <i class="fa-solid fa-arrow-left"></i> Back to Directory
             </a>
         </div>
@@ -391,6 +388,29 @@
                     </div>
                 </div>
 
+                <!-- Action Buttons Card -->
+                <div class="card erp-sidebar-actions-card" style="margin-bottom: 1.5rem;">
+                    <button type="submit" class="erp-btn-action-submit">
+                        <i class="fa-solid fa-floppy-disk"></i> Update Company Profile
+                    </button>
+                    <a href="{{ route('admin.masters.company') }}" class="erp-btn-action-cancel">
+                        <i class="fa-solid fa-xmark"></i> Cancel
+                    </a>
+                </div>
+
+                @if(!$company->is_default)
+                    <!-- Danger Zone (Delete / Archive Company) -->
+                    <div class="erp-alert-error-list-card p-3 mb-4" style="background: #FEF2F2; border: 1px solid #FECACA; border-radius: 12px; margin-bottom: 1.5rem;">
+                        <div class="erp-alert-error-header mb-1 text-danger" style="font-weight: 700;">
+                            <i class="fa-solid fa-triangle-exclamation"></i> Danger Zone
+                        </div>
+                        <p class="erp-field-hint mt-0 mb-2">Delete this company entity. If transactions are linked, action will be safely rejected.</p>
+                        <button type="button" class="erp-btn-action-danger" onclick="confirmDeleteCompany()">
+                            <i class="fa-solid fa-trash-can"></i> Delete Company Profile
+                        </button>
+                    </div>
+                @endif
+
                 <!-- Guidelines Card -->
                 <div class="erp-card">
                     <div class="erp-card-header" style="padding: 1rem 1.25rem;">
@@ -418,6 +438,12 @@
                 </div>
             </div>
         </div>
+    </form>
+
+    <!-- Hidden Form for Safe Deletion -->
+    <form id="delete-company-form" action="{{ route('admin.masters.company.destroy', $company->id) }}" method="POST" style="display: none;">
+        @csrf
+        @method('DELETE')
     </form>
 </section>
 
@@ -569,6 +595,25 @@
 
         updatePreview();
     });
+
+    function confirmDeleteCompany() {
+        Swal.fire({
+            title: 'Delete Company Profile?',
+            text: 'Are you sure you want to delete "{{ addslashes($company->name) }}"? If transactions exist, this will be safely blocked.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#EF4444',
+            cancelButtonColor: '#6B7280',
+            confirmButtonText: 'Yes, Delete Entity',
+            cancelButtonText: 'Cancel',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const form = document.getElementById('delete-company-form');
+                if (form) form.submit();
+            }
+        });
+    }
 </script>
 @endpush
 @endsection
