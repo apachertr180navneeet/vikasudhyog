@@ -161,32 +161,27 @@
                             </label>
                             <div class="erp-field-icon-wrap">
                                 <i class="fa-solid fa-cubes erp-field-icon"></i>
-                                <select name="unit" id="field-unit" class="form-control erp-field-input-iconified" required onchange="updateLivePreview()">
+                                <select name="unit" id="field-unit" class="form-control erp-field-input-iconified" required onchange="document.getElementById('field-unit-id').value = this.options[this.selectedIndex].getAttribute('data-id'); updateLivePreview()">
+                                    @php
+                                        $rU = strtoupper(trim(old('unit', $item->unit ?? 'KG')));
+                                    @endphp
                                     @foreach($units as $u)
                                         @php
                                             $uVal = $u->code ?: $u->name;
-                                            $uCode = strtoupper(trim($u->code ?? ''));
-                                            $uName = strtoupper(trim($u->name ?? ''));
-                                            $rU = strtoupper(trim(old('unit', $item->unit ?? 'KG')));
-                                            $isSelected = ($rU === $uCode || $rU === $uName || old('unit_id', $item->unit_id) == $u->id ||
-                                                          (($rU === 'PACKET' || $rU === 'PKT') && in_array($uCode, ['PKT', 'PACKET'])) ||
-                                                          (($rU === 'KG' || $rU === 'KILOGRAM') && in_array($uCode, ['KG', 'KILOGRAM'])) ||
-                                                          (($rU === 'QTL' || $rU === 'QUINTAL') && in_array($uCode, ['QTL', 'QUINTAL'])));
+                                            $isSelected = (old('unit_id', $item->unit_id) == $u->id) || $u->matchesValue($rU);
                                         @endphp
                                         <option value="{{ $uVal }}" data-id="{{ $u->id }}" {{ $isSelected ? 'selected' : '' }}>
                                             {{ $u->name }} ({{ $u->code }})
                                         </option>
                                     @endforeach
                                     @php
-                                        $itemU = strtoupper(trim($item->unit ?? ''));
-                                        $foundInMaster = $units->contains(function($u) use ($itemU) {
-                                            return $itemU === strtoupper(trim($u->code ?? '')) || $itemU === strtoupper(trim($u->name ?? ''));
-                                        });
+                                        $foundInMaster = $units->contains(fn($u) => $u->matchesValue($rU));
                                     @endphp
                                     @if(!$foundInMaster && !empty($item->unit))
                                         <option value="{{ $item->unit }}" selected>{{ $item->unit }}</option>
                                     @endif
                                 </select>
+                                <input type="hidden" name="unit_id" id="field-unit-id" value="{{ old('unit_id', $item->unit_id ?? '') }}">
                             </div>
                             <span class="erp-field-hint">Standard quantity billing metric</span>
                         </div>

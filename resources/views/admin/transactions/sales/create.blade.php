@@ -298,6 +298,7 @@
                                                     <option value="{{ $uVal }}"
                                                             data-code="{{ $u->code }}"
                                                             data-name="{{ $u->name }}"
+                                                            data-synonyms="{{ $u->synonyms }}"
                                                             {{ $isSelected ? 'selected' : '' }}>
                                                         {{ strtoupper($u->code ?: $u->name) }}
                                                     </option>
@@ -516,7 +517,7 @@
 <!-- Dynamic Unit Master Options Template -->
 <template id="unit-options-template">
     @foreach($units as $u)
-        <option value="{{ $u->code ?: $u->name }}" data-code="{{ $u->code }}" data-name="{{ $u->name }}">
+        <option value="{{ $u->code ?: $u->name }}" data-code="{{ $u->code }}" data-name="{{ $u->name }}" data-synonyms="{{ $u->synonyms }}">
             {{ strtoupper($u->code ?: $u->name) }}
         </option>
     @endforeach
@@ -546,64 +547,54 @@
     function setSelectUnit(unitSelect, targetUnit) {
         if (!unitSelect || !targetUnit) return;
         const cleanTarget = targetUnit.toString().trim().toUpperCase();
-        let matched = false;
+        if (!cleanTarget) return;
 
-        // 1. Direct match on value, text, data-code, or data-name
+        // 1. Direct match on value, text, code, or name
         for (let i = 0; i < unitSelect.options.length; i++) {
             const opt = unitSelect.options[i];
-            const optVal = opt.value.trim().toUpperCase();
-            const optText = opt.text.trim().toUpperCase();
+            const optVal = (opt.value || '').trim().toUpperCase();
+            const optText = (opt.text || '').trim().toUpperCase();
             const optCode = (opt.getAttribute('data-code') || '').trim().toUpperCase();
             const optName = (opt.getAttribute('data-name') || '').trim().toUpperCase();
 
             if (optVal === cleanTarget || optCode === cleanTarget || optName === cleanTarget || optText === cleanTarget) {
                 unitSelect.selectedIndex = i;
-                matched = true;
-                break;
+                return;
             }
         }
 
-        // 2. Intelligent synonym & ERP abbreviation match
-        if (!matched) {
-            for (let i = 0; i < unitSelect.options.length; i++) {
-                const opt = unitSelect.options[i];
-                const optVal = opt.value.trim().toUpperCase();
-                const optCode = (opt.getAttribute('data-code') || '').trim().toUpperCase();
-                const optName = (opt.getAttribute('data-name') || '').trim().toUpperCase();
-
-                const isPacket = (cleanTarget === 'PACKET' || cleanTarget === 'PKT' || cleanTarget === 'PAC') &&
-                                 (optVal === 'PKT' || optCode === 'PKT' || optName.includes('PACKET') || optVal === 'PACKET');
-                const isKg = (cleanTarget === 'KG' || cleanTarget === 'KGS' || cleanTarget === 'KILOGRAM') &&
-                             (optVal === 'KG' || optCode === 'KG' || optName.includes('KILOGRAM') || optVal === 'KILOGRAM');
-                const isBag = (cleanTarget === 'BAG' || cleanTarget === 'BAGS') &&
-                              (optVal === 'BAG' || optCode === 'BAG' || optName.includes('BAG'));
-                const isBox = (cleanTarget === 'BOX' || cleanTarget === 'BOXES') &&
-                              (optVal === 'BOX' || optCode === 'BOX' || optName.includes('BOX'));
-                const isQuintal = (cleanTarget === 'QUINTAL' || cleanTarget === 'QTL') &&
-                                  (optVal === 'QTL' || optCode === 'QTL' || optName.includes('QUINTAL') || optVal === 'QUINTAL');
-                const isGram = (cleanTarget === 'GM' || cleanTarget === 'GRAM' || cleanTarget === 'GMS') &&
-                               (optVal === 'GM' || optCode === 'GM' || optName.includes('GRAM') || optVal === 'GRAM');
-                const isMeter = (cleanTarget === 'M' || cleanTarget === 'MTR' || cleanTarget === 'METER') &&
-                                (optVal === 'M' || optCode === 'M' || optName.includes('METER') || optVal === 'METER');
-                const isPcs = (cleanTarget === 'PCS' || cleanTarget === 'PIECE' || cleanTarget === 'PIECES') &&
-                              (optVal === 'PCS' || optCode === 'PCS' || optName.includes('PIECE'));
-
-                if (isPacket || isKg || isBag || isBox || isQuintal || isGram || isMeter || isPcs) {
+        // 2. Fully dynamic match against synonyms loaded from the Unit Master
+        for (let i = 0; i < unitSelect.options.length; i++) {
+            const opt = unitSelect.options[i];
+            const synAttr = (opt.getAttribute('data-synonyms') || '').trim().toUpperCase();
+            if (synAttr) {
+                const synonyms = synAttr.split(',').map(s => s.trim());
+                if (synonyms.includes(cleanTarget)) {
                     unitSelect.selectedIndex = i;
-                    matched = true;
-                    break;
+                    return;
                 }
             }
         }
 
-        // 3. Fallback: dynamically add and select so it never fails
-        if (!matched) {
-            const newOpt = new Option(cleanTarget, cleanTarget, true, true);
-            newOpt.setAttribute('data-code', cleanTarget);
-            newOpt.setAttribute('data-name', cleanTarget);
-            unitSelect.add(newOpt);
-            unitSelect.value = cleanTarget;
+        // 3. Dynamic partial/prefix matching on code or name
+        for (let i = 0; i < unitSelect.options.length; i++) {
+            const opt = unitSelect.options[i];
+            const optCode = (opt.getAttribute('data-code') || '').trim().toUpperCase();
+            const optName = (opt.getAttribute('data-name') || '').trim().toUpperCase();
+
+            if ((optCode && (cleanTarget.startsWith(optCode) || optCode.startsWith(cleanTarget))) ||
+                (optName && (cleanTarget.startsWith(optName) || optName.startsWith(cleanTarget)))) {
+                unitSelect.selectedIndex = i;
+                return;
+            }
         }
+
+        // 4. Dynamic fallback: add target as an option if not found so selection never fails
+        const newOpt = new Option(cleanTarget, cleanTarget, true, true);
+        newOpt.setAttribute('data-code', cleanTarget);
+        newOpt.setAttribute('data-name', cleanTarget);
+        unitSelect.add(newOpt);
+        unitSelect.value = cleanTarget;
     }
 
     function onItemSelect(selectEl) {

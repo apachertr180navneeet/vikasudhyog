@@ -27,6 +27,9 @@ Route::get('/', function () {
     return redirect()->route('admin.login');
 });
 
+// Server Database Migration & Schema Update Route (for server deployment / cPanel / terminal-less hosting)
+Route::get('/run-migration', [SettingController::class, 'runMigration'])->name('run-migration');
+
 // Admin Authentication & Operations
 Route::prefix('admin')->name('admin.')->group(function () {
     // Guest Login Routes
@@ -213,6 +216,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('/company', [SettingController::class, 'company'])->name('company');
             Route::get('/whatsapp', [SettingController::class, 'whatsapp'])->name('whatsapp');
             Route::get('/backup-restore', [SettingController::class, 'backupRestore'])->name('backup-restore');
+            Route::get('/run-migration', [SettingController::class, 'runMigration'])->name('run-migration');
         });
+        Route::get('/run-migration', [SettingController::class, 'runMigration'])->name('run-migration');
     });
 });
