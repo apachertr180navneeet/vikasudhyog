@@ -16,6 +16,8 @@ use App\Http\Controllers\Admin\AccessLevelController;
 use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Admin\PurchaseController;
 use App\Http\Controllers\Admin\WBPurchaseController;
+use App\Http\Controllers\Admin\SaleController;
+use App\Http\Controllers\Admin\WBSaleController;
 use App\Http\Controllers\Admin\InventoryController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\SettingController;
@@ -163,8 +165,27 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::put('/wb-purchase-entry/{wbPurchase}', [WBPurchaseController::class, 'update'])->name('wb-purchase-entry.update');
             Route::delete('/wb-purchase-entry/{wbPurchase}', [WBPurchaseController::class, 'destroy'])->name('wb-purchase-entry.destroy');
             Route::patch('/wb-purchase-entry/{wbPurchase}/toggle-status', [WBPurchaseController::class, 'toggleStatus'])->name('wb-purchase-entry.toggle-status');
-            Route::get('/sales-entry', [TransactionController::class, 'salesEntry'])->name('sales-entry');
-            Route::get('/wb-sales-entry', [TransactionController::class, 'wbSalesEntry'])->name('wb-sales-entry');
+            // Sales Entry (With Bill) CRUD
+            Route::get('/sales-entry', [SaleController::class, 'index'])->name('sales-entry');
+            Route::get('/sales-entry/create', [SaleController::class, 'create'])->name('sales-entry.create');
+            Route::get('/sales-entry/generate-code', [SaleController::class, 'generateCode'])->name('sales-entry.generate-code');
+            Route::post('/sales-entry', [SaleController::class, 'store'])->name('sales-entry.store');
+            Route::get('/sales-entry/{sale}', [SaleController::class, 'show'])->name('sales-entry.show');
+            Route::get('/sales-entry/{sale}/edit', [SaleController::class, 'edit'])->name('sales-entry.edit');
+            Route::put('/sales-entry/{sale}', [SaleController::class, 'update'])->name('sales-entry.update');
+            Route::delete('/sales-entry/{sale}', [SaleController::class, 'destroy'])->name('sales-entry.destroy');
+            Route::patch('/sales-entry/{sale}/toggle-status', [SaleController::class, 'toggleStatus'])->name('sales-entry.toggle-status');
+
+            // WB Sales Entry (Without Bill) CRUD
+            Route::get('/wb-sales-entry', [WBSaleController::class, 'index'])->name('wb-sales-entry');
+            Route::get('/wb-sales-entry/create', [WBSaleController::class, 'create'])->name('wb-sales-entry.create');
+            Route::get('/wb-sales-entry/generate-code', [WBSaleController::class, 'generateCode'])->name('wb-sales-entry.generate-code');
+            Route::post('/wb-sales-entry', [WBSaleController::class, 'store'])->name('wb-sales-entry.store');
+            Route::get('/wb-sales-entry/{wbSale}', [WBSaleController::class, 'show'])->name('wb-sales-entry.show');
+            Route::get('/wb-sales-entry/{wbSale}/edit', [WBSaleController::class, 'edit'])->name('wb-sales-entry.edit');
+            Route::put('/wb-sales-entry/{wbSale}', [WBSaleController::class, 'update'])->name('wb-sales-entry.update');
+            Route::delete('/wb-sales-entry/{wbSale}', [WBSaleController::class, 'destroy'])->name('wb-sales-entry.destroy');
+            Route::patch('/wb-sales-entry/{wbSale}/toggle-status', [WBSaleController::class, 'toggleStatus'])->name('wb-sales-entry.toggle-status');
             Route::get('/order-dispatch', [TransactionController::class, 'orderDispatch'])->name('order-dispatch');
             Route::get('/sales-purchase-order', [TransactionController::class, 'salesPurchaseOrder'])->name('sales-purchase-order');
             Route::get('/receipt-voucher', [TransactionController::class, 'receiptVoucher'])->name('receipt-voucher');
