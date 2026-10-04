@@ -112,7 +112,13 @@ class VendorSeeder extends Seeder
         ];
 
         foreach ($vendors as $v) {
-            Vendor::firstOrCreate(['code' => $v['code']], $v);
+            $vendor = Vendor::withTrashed()->where('code', $v['code'])->first();
+            if ($vendor) {
+                $vendor->restore();
+                $vendor->update($v);
+            } else {
+                Vendor::create($v);
+            }
         }
     }
 }

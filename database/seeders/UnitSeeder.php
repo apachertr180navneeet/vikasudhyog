@@ -7,13 +7,24 @@ use App\Models\Unit;
 
 class UnitSeeder extends Seeder
 {
+    private function upsertUnit(array $attributes, array $values): Unit
+    {
+        $unit = Unit::withTrashed()->where('code', $attributes['code'])->first();
+        if ($unit) {
+            $unit->restore();
+            $unit->update($values);
+            return $unit;
+        }
+        return Unit::create(array_merge($attributes, $values));
+    }
+
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
         // 1. Primary Base Units
-        $meter = Unit::updateOrCreate(
+        $meter = $this->upsertUnit(
             ['code' => 'M'],
             [
                 'name'              => 'Meter',
@@ -28,7 +39,7 @@ class UnitSeeder extends Seeder
             ]
         );
 
-        $kg = Unit::updateOrCreate(
+        $kg = $this->upsertUnit(
             ['code' => 'KG'],
             [
                 'name'              => 'Kilogram',
@@ -43,7 +54,7 @@ class UnitSeeder extends Seeder
             ]
         );
 
-        $box = Unit::updateOrCreate(
+        $box = $this->upsertUnit(
             ['code' => 'BOX'],
             [
                 'name'              => 'Box',
@@ -58,7 +69,7 @@ class UnitSeeder extends Seeder
             ]
         );
 
-        $pkt = Unit::updateOrCreate(
+        $pkt = $this->upsertUnit(
             ['code' => 'PKT'],
             [
                 'name'              => 'Packet',
@@ -74,7 +85,7 @@ class UnitSeeder extends Seeder
         );
 
         // 2. Sub-Units / Derived Units with Explicit Relations (e.g. 100 cm = 1 m)
-        Unit::updateOrCreate(
+        $this->upsertUnit(
             ['code' => 'CM'],
             [
                 'name'              => 'Centimeter',
@@ -89,7 +100,7 @@ class UnitSeeder extends Seeder
             ]
         );
 
-        Unit::updateOrCreate(
+        $this->upsertUnit(
             ['code' => 'GM'],
             [
                 'name'              => 'Gram',
@@ -104,7 +115,7 @@ class UnitSeeder extends Seeder
             ]
         );
 
-        Unit::updateOrCreate(
+        $this->upsertUnit(
             ['code' => 'BAG'],
             [
                 'name'              => 'Bag (20 KG)',
@@ -119,7 +130,7 @@ class UnitSeeder extends Seeder
             ]
         );
 
-        Unit::updateOrCreate(
+        $this->upsertUnit(
             ['code' => 'QTL'],
             [
                 'name'              => 'Quintal',

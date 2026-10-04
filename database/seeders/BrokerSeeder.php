@@ -116,7 +116,13 @@ class BrokerSeeder extends Seeder
         ];
 
         foreach ($brokers as $b) {
-            Broker::updateOrCreate(['code' => $b['code']], $b);
+            $broker = Broker::withTrashed()->where('code', $b['code'])->first();
+            if ($broker) {
+                $broker->restore();
+                $broker->update($b);
+            } else {
+                Broker::create($b);
+            }
         }
     }
 }

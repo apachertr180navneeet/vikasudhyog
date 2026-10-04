@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\BrokerController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\ItemController;
 use App\Http\Controllers\Admin\UnitController;
+use App\Http\Controllers\Admin\AccountController;
 use App\Http\Controllers\Admin\AccessLevelController;
 use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Admin\InventoryController;
@@ -125,7 +126,16 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::put('/unit/{unit}', [UnitController::class, 'update'])->name('unit.update');
             Route::delete('/unit/{unit}', [UnitController::class, 'destroy'])->name('unit.destroy');
             Route::patch('/unit/{unit}/toggle-status', [UnitController::class, 'toggleStatus'])->name('unit.toggle-status');
-            Route::get('/account', [MasterController::class, 'account'])->name('account');
+            // Account Master CRUD (Dedicated Pages)
+            Route::get('/account', [AccountController::class, 'index'])->name('account');
+            Route::get('/account/create', [AccountController::class, 'create'])->name('account.create');
+            Route::get('/account/generate-code', [AccountController::class, 'generateCode'])->name('account.generate-code');
+            Route::post('/account', [AccountController::class, 'store'])->name('account.store');
+            Route::get('/account/{account}', [AccountController::class, 'show'])->name('account.show');
+            Route::get('/account/{account}/edit', [AccountController::class, 'edit'])->name('account.edit');
+            Route::put('/account/{account}', [AccountController::class, 'update'])->name('account.update');
+            Route::delete('/account/{account}', [AccountController::class, 'destroy'])->name('account.destroy');
+            Route::patch('/account/{account}/toggle-status', [AccountController::class, 'toggleStatus'])->name('account.toggle-status');
         });
 
         // Transaction Routes

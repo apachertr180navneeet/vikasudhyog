@@ -139,10 +139,13 @@ class ItemSeeder extends Seeder
         ];
 
         foreach ($items as $data) {
-            Item::updateOrCreate(
-                ['code' => $data['code']],
-                $data
-            );
+            $item = Item::withTrashed()->where('code', $data['code'])->first();
+            if ($item) {
+                $item->restore();
+                $item->update($data);
+            } else {
+                Item::create($data);
+            }
         }
     }
 }

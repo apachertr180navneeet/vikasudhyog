@@ -170,10 +170,13 @@ class CustomerSeeder extends Seeder
         ];
 
         foreach ($customers as $data) {
-            Customer::updateOrCreate(
-                ['code' => $data['code']],
-                $data
-            );
+            $customer = Customer::withTrashed()->where('code', $data['code'])->first();
+            if ($customer) {
+                $customer->restore();
+                $customer->update($data);
+            } else {
+                Customer::create($data);
+            }
         }
     }
 }
