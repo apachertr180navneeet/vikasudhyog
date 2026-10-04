@@ -187,8 +187,8 @@
                                     <th style="text-align: right;">NET WT</th>
                                     <th style="text-align: right;">BILL RATE (₹)</th>
                                     <th style="text-align: right;">U-B RATE (₹)</th>
-                                    <th style="text-align: right;">BILL ARNT (₹)</th>
-                                    <th style="text-align: right;">U-B ARNT (₹)</th>
+                                    <th style="text-align: right;">BILL AMT (₹)</th>
+                                    <th style="text-align: right;">U-B AMT (₹)</th>
                                     <th style="text-align: right; padding-right: 1.25rem;">TOTAL VALUE (₹)</th>
                                 </tr>
                             </thead>

@@ -97,7 +97,7 @@ class PurchaseController extends Controller
         $nextPurchaseNo = Purchase::generateNextPurchaseNo();
         $vendors = Vendor::where('status', 'active')->orderBy('name')->get();
         $brokers = Broker::where('status', 'active')->orderBy('name')->get();
-        $items = Item::where('status', 'active')->orderBy('name')->get();
+        $items = Item::with('unitRelation')->where('status', 'active')->orderBy('name')->get();
         $units = Unit::active()->orderBy('name')->get();
 
         return view('admin.transactions.purchase.create', compact(
@@ -240,7 +240,7 @@ class PurchaseController extends Controller
      */
     public function show(Purchase $purchase)
     {
-        $purchase->load(['vendor', 'broker', 'company', 'items.item']);
+        $purchase->load(['vendor', 'broker', 'company', 'items.item.unitRelation']);
         return view('admin.transactions.purchase.show', compact('purchase'));
     }
 
@@ -249,10 +249,10 @@ class PurchaseController extends Controller
      */
     public function edit(Purchase $purchase)
     {
-        $purchase->load(['vendor', 'broker', 'items.item']);
+        $purchase->load(['vendor', 'broker', 'items.item.unitRelation']);
         $vendors = Vendor::where('status', 'active')->orderBy('name')->get();
         $brokers = Broker::where('status', 'active')->orderBy('name')->get();
-        $items = Item::where('status', 'active')->orderBy('name')->get();
+        $items = Item::with('unitRelation')->where('status', 'active')->orderBy('name')->get();
         $units = Unit::active()->orderBy('name')->get();
 
         return view('admin.transactions.purchase.edit', compact(

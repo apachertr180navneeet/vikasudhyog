@@ -64,6 +64,22 @@ class Purchase extends Model
         return $this->hasMany(PurchaseItem::class);
     }
 
+    public function purchaseItems()
+    {
+        return $this->hasMany(PurchaseItem::class);
+    }
+
+    public function productItems()
+    {
+        return $this->belongsToMany(Item::class, 'purchase_items', 'purchase_id', 'item_id')
+                    ->withPivot([
+                        'batch_no', 'hsn_code', 'unit', 'quantity', 'actual_rate',
+                        'bill_rate', 'ub_rate', 'gst_percent', 'tax_amount',
+                        'bill_amount', 'under_amount', 'total_amount'
+                    ])
+                    ->withTimestamps();
+    }
+
     public static function generateNextPurchaseNo(): string
     {
         $year = date('Y');

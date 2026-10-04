@@ -229,8 +229,8 @@
                                     <th style="width: 115px; text-align: right;">DISPATCH QTY <span class="text-danger">*</span></th>
                                     <th style="width: 125px; text-align: right;">BILL RATE (₹) <span class="text-danger">*</span></th>
                                     <th style="width: 115px; text-align: right;">U-B RATE (₹)</th>
-                                    <th style="width: 125px; text-align: right;">BILL ARNT (₹)</th>
-                                    <th style="width: 125px; text-align: right;">U-B ARNT (₹)</th>
+                                    <th style="width: 125px; text-align: right;">BILL AMT (₹)</th>
+                                    <th style="width: 125px; text-align: right;">U-B AMT (₹)</th>
                                     <th style="width: 45px; text-align: center;"></th>
                                 </tr>
                             </thead>
@@ -272,7 +272,7 @@
                                                             data-stock="{{ (float)$itm->current_stock }}"
                                                             data-batch="{{ $itm->batch_no }}"
                                                             {{ ($row['item_id'] ?? '') == $itm->id ? 'selected' : '' }}>
-                                                        {{ $itm->name }} ({{ $itm->code }}) - Stock: {{ number_format($itm->current_stock, 2) }} {{ $itm->unit }}
+                                                        {{ $itm->name }} ({{ $itm->code }})
                                                     </option>
                                                 @endforeach
                                             </select>
@@ -296,18 +296,42 @@
                                         </td>
                                         <td>
                                             <select name="items[{{ $idx }}][unit]" class="form-select row-unit" required>
-                                                @php $rowUnit = strtoupper($row['unit'] ?? 'KG'); @endphp
-                                                <option value="KG" {{ $rowUnit === 'KG' ? 'selected' : '' }}>KG</option>
-                                                <option value="BOX" {{ $rowUnit === 'BOX' ? 'selected' : '' }}>BOX</option>
-                                                <option value="BAG" {{ $rowUnit === 'BAG' ? 'selected' : '' }}>BAG</option>
-                                                <option value="QUINTAL" {{ $rowUnit === 'QUINTAL' ? 'selected' : '' }}>QUINTAL</option>
-                                                <option value="TON" {{ $rowUnit === 'TON' ? 'selected' : '' }}>TON</option>
-                                                <option value="PCS" {{ $rowUnit === 'PCS' ? 'selected' : '' }}>PCS</option>
+                                                @php
+                                                    $rU = strtoupper(trim($row['unit'] ?? 'KG'));
+                                                @endphp
                                                 @foreach($units as $u)
-                                                    @if(!in_array(strtoupper($u->name), ['KG', 'BOX', 'BAG', 'QUINTAL', 'TON', 'PCS']))
-                                                        <option value="{{ $u->name }}" {{ $rowUnit === strtoupper($u->name) ? 'selected' : '' }}>{{ $u->name }}</option>
-                                                    @endif
+                                                    @php
+                                                        $uVal = $u->code ?: $u->name;
+                                                        $uCode = strtoupper(trim($u->code ?? ''));
+                                                        $uName = strtoupper(trim($u->name ?? ''));
+                                                        $isSelected = ($rU === $uCode || $rU === $uName ||
+                                                                      (($rU === 'PACKET' || $rU === 'PKT') && in_array($uCode, ['PKT', 'PACKET'])) ||
+                                                                      (($rU === 'KG' || $rU === 'KILOGRAM') && in_array($uCode, ['KG', 'KILOGRAM'])) ||
+                                                                      (($rU === 'QTL' || $rU === 'QUINTAL') && in_array($uCode, ['QTL', 'QUINTAL'])));
+                                                    @endphp
+                                                    <option value="{{ $uVal }}"
+                                                            data-code="{{ $u->code }}"
+                                                            data-name="{{ $u->name }}"
+                                                            title="{{ $u->name }} ({{ $u->code }})"
+                                                            {{ $isSelected ? 'selected' : '' }}>
+                                                        {{ $u->code ?: $u->name }}
+                                                    </option>
                                                 @endforeach
+                                                @php
+                                                    $foundInMaster = $units->contains(function($u) use ($rU) {
+                                                        $uCode = strtoupper(trim($u->code ?? ''));
+                                                        $uName = strtoupper(trim($u->name ?? ''));
+                                                        return $rU === $uCode || $rU === $uName ||
+                                                               (($rU === 'PACKET' || $rU === 'PKT') && in_array($uCode, ['PKT', 'PACKET'])) ||
+                                                               (($rU === 'KG' || $rU === 'KILOGRAM') && in_array($uCode, ['KG', 'KILOGRAM'])) ||
+                                                               (($rU === 'QTL' || $rU === 'QUINTAL') && in_array($uCode, ['QTL', 'QUINTAL']));
+                                                    });
+                                                @endphp
+                                                @if(!$foundInMaster && !empty($row['unit']))
+                                                    <option value="{{ $row['unit'] }}" data-code="{{ $row['unit'] }}" data-name="{{ $row['unit'] }}" selected>
+                                                        {{ $row['unit'] }}
+                                                    </option>
+                                                @endif
                                             </select>
                                         </td>
                                         <td>
@@ -508,6 +532,15 @@
     </form>
 </section>
 
+<!-- Dynamic Unit Master Options Template -->
+<template id="unit-options-template">
+    @foreach($units as $u)
+        <option value="{{ $u->code ?: $u->name }}" data-code="{{ $u->code }}" data-name="{{ $u->name }}" title="{{ $u->name }} ({{ $u->code }})">
+            {{ $u->code ?: $u->name }}
+        </option>
+    @endforeach
+</template>
+
 @push('scripts')
 <script>
     let rowIndex = {{ count($existingItems) }};
@@ -528,6 +561,69 @@
         @endforeach
     ];
 
+    function setSelectUnit(unitSelect, targetUnit) {
+        if (!unitSelect || !targetUnit) return;
+        const cleanTarget = targetUnit.toString().trim().toUpperCase();
+        let matched = false;
+
+        // 1. Direct match on value, text, data-code, or data-name
+        for (let i = 0; i < unitSelect.options.length; i++) {
+            const opt = unitSelect.options[i];
+            const optVal = opt.value.trim().toUpperCase();
+            const optText = opt.text.trim().toUpperCase();
+            const optCode = (opt.getAttribute('data-code') || '').trim().toUpperCase();
+            const optName = (opt.getAttribute('data-name') || '').trim().toUpperCase();
+
+            if (optVal === cleanTarget || optCode === cleanTarget || optName === cleanTarget || optText === cleanTarget) {
+                unitSelect.selectedIndex = i;
+                matched = true;
+                break;
+            }
+        }
+
+        // 2. Intelligent synonym & ERP abbreviation match
+        if (!matched) {
+            for (let i = 0; i < unitSelect.options.length; i++) {
+                const opt = unitSelect.options[i];
+                const optVal = opt.value.trim().toUpperCase();
+                const optCode = (opt.getAttribute('data-code') || '').trim().toUpperCase();
+                const optName = (opt.getAttribute('data-name') || '').trim().toUpperCase();
+
+                const isPacket = (cleanTarget === 'PACKET' || cleanTarget === 'PKT' || cleanTarget === 'PAC') &&
+                                 (optVal === 'PKT' || optCode === 'PKT' || optName.includes('PACKET') || optVal === 'PACKET');
+                const isKg = (cleanTarget === 'KG' || cleanTarget === 'KGS' || cleanTarget === 'KILOGRAM') &&
+                             (optVal === 'KG' || optCode === 'KG' || optName.includes('KILOGRAM') || optVal === 'KILOGRAM');
+                const isBag = (cleanTarget === 'BAG' || cleanTarget === 'BAGS') &&
+                              (optVal === 'BAG' || optCode === 'BAG' || optName.includes('BAG'));
+                const isBox = (cleanTarget === 'BOX' || cleanTarget === 'BOXES') &&
+                              (optVal === 'BOX' || optCode === 'BOX' || optName.includes('BOX'));
+                const isQuintal = (cleanTarget === 'QUINTAL' || cleanTarget === 'QTL') &&
+                                  (optVal === 'QTL' || optCode === 'QTL' || optName.includes('QUINTAL') || optVal === 'QUINTAL');
+                const isGram = (cleanTarget === 'GM' || cleanTarget === 'GRAM' || cleanTarget === 'GMS') &&
+                               (optVal === 'GM' || optCode === 'GM' || optName.includes('GRAM') || optVal === 'GRAM');
+                const isMeter = (cleanTarget === 'M' || cleanTarget === 'MTR' || cleanTarget === 'METER') &&
+                                (optVal === 'M' || optCode === 'M' || optName.includes('METER') || optVal === 'METER');
+                const isPcs = (cleanTarget === 'PCS' || cleanTarget === 'PIECE' || cleanTarget === 'PIECES') &&
+                              (optVal === 'PCS' || optCode === 'PCS' || optName.includes('PIECE'));
+
+                if (isPacket || isKg || isBag || isBox || isQuintal || isGram || isMeter || isPcs) {
+                    unitSelect.selectedIndex = i;
+                    matched = true;
+                    break;
+                }
+            }
+        }
+
+        // 3. Fallback: dynamically add and select so it never fails
+        if (!matched) {
+            const newOpt = new Option(cleanTarget, cleanTarget, true, true);
+            newOpt.setAttribute('data-code', cleanTarget);
+            newOpt.setAttribute('data-name', cleanTarget);
+            unitSelect.add(newOpt);
+            unitSelect.value = cleanTarget;
+        }
+    }
+
     function onItemSelect(selectEl) {
         const row = selectEl.closest('.item-row');
         const selectedId = selectEl.value;
@@ -543,9 +639,9 @@
         const originalQty = parseFloat(origQtyInput ? origQtyInput.value : 0) || 0;
 
         if (item) {
-            if (hsnInput && !hsnInput.value) hsnInput.value = item.hsn;
-            if (gstInput && !gstInput.value) gstInput.value = item.gst.toFixed(2);
-            if (unitSelect && !unitSelect.value) unitSelect.value = item.unit.toUpperCase();
+            if (hsnInput) hsnInput.value = item.hsn;
+            if (gstInput) gstInput.value = item.gst.toFixed(2);
+            if (unitSelect) setSelectUnit(unitSelect, item.unit);
             if (billRateInput && (parseFloat(billRateInput.value) === 0 || !billRateInput.value)) {
                 billRateInput.value = item.sale_rate.toFixed(2);
             }
@@ -717,7 +813,7 @@
                                 data-sale-rate="{{ $itm->sale_rate }}"
                                 data-stock="{{ (float)$itm->current_stock }}"
                                 data-batch="{{ $itm->batch_no }}">
-                            {{ $itm->name }} ({{ $itm->code }}) - Stock: {{ number_format($itm->current_stock, 2) }} {{ $itm->unit }}
+                            {{ $itm->name }} ({{ $itm->code }})
                         </option>
                     @endforeach
                 </select>
@@ -740,12 +836,7 @@
             </td>
             <td>
                 <select name="items[${rowIndex}][unit]" class="form-select row-unit" required>
-                    <option value="KG">KG</option>
-                    <option value="BOX">BOX</option>
-                    <option value="BAG">BAG</option>
-                    <option value="QUINTAL">QUINTAL</option>
-                    <option value="TON">TON</option>
-                    <option value="PCS">PCS</option>
+                    ${document.getElementById('unit-options-template').innerHTML}
                 </select>
             </td>
             <td>

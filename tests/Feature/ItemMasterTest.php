@@ -249,4 +249,114 @@ class ItemMasterTest extends TestCase
         $this->assertTrue($response->json('success'));
         $this->assertStringStartsWith('ITM-', $response->json('code'));
     }
+
+    public function test_item_belongs_to_unit_and_unit_has_many_items(): void
+    {
+        $unit = \App\Models\Unit::create([
+            'name' => 'Kilogram Test',
+            'code' => 'KG-T',
+            'is_base_unit' => true,
+            'status' => 'active',
+        ]);
+
+        $item = Item::create([
+            'code'            => 'ITM-REL-01',
+            'name'            => 'Relation Test Herb',
+            'category'        => 'Herbal Powder',
+            'unit'            => $unit->code,
+            'unit_id'         => $unit->id,
+            'hsn_code'        => '121190',
+            'gst_rate'        => 5.00,
+            'purchase_rate'   => 50.00,
+            'sale_rate'       => 80.00,
+            'opening_stock'   => 100.00,
+            'current_stock'   => 100.00,
+            'min_stock_alert' => 10.00,
+            'status'          => 'active',
+        ]);
+
+        $this->assertNotNull($item->unitRelation);
+        $this->assertEquals($unit->id, $item->unitRelation->id);
+        $this->assertEquals('Kilogram Test', $item->unitRelation->name);
+
+        $this->assertTrue($unit->items->contains($item));
+    }
+
+    public function test_item_relations_with_purchases_and_sales(): void
+    {
+        $vendor = \App\Models\Vendor::create([
+            'name' => 'Test Vendor',
+            'code' => 'VND-T1',
+            'status' => 'active',
+        ]);
+
+        $customer = \App\Models\Customer::create([
+            'name' => 'Test Customer',
+            'code' => 'CUS-T1',
+            'status' => 'active',
+        ]);
+
+        $item = Item::create([
+            'code'            => 'ITM-REL-02',
+            'name'            => 'Transaction Rel Herb',
+            'category'        => 'Herbal Powder',
+            'unit'            => 'KG',
+            'hsn_code'        => '121190',
+            'gst_rate'        => 5.00,
+            'purchase_rate'   => 100.00,
+            'sale_rate'       => 150.00,
+            'opening_stock'   => 50.00,
+            'current_stock'   => 50.00,
+            'min_stock_alert' => 5.00,
+            'status'          => 'active',
+        ]);
+
+        $purchase = \App\Models\Purchase::create([
+            'purchase_no' => 'PUR-TEST-001',
+            'invoice_date' => now()->toDateString(),
+            'vendor_id' => $vendor->id,
+            'order_type' => 'Medium',
+            'subtotal' => 1000.00,
+            'grand_total' => 1050.00,
+            'status' => 'received',
+        ]);
+
+        $purchaseItem = \App\Models\PurchaseItem::create([
+            'purchase_id' => $purchase->id,
+            'item_id' => $item->id,
+            'unit' => 'KG',
+            'quantity' => 10,
+            'bill_rate' => 100.00,
+            'total_amount' => 1000.00,
+        ]);
+
+        $sale = \App\Models\Sale::create([
+            'sale_no' => 'SAL-TEST-001',
+            'sale_date' => now()->toDateString(),
+            'customer_id' => $customer->id,
+            'order_type' => 'Standard',
+            'subtotal' => 750.00,
+            'grand_total' => 787.50,
+            'status' => 'dispatched',
+        ]);
+
+        $saleItem = \App\Models\SaleItem::create([
+            'sale_id' => $sale->id,
+            'item_id' => $item->id,
+            'unit' => 'KG',
+            'quantity' => 5,
+            'bill_rate' => 150.00,
+            'total_amount' => 750.00,
+        ]);
+
+        // Verify relationships from item side
+        $this->assertTrue($item->purchaseItems->contains($purchaseItem));
+        $this->assertTrue($item->purchases->contains($purchase));
+        $this->assertTrue($item->saleItems->contains($saleItem));
+        $this->assertTrue($item->sales->contains($sale));
+
+        // Verify relationships from purchase & sale side
+        $this->assertTrue($purchase->productItems->contains($item));
+        $this->assertTrue($sale->productItems->contains($item));
+    }
 }

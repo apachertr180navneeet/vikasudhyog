@@ -91,7 +91,7 @@ class WBPurchaseController extends Controller
         $nextSlipNo = WBPurchase::generateNextSlipNo();
         $vendors = Vendor::where('status', 'active')->orderBy('name')->get();
         $brokers = Broker::where('status', 'active')->orderBy('name')->get();
-        $items = Item::where('status', 'active')->orderBy('name')->get();
+        $items = Item::with('unitRelation')->where('status', 'active')->orderBy('name')->get();
         $units = Unit::active()->orderBy('name')->get();
 
         return view('admin.transactions.wb-purchase.create', compact(
@@ -230,7 +230,7 @@ class WBPurchaseController extends Controller
      */
     public function show(WBPurchase $wbPurchase)
     {
-        $wbPurchase->load(['vendor', 'broker', 'company', 'items.item']);
+        $wbPurchase->load(['vendor', 'broker', 'company', 'items.item.unitRelation']);
         return view('admin.transactions.wb-purchase.show', compact('wbPurchase'));
     }
 
@@ -239,10 +239,10 @@ class WBPurchaseController extends Controller
      */
     public function edit(WBPurchase $wbPurchase)
     {
-        $wbPurchase->load(['vendor', 'broker', 'items.item']);
+        $wbPurchase->load(['vendor', 'broker', 'items.item.unitRelation']);
         $vendors = Vendor::where('status', 'active')->orderBy('name')->get();
         $brokers = Broker::where('status', 'active')->orderBy('name')->get();
-        $items = Item::where('status', 'active')->orderBy('name')->get();
+        $items = Item::with('unitRelation')->where('status', 'active')->orderBy('name')->get();
         $units = Unit::active()->orderBy('name')->get();
 
         return view('admin.transactions.wb-purchase.edit', compact(

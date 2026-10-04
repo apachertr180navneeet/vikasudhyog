@@ -91,7 +91,7 @@ class WBSaleController extends Controller
         $nextSlipNo = WBSale::generateNextSlipNo();
         $customers = Customer::where('status', 'active')->orderBy('name')->get();
         $brokers = Broker::where('status', 'active')->orderBy('name')->get();
-        $items = Item::where('status', 'active')->orderBy('name')->get();
+        $items = Item::with('unitRelation')->where('status', 'active')->orderBy('name')->get();
         $units = Unit::active()->orderBy('name')->get();
 
         return view('admin.transactions.wb-sales.create', compact(
@@ -249,7 +249,7 @@ class WBSaleController extends Controller
      */
     public function show(WBSale $wbSale)
     {
-        $wbSale->load(['customer', 'broker', 'company', 'items.item']);
+        $wbSale->load(['customer', 'broker', 'company', 'items.item.unitRelation']);
         return view('admin.transactions.wb-sales.show', compact('wbSale'));
     }
 
@@ -258,10 +258,10 @@ class WBSaleController extends Controller
      */
     public function edit(WBSale $wbSale)
     {
-        $wbSale->load(['customer', 'broker', 'items.item']);
+        $wbSale->load(['customer', 'broker', 'items.item.unitRelation']);
         $customers = Customer::where('status', 'active')->orderBy('name')->get();
         $brokers = Broker::where('status', 'active')->orderBy('name')->get();
-        $items = Item::where('status', 'active')->orderBy('name')->get();
+        $items = Item::with('unitRelation')->where('status', 'active')->orderBy('name')->get();
         $units = Unit::active()->orderBy('name')->get();
 
         return view('admin.transactions.wb-sales.edit', compact(

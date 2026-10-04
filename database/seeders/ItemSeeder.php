@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\Item;
 use App\Models\Company;
+use App\Models\Unit;
 
 class ItemSeeder extends Seeder
 {
@@ -139,6 +140,11 @@ class ItemSeeder extends Seeder
         ];
 
         foreach ($items as $data) {
+            $unitModel = Unit::where('code', $data['unit'])->orWhere('name', $data['unit'])->first();
+            if ($unitModel) {
+                $data['unit_id'] = $unitModel->id;
+            }
+
             $item = Item::withTrashed()->where('code', $data['code'])->first();
             if ($item) {
                 $item->restore();

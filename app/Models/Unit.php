@@ -67,6 +67,14 @@ class Unit extends Model
     }
 
     /**
+     * Items assigned to this unit of measure.
+     */
+    public function items(): HasMany
+    {
+        return $this->hasMany(Item::class, 'unit_id');
+    }
+
+    /**
      * Get two-letter initials for circular avatar.
      */
     public function getInitialsAttribute(): string

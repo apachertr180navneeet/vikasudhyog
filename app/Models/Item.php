@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Item extends Model
 {
@@ -16,6 +18,7 @@ class Item extends Model
         'name',
         'category',
         'unit',
+        'unit_id',
         'hsn_code',
         'gst_rate',
         'purchase_rate',
@@ -30,6 +33,7 @@ class Item extends Model
     ];
 
     protected $casts = [
+        'unit_id'         => 'integer',
         'gst_rate'        => 'decimal:2',
         'purchase_rate'   => 'decimal:2',
         'sale_rate'       => 'decimal:2',
@@ -60,6 +64,106 @@ class Item extends Model
     public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);
+    }
+
+    /**
+     * Relationship with Unit Master.
+     */
+    public function unitRelation(): BelongsTo
+    {
+        return $this->belongsTo(Unit::class, 'unit_id');
+    }
+
+    /**
+     * Alias for Unit Master relationship.
+     */
+    public function unitMaster(): BelongsTo
+    {
+        return $this->belongsTo(Unit::class, 'unit_id');
+    }
+
+    /**
+     * Purchase line items for this item.
+     */
+    public function purchaseItems(): HasMany
+    {
+        return $this->hasMany(PurchaseItem::class, 'item_id');
+    }
+
+    /**
+     * Purchases associated with this item.
+     */
+    public function purchases(): BelongsToMany
+    {
+        return $this->belongsToMany(Purchase::class, 'purchase_items', 'item_id', 'purchase_id')
+                    ->withPivot([
+                        'batch_no', 'hsn_code', 'unit', 'quantity', 'actual_rate',
+                        'bill_rate', 'ub_rate', 'gst_percent', 'tax_amount',
+                        'bill_amount', 'under_amount', 'total_amount'
+                    ])
+                    ->withTimestamps();
+    }
+
+    /**
+     * Without-Bill Purchase line items for this item.
+     */
+    public function wbPurchaseItems(): HasMany
+    {
+        return $this->hasMany(WBPurchaseItem::class, 'item_id');
+    }
+
+    /**
+     * Without-Bill Purchases associated with this item.
+     */
+    public function wbPurchases(): BelongsToMany
+    {
+        return $this->belongsToMany(WBPurchase::class, 'wb_purchase_items', 'item_id', 'wb_purchase_id')
+                    ->withPivot([
+                        'batch_no', 'hsn_code', 'unit', 'quantity', 'rate', 'amount', 'notes'
+                    ])
+                    ->withTimestamps();
+    }
+
+    /**
+     * Sale line items for this item.
+     */
+    public function saleItems(): HasMany
+    {
+        return $this->hasMany(SaleItem::class, 'item_id');
+    }
+
+    /**
+     * Sales associated with this item.
+     */
+    public function sales(): BelongsToMany
+    {
+        return $this->belongsToMany(Sale::class, 'sale_items', 'item_id', 'sale_id')
+                    ->withPivot([
+                        'batch_no', 'hsn_code', 'unit', 'quantity', 'actual_rate',
+                        'bill_rate', 'ub_rate', 'gst_percent', 'tax_amount',
+                        'bill_amount', 'under_amount', 'total_amount'
+                    ])
+                    ->withTimestamps();
+    }
+
+    /**
+     * Without-Bill Sale line items for this item.
+     */
+    public function wbSaleItems(): HasMany
+    {
+        return $this->hasMany(WBSaleItem::class, 'item_id');
+    }
+
+    /**
+     * Without-Bill Sales associated with this item.
+     */
+    public function wbSales(): BelongsToMany
+    {
+        return $this->belongsToMany(WBSale::class, 'wb_sale_items', 'item_id', 'wb_sale_id')
+                    ->withPivot([
+                        'batch_no', 'hsn_code', 'unit', 'quantity', 'rate', 'amount', 'notes'
+                    ])
+                    ->withTimestamps();
     }
 
     /**

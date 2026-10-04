@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Item;
 use App\Models\Company;
+use App\Models\Unit;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -19,18 +20,6 @@ class ItemController extends Controller
         'Ayurvedic Raw Material',
         'Finished Product',
         'Packaging Material'
-    ];
-
-    /**
-     * Standard Units of Measure.
-     */
-    public const UNITS = [
-        'KG',
-        'GRAM',
-        'BAG',
-        'BOX',
-        'PACKET',
-        'QUINTAL'
     ];
 
     /**
@@ -49,7 +38,7 @@ class ItemController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Item::with('company');
+        $query = Item::with(['company', 'unitRelation']);
 
         // Search Filter
         if ($search = trim((string)$request->input('search', ''))) {
@@ -79,7 +68,10 @@ class ItemController extends Controller
         // Unit Filter
         if ($unit = $request->input('unit')) {
             if ($unit !== 'all') {
-                $query->where('unit', $unit);
+                $query->where(function ($q) use ($unit) {
+                    $q->where('unit', $unit)
+                      ->orWhere('unit_id', $unit);
+                });
             }
         }
 
@@ -106,6 +98,8 @@ class ItemController extends Controller
             'low_stock_count' => Item::lowStock()->count(),
         ];
 
+        $units = Unit::active()->orderBy('name')->get();
+
         if ($request->ajax() || $request->wantsJson()) {
             return response()->json([
                 'success' => true,
@@ -120,7 +114,7 @@ class ItemController extends Controller
             'items'      => $items,
             'stats'      => $stats,
             'categories' => self::CATEGORIES,
-            'units'      => self::UNITS,
+            'units'      => $units,
             'filters'    => [
                 'search'       => $request->input('search', ''),
                 'status'       => $request->input('status', 'all'),
@@ -138,6 +132,7 @@ class ItemController extends Controller
     {
         $suggestedCode = Item::generateUniqueCode('ITM');
         $companies = Company::active()->orderBy('name')->get();
+        $units = Unit::active()->orderBy('name')->get();
 
         return view('admin.masters.item.create', [
             'pageTitle'     => 'Add New Item - VIKAS UDHYOG ERP',
@@ -145,7 +140,7 @@ class ItemController extends Controller
             'suggestedCode' => $suggestedCode,
             'companies'     => $companies,
             'categories'    => self::CATEGORIES,
-            'units'         => self::UNITS,
+            'units'         => $units,
             'gstRates'      => self::GST_RATES,
         ]);
     }
@@ -175,7 +170,8 @@ class ItemController extends Controller
             'code'            => 'required|string|max:30|unique:items,code',
             'name'            => 'required|string|max:150',
             'category'        => 'required|string|max:50',
-            'unit'            => 'required|string|max:20',
+            'unit'            => 'nullable|string|max:20',
+            'unit_id'         => 'nullable|exists:units,id',
             'hsn_code'        => 'nullable|string|max:20',
             'gst_rate'        => 'nullable|numeric|min:0|max:100',
             'purchase_rate'   => 'nullable|numeric|min:0',
@@ -190,6 +186,30 @@ class ItemController extends Controller
         $validated['code'] = strtoupper(trim($validated['code']));
         if (!empty($validated['hsn_code'])) {
             $validated['hsn_code'] = strtoupper(trim($validated['hsn_code']));
+        }
+
+        // Resolve unit_id and unit code/name
+        if (!empty($validated['unit_id'])) {
+            $unitModel = Unit::find($validated['unit_id']);
+            if ($unitModel) {
+                $validated['unit'] = $unitModel->code ?: $unitModel->name;
+            }
+        } elseif (!empty($validated['unit'])) {
+            $unitModel = Unit::where('code', $validated['unit'])
+                ->orWhere('name', $validated['unit'])
+                ->first();
+            if ($unitModel) {
+                $validated['unit_id'] = $unitModel->id;
+                $validated['unit'] = $unitModel->code ?: $unitModel->name;
+            }
+        } else {
+            $defaultUnit = Unit::active()->first();
+            if ($defaultUnit) {
+                $validated['unit_id'] = $defaultUnit->id;
+                $validated['unit'] = $defaultUnit->code ?: $defaultUnit->name;
+            } else {
+                $validated['unit'] = 'KG';
+            }
         }
 
         // Automatic defaults per guidelines: no status field in form
@@ -221,7 +241,7 @@ class ItemController extends Controller
      */
     public function show(Request $request, Item $item)
     {
-        $item->load('company');
+        $item->load(['company', 'unitRelation']);
 
         if ($request->ajax() || $request->wantsJson()) {
             return response()->json([
@@ -242,7 +262,9 @@ class ItemController extends Controller
      */
     public function edit(Item $item)
     {
+        $item->load('unitRelation');
         $companies = Company::active()->orderBy('name')->get();
+        $units = Unit::active()->orderBy('name')->get();
 
         return view('admin.masters.item.edit', [
             'pageTitle'  => 'Edit Item: ' . $item->name . ' - VIKAS UDHYOG ERP',
@@ -250,7 +272,7 @@ class ItemController extends Controller
             'item'       => $item,
             'companies'  => $companies,
             'categories' => self::CATEGORIES,
-            'units'      => self::UNITS,
+            'units'      => $units,
             'gstRates'   => self::GST_RATES,
         ]);
     }
@@ -264,7 +286,8 @@ class ItemController extends Controller
             'code'            => ['required', 'string', 'max:30', Rule::unique('items', 'code')->ignore($item->id)],
             'name'            => 'required|string|max:150',
             'category'        => 'required|string|max:50',
-            'unit'            => 'required|string|max:20',
+            'unit'            => 'nullable|string|max:20',
+            'unit_id'         => 'nullable|exists:units,id',
             'hsn_code'        => 'nullable|string|max:20',
             'gst_rate'        => 'nullable|numeric|min:0|max:100',
             'purchase_rate'   => 'nullable|numeric|min:0',
@@ -280,6 +303,22 @@ class ItemController extends Controller
         $validated['code'] = strtoupper(trim($validated['code']));
         if (!empty($validated['hsn_code'])) {
             $validated['hsn_code'] = strtoupper(trim($validated['hsn_code']));
+        }
+
+        // Resolve unit_id and unit code/name
+        if (!empty($validated['unit_id'])) {
+            $unitModel = Unit::find($validated['unit_id']);
+            if ($unitModel) {
+                $validated['unit'] = $unitModel->code ?: $unitModel->name;
+            }
+        } elseif (!empty($validated['unit'])) {
+            $unitModel = Unit::where('code', $validated['unit'])
+                ->orWhere('name', $validated['unit'])
+                ->first();
+            if ($unitModel) {
+                $validated['unit_id'] = $unitModel->id;
+                $validated['unit'] = $unitModel->code ?: $unitModel->name;
+            }
         }
 
         if (isset($validated['current_stock'])) {

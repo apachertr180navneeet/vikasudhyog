@@ -2839,6 +2839,7 @@
 
 .erp-items-table {
     width: 100% !important;
+    min-width: 1150px;
     border-collapse: separate;
     border-spacing: 0;
     margin: 0;
@@ -2859,7 +2860,7 @@
 }
 
 .erp-items-table tbody td {
-    padding: 0.35rem 0.45rem !important;
+    padding: 0.4rem 0.45rem !important;
     border-bottom: 1px solid #F1F5F9 !important;
     border-top: none !important;
     vertical-align: middle !important;
@@ -2900,6 +2901,26 @@
     background-color: #FFFFFF !important;
     color: #1E293B !important;
     transition: all 0.15s ease !important;
+}
+
+.erp-items-table .form-select,
+.erp-items-table select {
+    padding-right: 1.5rem !important;
+    padding-left: 0.45rem !important;
+    background-position: right 0.45rem center !important;
+    background-size: 11px 9px !important;
+    cursor: pointer;
+}
+
+.erp-items-table select.erp-item-select {
+    text-overflow: ellipsis;
+    font-weight: 500;
+}
+
+.erp-items-table select.row-unit {
+    text-align: center;
+    font-weight: 600;
+    letter-spacing: 0.02em;
 }
 
 .erp-items-table .form-control:focus,

@@ -67,6 +67,20 @@ class WBSale extends Model
         return $this->hasMany(WBSaleItem::class, 'wb_sale_id');
     }
 
+    public function wbSaleItems()
+    {
+        return $this->hasMany(WBSaleItem::class, 'wb_sale_id');
+    }
+
+    public function productItems()
+    {
+        return $this->belongsToMany(Item::class, 'wb_sale_items', 'wb_sale_id', 'item_id')
+                    ->withPivot([
+                        'batch_no', 'hsn_code', 'unit', 'quantity', 'rate', 'amount', 'notes'
+                    ])
+                    ->withTimestamps();
+    }
+
     public static function generateNextSlipNo(): string
     {
         $year = date('Y');

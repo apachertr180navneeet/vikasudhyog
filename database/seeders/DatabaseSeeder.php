@@ -19,8 +19,8 @@ class DatabaseSeeder extends Seeder
             VendorSeeder::class,
             BrokerSeeder::class,
             CustomerSeeder::class,
-            ItemSeeder::class,
             UnitSeeder::class,
+            ItemSeeder::class,
             AccountSeeder::class,
         ]);
     }

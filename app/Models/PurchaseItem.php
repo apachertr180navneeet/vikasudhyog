@@ -47,4 +47,9 @@ class PurchaseItem extends Model
     {
         return $this->belongsTo(Item::class);
     }
+
+    public function unitRelation()
+    {
+        return $this->belongsTo(Unit::class, 'unit', 'code');
+    }
 }

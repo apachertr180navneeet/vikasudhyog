@@ -125,7 +125,12 @@
                 <select name="unit" class="form-control erp-filter-select" onchange="this.form.submit()">
                     <option value="all" {{ ($filters['unit'] ?? 'all') === 'all' ? 'selected' : '' }}>All Units</option>
                     @foreach($units as $u)
-                        <option value="{{ $u }}" {{ ($filters['unit'] ?? '') === $u ? 'selected' : '' }}>{{ $u }}</option>
+                        @php
+                            $uVal = $u->code ?: $u->name;
+                        @endphp
+                        <option value="{{ $uVal }}" {{ ($filters['unit'] ?? '') === $uVal ? 'selected' : '' }}>
+                            {{ $u->name }} ({{ $u->code }})
+                        </option>
                     @endforeach
                 </select>
 

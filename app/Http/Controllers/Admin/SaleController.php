@@ -98,7 +98,7 @@ class SaleController extends Controller
         $nextSaleNo = Sale::generateNextSaleNo();
         $customers = Customer::where('status', 'active')->orderBy('name')->get();
         $brokers = Broker::where('status', 'active')->orderBy('name')->get();
-        $items = Item::where('status', 'active')->orderBy('name')->get();
+        $items = Item::with('unitRelation')->where('status', 'active')->orderBy('name')->get();
         $units = Unit::active()->orderBy('name')->get();
 
         return view('admin.transactions.sales.create', compact(
@@ -262,7 +262,7 @@ class SaleController extends Controller
      */
     public function show(Sale $sale)
     {
-        $sale->load(['customer', 'broker', 'company', 'items.item']);
+        $sale->load(['customer', 'broker', 'company', 'items.item.unitRelation']);
         return view('admin.transactions.sales.show', compact('sale'));
     }
 
@@ -271,10 +271,10 @@ class SaleController extends Controller
      */
     public function edit(Sale $sale)
     {
-        $sale->load(['customer', 'broker', 'items.item']);
+        $sale->load(['customer', 'broker', 'items.item.unitRelation']);
         $customers = Customer::where('status', 'active')->orderBy('name')->get();
         $brokers = Broker::where('status', 'active')->orderBy('name')->get();
-        $items = Item::where('status', 'active')->orderBy('name')->get();
+        $items = Item::with('unitRelation')->where('status', 'active')->orderBy('name')->get();
         $units = Unit::active()->orderBy('name')->get();
 
         return view('admin.transactions.sales.edit', compact(

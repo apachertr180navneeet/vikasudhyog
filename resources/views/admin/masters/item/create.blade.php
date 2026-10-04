@@ -159,7 +159,19 @@
                                 <i class="fa-solid fa-cubes erp-field-icon"></i>
                                 <select name="unit" id="field-unit" class="form-control erp-field-input-iconified" required onchange="updateLivePreview()">
                                     @foreach($units as $u)
-                                        <option value="{{ $u }}" {{ old('unit', 'KG') === $u ? 'selected' : '' }}>{{ $u }}</option>
+                                        @php
+                                            $uVal = $u->code ?: $u->name;
+                                            $uCode = strtoupper(trim($u->code ?? ''));
+                                            $uName = strtoupper(trim($u->name ?? ''));
+                                            $rU = strtoupper(trim(old('unit', 'KG')));
+                                            $isSelected = ($rU === $uCode || $rU === $uName ||
+                                                          (($rU === 'PACKET' || $rU === 'PKT') && in_array($uCode, ['PKT', 'PACKET'])) ||
+                                                          (($rU === 'KG' || $rU === 'KILOGRAM') && in_array($uCode, ['KG', 'KILOGRAM'])) ||
+                                                          (($rU === 'QTL' || $rU === 'QUINTAL') && in_array($uCode, ['QTL', 'QUINTAL'])));
+                                        @endphp
+                                        <option value="{{ $uVal }}" data-id="{{ $u->id }}" {{ $isSelected ? 'selected' : '' }}>
+                                            {{ $u->name }} ({{ $u->code }})
+                                        </option>
                                     @endforeach
                                 </select>
                             </div>

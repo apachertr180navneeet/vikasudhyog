@@ -214,8 +214,17 @@
                         <div class="erp-profile-detail-label">Primary Unit of Measure</div>
                         <div class="erp-profile-detail-val">
                             <span class="badge" style="background: #F1F5F9; color: #334155; font-size: 0.8rem; font-weight: 700; padding: 4px 10px; border-radius: 6px; border: 1px solid #CBD5E1;">
-                                {{ $item->unit }}
+                                @if($item->unitRelation)
+                                    {{ $item->unitRelation->name }} ({{ $item->unitRelation->code }})
+                                @else
+                                    {{ $item->unit }}
+                                @endif
                             </span>
+                            @if($item->unitRelation && $item->unitRelation->relation_formula !== 'Primary Base Unit')
+                                <span class="text-muted ms-1" style="font-size: 0.78rem;">
+                                    ({{ $item->unitRelation->relation_formula }})
+                                </span>
+                            @endif
                         </div>
                     </div>
 

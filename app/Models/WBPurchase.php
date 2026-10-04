@@ -67,6 +67,20 @@ class WBPurchase extends Model
         return $this->hasMany(WBPurchaseItem::class, 'wb_purchase_id');
     }
 
+    public function wbPurchaseItems()
+    {
+        return $this->hasMany(WBPurchaseItem::class, 'wb_purchase_id');
+    }
+
+    public function productItems()
+    {
+        return $this->belongsToMany(Item::class, 'wb_purchase_items', 'wb_purchase_id', 'item_id')
+                    ->withPivot([
+                        'batch_no', 'hsn_code', 'unit', 'quantity', 'rate', 'amount', 'notes'
+                    ])
+                    ->withTimestamps();
+    }
+
     public static function generateNextSlipNo(): string
     {
         $year = date('Y');
