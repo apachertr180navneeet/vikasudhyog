@@ -108,7 +108,14 @@ Every index view must follow this exact sequential layout:
 </div>
 ```
 
-### D. Table Row & Vibrant Status Button
+### D. Modern Table Styling Standard
+- **Container**: `.card.erp-main-card` (border-radius: `16px`, soft shadow `0 4px 20px -2px rgba(0,0,0,0.05)`, border: `1px solid #E2E8F0`).
+- **Headers (`th`)**: Clean `#F8FAFC` background, uppercase `0.73rem`, font-weight `700`, letter-spacing `0.05em`, text `#475569`, padding `0.95rem 1.15rem;`.
+- **Cells (`td`)**: Generous breathing padding `0.95rem 1.15rem;`, row hover `#F9FBFA`, clean borders `#F1F5F9`.
+- **Avatars**: 38px circular gradient avatar (`linear-gradient(135deg, #5B841E, #3D5A12)`) with crisp white bold initials.
+- **Numbers / Currencies**: Always modern tabular Consolas/sans-serif numbers in rich slate `#0F172A`, emerald `#059669` or crimson `#B91C1C`. Never typewriter/purple fonts or raw `<code>` tags.
+
+### E. Table Status & Actions Markup
 ```blade
 <!-- Table Status Cell -->
 <td style="text-align: center;">

@@ -165,19 +165,19 @@
                             </td>
                             <td>
                                 <div class="d-flex align-items-center gap-2">
-                                    <div class="erp-user-avatar-circle" style="background: rgba(91, 132, 30, 0.12); color: var(--primary);">
+                                    <div class="avatar" style="background: linear-gradient(135deg, #5B841E, #3D5A12); color: #FFFFFF; font-weight: 700; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; flex-shrink: 0; box-shadow: 0 2px 6px rgba(91, 132, 30, 0.25);">
                                         {{ $broker->initials }}
                                     </div>
                                     <div>
-                                        <a href="{{ route('admin.masters.broker.show', $broker->id) }}" class="fw-bold text-dark text-decoration-none" style="font-size: 0.92rem;">
+                                        <a href="{{ route('admin.masters.broker.show', $broker->id) }}" class="fw-bold text-dark text-decoration-none erp-table-title-link">
                                             {{ $broker->name }}
                                         </a>
                                         <div class="d-flex align-items-center gap-1 mt-1">
-                                            <span class="badge" style="background: #F1F5F9; color: #475569; font-family: var(--font-mono); font-size: 0.72rem; font-weight: 700;">
+                                            <span class="badge font-monospace" style="background: #F1F5F9; color: #475569; font-size: 0.72rem; padding: 2px 6px; border-radius: 4px; border: 1px solid #E2E8F0;">
                                                 {{ $broker->code }}
                                             </span>
                                             @if($broker->company)
-                                                <span class="badge" style="background: rgba(91, 132, 30, 0.08); color: var(--primary); font-size: 0.72rem;" title="Assigned Plant: {{ $broker->company->name }}">
+                                                <span class="badge" style="background: rgba(91, 132, 30, 0.08); color: var(--primary); font-size: 0.72rem; border: 1px solid rgba(91, 132, 30, 0.15);" title="Assigned Plant: {{ $broker->company->name }}">
                                                     <i class="fa-solid fa-building" style="font-size: 0.65rem;"></i> {{ $broker->company->code }}
                                                 </span>
                                             @endif
@@ -210,17 +210,17 @@
                                 </div>
                             </td>
                             <td>
-                                <span class="badge" style="background: rgba(16, 185, 129, 0.12); color: #047857; font-weight: 700; font-size: 0.85rem;">
+                                <span class="badge" style="background: rgba(16, 185, 129, 0.12); color: #047857; font-weight: 700; font-size: 0.82rem; border: 1px solid rgba(16, 185, 129, 0.2);">
                                     {{ number_format($broker->commission_rate, 2) }}%
                                 </span>
                             </td>
                             <td>
                                 <div style="font-size: 0.82rem;">
                                     @if($broker->pan)
-                                        <div><span class="text-muted" style="font-size: 0.72rem;">PAN:</span> <code class="font-monospace" style="font-size: 0.78rem; background: #F1F5F9; padding: 1px 4px; border-radius: 4px;">{{ $broker->pan }}</code></div>
+                                        <div><span class="text-muted" style="font-size: 0.72rem;">PAN:</span> <span class="badge font-monospace" style="background: #F1F5F9; color: #334155; font-size: 0.74rem; border: 1px solid #E2E8F0; padding: 2px 6px; border-radius: 4px;">{{ $broker->pan }}</span></div>
                                     @endif
                                     @if($broker->gstin)
-                                        <div style="margin-top: 2px;"><span class="text-muted" style="font-size: 0.72rem;">GST:</span> <code class="font-monospace" style="font-size: 0.78rem; background: #F1F5F9; padding: 1px 4px; border-radius: 4px;">{{ $broker->gstin }}</code></div>
+                                        <div style="margin-top: 2px;"><span class="text-muted" style="font-size: 0.72rem;">GST:</span> <span class="badge font-monospace" style="background: #F1F5F9; color: #334155; font-size: 0.74rem; border: 1px solid #E2E8F0; padding: 2px 6px; border-radius: 4px;">{{ $broker->gstin }}</span></div>
                                     @endif
                                     @if(!$broker->pan && !$broker->gstin)
                                         <span class="text-muted">—</span>
@@ -229,12 +229,12 @@
                             </td>
                             <td>
                                 <div style="font-size: 0.85rem;">
-                                    <strong>{{ $broker->city ?: 'Sojat' }}</strong>
+                                    <strong style="color: #1E293B;">{{ $broker->city ?: 'Sojat' }}</strong>
                                     <div class="text-muted" style="font-size: 0.75rem;">{{ $broker->state ?: 'Rajasthan' }}</div>
                                 </div>
                             </td>
                             <td>
-                                <div class="font-monospace fw-bold" style="color: #7E22CE; font-size: 0.9rem;">
+                                <div class="font-monospace fw-bold" style="color: {{ $broker->current_balance > 0 ? '#B91C1C' : '#059669' }};">
                                     ₹{{ number_format($broker->current_balance, 2) }}
                                 </div>
                             </td>

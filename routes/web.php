@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\VendorController;
 use App\Http\Controllers\Admin\BrokerController;
 use App\Http\Controllers\Admin\CustomerController;
+use App\Http\Controllers\Admin\ItemController;
 use App\Http\Controllers\Admin\AccessLevelController;
 use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Admin\InventoryController;
@@ -104,7 +105,16 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::put('/customer/{customer}', [CustomerController::class, 'update'])->name('customer.update');
             Route::delete('/customer/{customer}', [CustomerController::class, 'destroy'])->name('customer.destroy');
             Route::patch('/customer/{customer}/toggle-status', [CustomerController::class, 'toggleStatus'])->name('customer.toggle-status');
-            Route::get('/item', [MasterController::class, 'item'])->name('item');
+            // Item Master CRUD (Dedicated Pages)
+            Route::get('/item', [ItemController::class, 'index'])->name('item');
+            Route::get('/item/create', [ItemController::class, 'create'])->name('item.create');
+            Route::get('/item/generate-code', [ItemController::class, 'generateCode'])->name('item.generate-code');
+            Route::post('/item', [ItemController::class, 'store'])->name('item.store');
+            Route::get('/item/{item}', [ItemController::class, 'show'])->name('item.show');
+            Route::get('/item/{item}/edit', [ItemController::class, 'edit'])->name('item.edit');
+            Route::put('/item/{item}', [ItemController::class, 'update'])->name('item.update');
+            Route::delete('/item/{item}', [ItemController::class, 'destroy'])->name('item.destroy');
+            Route::patch('/item/{item}/toggle-status', [ItemController::class, 'toggleStatus'])->name('item.toggle-status');
             Route::get('/unit', [MasterController::class, 'unit'])->name('unit');
             Route::get('/account', [MasterController::class, 'account'])->name('account');
         });

@@ -15,10 +15,13 @@ Whenever creating or updating ANY module in this ERP (Masters, Transactions, Inv
 
 3. **Styling & Typography Guidelines**:
    - Brand Primary: `#5B841E` (Olive Green) / Hover `#4A6D18`.
-   - Table Container: `.erp-main-card` with `padding: 0 !important; overflow: hidden; border-radius: 16px;`.
+   - Table Container: `.erp-main-card` with `padding: 0 !important; overflow: hidden; border-radius: 16px; border: 1px solid #E2E8F0; box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);`.
+   - Table Headers (`th`): Clean `#F8FAFC` background, uppercase 0.73rem, font-weight 700, letter-spacing 0.05em, text `#475569`, generous padding `0.95rem 1.15rem;`.
+   - Table Cells (`td`): Generous padding `0.95rem 1.15rem;` (never cramped 5px/8px padding!), clean borders `#F1F5F9`, row hover `#F9FBFA`.
+   - Table Avatars: Always use 38px circular gradient avatar (`linear-gradient(135deg, #5B841E, #3D5A12)`) with crisp white bold initials. Never pale rectangular boxes.
+   - Numbers & Monospace: Always use modern tabular monospace stack (`Consolas, 'SFMono-Regular', Menlo, Monaco, 'Liberation Mono', monospace`). Currency amounts must use rich slate `#0F172A`, emerald `#059669` or crimson `#B91C1C`. Never typewriter/purple fonts or raw `<code>` tags.
    - Filters: Always inline flex (`.erp-filter-form`), search icon positioned inside input (`.erp-search-wrap`), compact auto-width selects (`.erp-filter-select`), and right-aligned counter badge (`.erp-table-summary-count`).
    - Placeholders: Strictly use `Enter [Field Name]` format. Never include dummy/example names or numbers.
-   - Monospace: Always use monospace font for codes, GSTIN, PAN, Bank Accounts, and monetary values.
 
 4. **No Status Field in Any Form (Create or Edit)**:
    - Status must **NEVER** appear as an input, select dropdown, or editable field in `create.blade.php` or `edit.blade.php`.

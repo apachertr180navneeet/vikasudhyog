@@ -2513,5 +2513,223 @@
 .text-muted { color: var(--text-muted, #64748B) !important; }
 .text-dark { color: var(--text-primary, #0F172A) !important; }
 .text-primary { color: var(--primary, #6B8E23) !important; }
-.font-monospace { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important; }
+.font-monospace { font-family: Consolas, 'SFMono-Regular', Menlo, Monaco, 'Liberation Mono', 'Courier New', monospace !important; font-variant-numeric: tabular-nums !important; letter-spacing: -0.01em !important; }
+
+/* --------------------------------------------------------------------------
+   16. Universal High-End ERP Table Standard (Modern Enterprise Theme)
+   -------------------------------------------------------------------------- */
+.erp-main-card,
+.erp-table-container-card {
+    background: #FFFFFF !important;
+    border-radius: 16px !important;
+    border: 1px solid #E2E8F0 !important;
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05) !important;
+    overflow: hidden !important;
+    margin-bottom: 1.5rem !important;
+}
+
+/* Ensure clean table structure */
+.custom-table {
+    width: 100% !important;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    font-size: 0.86rem !important;
+    background: #FFFFFF !important;
+}
+
+/* Table Header */
+.custom-table thead th {
+    background-color: #F8FAFC !important;
+    color: #475569 !important;
+    font-weight: 700 !important;
+    font-size: 0.73rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    padding: 0.95rem 1.15rem !important;
+    border-top: none !important;
+    border-bottom: 1px solid #E2E8F0 !important;
+    white-space: nowrap !important;
+    vertical-align: middle !important;
+}
+
+/* Table Body Rows */
+.custom-table tbody tr {
+    background-color: #FFFFFF !important;
+    transition: background-color 0.15s ease-in-out !important;
+}
+
+.custom-table tbody tr:hover {
+    background-color: #F9FBFA !important;
+}
+
+/* Table Cells */
+.custom-table tbody td {
+    padding: 0.95rem 1.15rem !important;
+    border-top: none !important;
+    border-bottom: 1px solid #F1F5F9 !important;
+    color: #334155 !important;
+    font-size: 0.86rem !important;
+    line-height: 1.45 !important;
+    vertical-align: middle !important;
+}
+
+.custom-table tbody tr:last-child td {
+    border-bottom: none !important;
+}
+
+/* Row Numbers */
+.custom-table td:first-child span.text-muted {
+    font-size: 0.78rem !important;
+    font-weight: 600 !important;
+    color: #94A3B8 !important;
+}
+
+/* Universal Avatar Circles in Tables */
+.erp-user-avatar-circle,
+.erp-avatar-box,
+.custom-table .avatar {
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+    border-radius: 50% !important;
+    background: linear-gradient(135deg, #5B841E 0%, #3D5A12 100%) !important;
+    color: #FFFFFF !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-weight: 700 !important;
+    font-size: 0.85rem !important;
+    box-shadow: 0 2px 6px rgba(91, 132, 30, 0.25) !important;
+    letter-spacing: 0.5px !important;
+    flex-shrink: 0 !important;
+}
+
+/* Entity Titles in Table */
+.custom-table td a.fw-bold,
+.erp-table-title-link {
+    color: #0F172A !important;
+    font-weight: 600 !important;
+    font-size: 0.88rem !important;
+    text-decoration: none !important;
+    transition: color 0.15s ease !important;
+}
+
+.custom-table td a.fw-bold:hover,
+.erp-table-title-link:hover {
+    color: #5B841E !important;
+}
+
+/* Modern Monospace Stack & Financial Formatting */
+.custom-table .font-monospace,
+.custom-table code {
+    font-family: Consolas, 'SFMono-Regular', Menlo, Monaco, 'Liberation Mono', 'Courier New', monospace !important;
+    font-variant-numeric: tabular-nums !important;
+    letter-spacing: -0.01em !important;
+}
+
+/* Clean up code tags in tables */
+.custom-table code {
+    background: #F1F5F9 !important;
+    color: #334155 !important;
+    padding: 0.18rem 0.45rem !important;
+    border-radius: 4px !important;
+    border: 1px solid #E2E8F0 !important;
+    font-size: 0.75rem !important;
+    font-weight: 600 !important;
+}
+
+/* Badges in tables */
+.custom-table .badge {
+    padding: 0.25rem 0.65rem !important;
+    font-weight: 600 !important;
+    font-size: 0.74rem !important;
+    border-radius: 9999px !important;
+}
+
+/* Action Icons Cell */
+.erp-actions-cell,
+.custom-table .action-btns,
+.custom-table td .d-flex.justify-content-end {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: 0.4rem !important;
+}
+
+.erp-table-action-icon,
+.custom-table td .btn-icon {
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    border-radius: 8px !important;
+    border: 1px solid #E2E8F0 !important;
+    background: #FFFFFF !important;
+    color: #64748B !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 0.82rem !important;
+    cursor: pointer !important;
+    transition: all 0.15s ease !important;
+    text-decoration: none !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+}
+
+.erp-table-action-icon:hover,
+.custom-table td .btn-icon:hover {
+    background: #F8FAFC !important;
+    color: #5B841E !important;
+    border-color: #86EFAC !important;
+    box-shadow: 0 2px 6px rgba(91, 132, 30, 0.15) !important;
+    transform: translateY(-1px) !important;
+}
+
+.erp-table-action-icon-danger:hover,
+.custom-table td .btn-icon.text-danger:hover {
+    background: #FEF2F2 !important;
+    color: #DC2626 !important;
+    border-color: #FCA5A5 !important;
+    box-shadow: 0 2px 6px rgba(220, 38, 38, 0.15) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Status Pill */
+.erp-status-btn {
+    padding: 0.32rem 0.8rem !important;
+    border-radius: 9999px !important;
+    font-size: 0.75rem !important;
+    font-weight: 700 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.45rem !important;
+    cursor: pointer !important;
+    transition: all 0.15s ease !important;
+    border: 1px solid transparent !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+}
+
+.erp-status-btn-active {
+    background: #DCFCE7 !important;
+    color: #15803D !important;
+    border-color: #86EFAC !important;
+}
+
+.erp-status-btn-active:hover {
+    background: #BBF7D0 !important;
+    border-color: #4ADE80 !important;
+    transform: translateY(-1px) !important;
+}
+
+.erp-status-btn-inactive {
+    background: #FEE2E2 !important;
+    color: #B91C1C !important;
+    border-color: #FCA5A5 !important;
+}
+
+.erp-status-btn-inactive:hover {
+    background: #FECACA !important;
+    border-color: #F87171 !important;
+    transform: translateY(-1px) !important;
+}
 
