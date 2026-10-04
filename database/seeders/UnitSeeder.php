@@ -28,6 +28,7 @@ class UnitSeeder extends Seeder
             ['code' => 'M'],
             [
                 'name'              => 'Meter',
+                'synonyms'          => 'MTR,METRE,METERS',
                 'uqc_code'          => 'MTR',
                 'decimal_places'    => 2,
                 'is_base_unit'      => true,
@@ -43,6 +44,7 @@ class UnitSeeder extends Seeder
             ['code' => 'KG'],
             [
                 'name'              => 'Kilogram',
+                'synonyms'          => 'KGS,KILO,KILOGRAM',
                 'uqc_code'          => 'KGS',
                 'decimal_places'    => 2,
                 'is_base_unit'      => true,
@@ -58,6 +60,7 @@ class UnitSeeder extends Seeder
             ['code' => 'BOX'],
             [
                 'name'              => 'Box',
+                'synonyms'          => 'BOXES,BX,CARTON',
                 'uqc_code'          => 'BOX',
                 'decimal_places'    => 0,
                 'is_base_unit'      => true,
@@ -73,6 +76,7 @@ class UnitSeeder extends Seeder
             ['code' => 'PKT'],
             [
                 'name'              => 'Packet',
+                'synonyms'          => 'PACKET,PACK,POUCH,PCS',
                 'uqc_code'          => 'PAC',
                 'decimal_places'    => 0,
                 'is_base_unit'      => true,
@@ -89,6 +93,7 @@ class UnitSeeder extends Seeder
             ['code' => 'CM'],
             [
                 'name'              => 'Centimeter',
+                'synonyms'          => 'CMS,CENTIMETRE',
                 'uqc_code'          => 'CMS',
                 'decimal_places'    => 2,
                 'is_base_unit'      => false,
@@ -104,6 +109,7 @@ class UnitSeeder extends Seeder
             ['code' => 'GM'],
             [
                 'name'              => 'Gram',
+                'synonyms'          => 'GMS,GRAMS,GR',
                 'uqc_code'          => 'GMS',
                 'decimal_places'    => 2,
                 'is_base_unit'      => false,
@@ -119,6 +125,7 @@ class UnitSeeder extends Seeder
             ['code' => 'BAG'],
             [
                 'name'              => 'Bag (20 KG)',
+                'synonyms'          => 'BGS,BAGS,BORI',
                 'uqc_code'          => 'BGS',
                 'decimal_places'    => 0,
                 'is_base_unit'      => false,
@@ -134,6 +141,7 @@ class UnitSeeder extends Seeder
             ['code' => 'QTL'],
             [
                 'name'              => 'Quintal',
+                'synonyms'          => 'QUINTAL,QUINTLE,QNT',
                 'uqc_code'          => 'QTL',
                 'decimal_places'    => 2,
                 'is_base_unit'      => false,

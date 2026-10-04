@@ -15,6 +15,7 @@ class Unit extends Model
     protected $fillable = [
         'name',
         'code',
+        'synonyms',
         'uqc_code',
         'decimal_places',
         'is_base_unit',
@@ -72,6 +73,40 @@ class Unit extends Model
     public function items(): HasMany
     {
         return $this->hasMany(Item::class, 'unit_id');
+    }
+
+    /**
+     * Check if a given value matches this unit's code, name, or any synonym.
+     * Fully dynamic — no hardcoded synonym arrays needed.
+     *
+     * @param string $value  The unit value to match (e.g. 'KG', 'Kilogram', 'PKT')
+     * @return bool
+     */
+    public function matchesValue(string $value): bool
+    {
+        $needle = strtoupper(trim($value));
+        if ($needle === '') {
+            return false;
+        }
+
+        // Direct match on code or name
+        if ($needle === strtoupper(trim($this->code ?? '')) ||
+            $needle === strtoupper(trim($this->name ?? ''))) {
+            return true;
+        }
+
+        // Match against comma-separated synonyms
+        if (!empty($this->synonyms)) {
+            $synonymList = array_map(function ($s) {
+                return strtoupper(trim($s));
+            }, explode(',', $this->synonyms));
+
+            if (in_array($needle, $synonymList, true)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

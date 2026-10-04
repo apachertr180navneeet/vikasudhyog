@@ -274,30 +274,17 @@
                                                 @foreach($units as $u)
                                                     @php
                                                         $uVal = $u->code ?: $u->name;
-                                                        $uCode = strtoupper(trim($u->code ?? ''));
-                                                        $uName = strtoupper(trim($u->name ?? ''));
-                                                        $isSelected = ($rU === $uCode || $rU === $uName ||
-                                                                      (($rU === 'PACKET' || $rU === 'PKT') && in_array($uCode, ['PKT', 'PACKET'])) ||
-                                                                      (($rU === 'KG' || $rU === 'KILOGRAM') && in_array($uCode, ['KG', 'KILOGRAM'])) ||
-                                                                      (($rU === 'QTL' || $rU === 'QUINTAL') && in_array($uCode, ['QTL', 'QUINTAL'])));
-                                                    @endphp
+                                                         $isSelected = $u->matchesValue($rU);
+@endphp
                                                     <option value="{{ $uVal }}"
                                                             data-code="{{ $u->code }}"
                                                             data-name="{{ $u->name }}"
-                                                            title="{{ $u->name }} ({{ $u->code }})"
                                                             {{ $isSelected ? 'selected' : '' }}>
-                                                        {{ $u->code ?: $u->name }}
+                                                        {{ strtoupper($u->code ?: $u->name) }}
                                                     </option>
                                                 @endforeach
                                                 @php
-                                                    $foundInMaster = $units->contains(function($u) use ($rU) {
-                                                        $uCode = strtoupper(trim($u->code ?? ''));
-                                                        $uName = strtoupper(trim($u->name ?? ''));
-                                                        return $rU === $uCode || $rU === $uName ||
-                                                               (($rU === 'PACKET' || $rU === 'PKT') && in_array($uCode, ['PKT', 'PACKET'])) ||
-                                                               (($rU === 'KG' || $rU === 'KILOGRAM') && in_array($uCode, ['KG', 'KILOGRAM'])) ||
-                                                               (($rU === 'QTL' || $rU === 'QUINTAL') && in_array($uCode, ['QTL', 'QUINTAL']));
-                                                    });
+                                                    $foundInMaster = $units->contains(fn($u) => $u->matchesValue($rU));
                                                 @endphp
                                                 @if(!$foundInMaster && !empty($row['unit']))
                                                     <option value="{{ $row['unit'] }}" data-code="{{ $row['unit'] }}" data-name="{{ $row['unit'] }}" selected>
@@ -513,8 +500,8 @@
 
 <template id="unit-options-template">
     @foreach($units as $u)
-        <option value="{{ $u->code ?: $u->name }}" data-code="{{ $u->code }}" data-name="{{ $u->name }}" title="{{ $u->name }} ({{ $u->code }})">
-            {{ $u->code ?: $u->name }}
+        <option value="{{ $u->code ?: $u->name }}" data-code="{{ $u->code }}" data-name="{{ $u->name }}">
+            {{ strtoupper($u->code ?: $u->name) }}
         </option>
     @endforeach
 </template>

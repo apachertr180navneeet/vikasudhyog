@@ -227,8 +227,8 @@
                                         <th style="width: 100px; text-align: right;">NET WT <span class="text-danger">*</span></th>
                                         <th style="width: 125px; text-align: right;">BILL RATE (₹) <span class="text-danger">*</span></th>
                                         <th style="width: 120px; text-align: right;">U-B RATE (₹)</th>
-                                        <th style="width: 125px; text-align: right;">BILL AMT (₹)</th>
-                                        <th style="width: 125px; text-align: right;">U-B AMT (₹)</th>
+                                        <th style="width: 125px; text-align: right;">BILL ARNT (₹)</th>
+                                        <th style="width: 125px; text-align: right;">U-B ARNT (₹)</th>
                                         <th style="width: 48px; text-align: center;"></th>
                                     </tr>
                                 </thead>
@@ -275,30 +275,17 @@
                                                         @foreach($units as $u)
                                                             @php
                                                                 $uVal = $u->code ?: $u->name;
-                                                                $uCode = strtoupper(trim($u->code ?? ''));
-                                                                $uName = strtoupper(trim($u->name ?? ''));
-                                                                $isSelected = ($rU === $uCode || $rU === $uName ||
-                                                                              (($rU === 'PACKET' || $rU === 'PKT') && in_array($uCode, ['PKT', 'PACKET'])) ||
-                                                                              (($rU === 'KG' || $rU === 'KILOGRAM') && in_array($uCode, ['KG', 'KILOGRAM'])) ||
-                                                                              (($rU === 'QTL' || $rU === 'QUINTAL') && in_array($uCode, ['QTL', 'QUINTAL'])));
-                                                            @endphp
+                                                         $isSelected = $u->matchesValue($rU);
+@endphp
                                                             <option value="{{ $uVal }}"
                                                                     data-code="{{ $u->code }}"
                                                                     data-name="{{ $u->name }}"
-                                                                    title="{{ $u->name }} ({{ $u->code }})"
                                                                     {{ $isSelected ? 'selected' : '' }}>
-                                                                {{ $u->code ?: $u->name }}
+                                                                {{ strtoupper($u->code ?: $u->name) }}
                                                             </option>
                                                         @endforeach
                                                         @php
-                                                            $foundInMaster = $units->contains(function($u) use ($rU) {
-                                                                $uCode = strtoupper(trim($u->code ?? ''));
-                                                                $uName = strtoupper(trim($u->name ?? ''));
-                                                                return $rU === $uCode || $rU === $uName ||
-                                                                       (($rU === 'PACKET' || $rU === 'PKT') && in_array($uCode, ['PKT', 'PACKET'])) ||
-                                                                       (($rU === 'KG' || $rU === 'KILOGRAM') && in_array($uCode, ['KG', 'KILOGRAM'])) ||
-                                                                       (($rU === 'QTL' || $rU === 'QUINTAL') && in_array($uCode, ['QTL', 'QUINTAL']));
-                                                            });
+                                                            $foundInMaster = $units->contains(fn($u) => $u->matchesValue($rU));
                                                         @endphp
                                                         @if(!$foundInMaster && !empty($row['unit']))
                                                             <option value="{{ $row['unit'] }}" data-code="{{ $row['unit'] }}" data-name="{{ $row['unit'] }}" selected>
@@ -383,9 +370,8 @@
                                                             <option value="{{ $uVal }}"
                                                                     data-code="{{ $u->code }}"
                                                                     data-name="{{ $u->name }}"
-                                                                    title="{{ $u->name }} ({{ $u->code }})"
                                                                     {{ $isSelected ? 'selected' : '' }}>
-                                                                {{ $u->code ?: $u->name }}
+                                                                {{ strtoupper($u->code ?: $u->name) }}
                                                             </option>
                                                         @endforeach
                                                         @php
@@ -440,7 +426,7 @@
                                 </button>
                                 <span class="erp-table-action-hint">
                                     <i class="fa-solid fa-calculator me-1" style="color: #5B841E;"></i>
-                                    <span><strong>Bill Amt</strong> = Net Wt &times; Bill Rate &bull; <strong>U-B Amt</strong> = Net Wt &times; U-B Rate</span>
+                                    <span><strong>Bill Arnt</strong> = Net Wt &times; Bill Rate &bull; <strong>U-B Arnt</strong> = Net Wt &times; U-B Rate</span>
                                 </span>
                             </div>
 
@@ -668,8 +654,8 @@
 
 <template id="unit-options-template">
     @foreach($units as $u)
-        <option value="{{ $u->code ?: $u->name }}" data-code="{{ $u->code }}" data-name="{{ $u->name }}" title="{{ $u->name }} ({{ $u->code }})">
-            {{ $u->code ?: $u->name }}
+        <option value="{{ $u->code ?: $u->name }}" data-code="{{ $u->code }}" data-name="{{ $u->name }}">
+            {{ strtoupper($u->code ?: $u->name) }}
         </option>
     @endforeach
 </template>
