@@ -36,7 +36,7 @@
                 <li><a href="{{ route('admin.masters.customer') }}" class="submenu-link {{ request()->routeIs('admin.masters.customer') ? 'active' : '' }}" data-view="master-customer">Customer Master</a></li>
                 <li><a href="{{ route('admin.masters.broker') }}" class="submenu-link {{ request()->routeIs('admin.masters.broker') ? 'active' : '' }}" data-view="master-broker">Broker Master</a></li>
                 <li><a href="{{ route('admin.masters.item') }}" class="submenu-link {{ request()->routeIs('admin.masters.item*') ? 'active' : '' }}" data-view="master-item">Item Master</a></li>
-                <li><a href="{{ route('admin.masters.unit') }}" class="submenu-link {{ request()->routeIs('admin.masters.unit') ? 'active' : '' }}" data-view="master-unit">Unit Master</a></li>
+                <li><a href="{{ route('admin.masters.unit') }}" class="submenu-link {{ request()->routeIs('admin.masters.unit*') ? 'active' : '' }}" data-view="master-unit">Unit Master</a></li>
                 <li><a href="{{ route('admin.masters.account') }}" class="submenu-link {{ request()->routeIs('admin.masters.account') ? 'active' : '' }}" data-view="master-account">Account Master</a></li>
             </ul>
         </li>

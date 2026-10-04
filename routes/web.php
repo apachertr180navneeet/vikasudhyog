@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\VendorController;
 use App\Http\Controllers\Admin\BrokerController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\ItemController;
+use App\Http\Controllers\Admin\UnitController;
 use App\Http\Controllers\Admin\AccessLevelController;
 use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Admin\InventoryController;
@@ -115,7 +116,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::put('/item/{item}', [ItemController::class, 'update'])->name('item.update');
             Route::delete('/item/{item}', [ItemController::class, 'destroy'])->name('item.destroy');
             Route::patch('/item/{item}/toggle-status', [ItemController::class, 'toggleStatus'])->name('item.toggle-status');
-            Route::get('/unit', [MasterController::class, 'unit'])->name('unit');
+            // Unit Master CRUD (Dedicated Pages)
+            Route::get('/unit', [UnitController::class, 'index'])->name('unit');
+            Route::get('/unit/create', [UnitController::class, 'create'])->name('unit.create');
+            Route::post('/unit', [UnitController::class, 'store'])->name('unit.store');
+            Route::get('/unit/{unit}', [UnitController::class, 'show'])->name('unit.show');
+            Route::get('/unit/{unit}/edit', [UnitController::class, 'edit'])->name('unit.edit');
+            Route::put('/unit/{unit}', [UnitController::class, 'update'])->name('unit.update');
+            Route::delete('/unit/{unit}', [UnitController::class, 'destroy'])->name('unit.destroy');
+            Route::patch('/unit/{unit}/toggle-status', [UnitController::class, 'toggleStatus'])->name('unit.toggle-status');
             Route::get('/account', [MasterController::class, 'account'])->name('account');
         });
 
