@@ -49,8 +49,8 @@
                 <i class="fa-solid fa-chevron-right nav-arrow"></i>
             </a>
             <ul class="submenu">
-                <li><a href="{{ route('admin.transactions.purchase-entry') }}" class="submenu-link {{ request()->routeIs('admin.transactions.purchase-entry') ? 'active' : '' }}" data-view="txn-purchase">Purchase Entry</a></li>
-                <li><a href="{{ route('admin.transactions.wb-purchase-entry') }}" class="submenu-link {{ request()->routeIs('admin.transactions.wb-purchase-entry') ? 'active' : '' }}" data-view="txn-wb-purchase">WB Purchase Entry</a></li>
+                <li><a href="{{ route('admin.transactions.purchase-entry') }}" class="submenu-link {{ request()->routeIs('admin.transactions.purchase-entry*') ? 'active' : '' }}" data-view="txn-purchase">Purchase Entry</a></li>
+                <li><a href="{{ route('admin.transactions.wb-purchase-entry') }}" class="submenu-link {{ request()->routeIs('admin.transactions.wb-purchase-entry*') ? 'active' : '' }}" data-view="txn-wb-purchase">WB Purchase Entry</a></li>
                 <li><a href="{{ route('admin.transactions.sales-entry') }}" class="submenu-link {{ request()->routeIs('admin.transactions.sales-entry') ? 'active' : '' }}" data-view="txn-sales-order">Sales Entry</a></li>
                 <li><a href="{{ route('admin.transactions.wb-sales-entry') }}" class="submenu-link {{ request()->routeIs('admin.transactions.wb-sales-entry') ? 'active' : '' }}" data-view="txn-wb-sales">WB Sales Entry</a></li>
                 <li><a href="{{ route('admin.transactions.order-dispatch') }}" class="submenu-link {{ request()->routeIs('admin.transactions.order-dispatch') ? 'active' : '' }}" data-view="txn-order-dispatch">Order Dispatch</a></li>

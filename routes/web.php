@@ -14,6 +14,8 @@ use App\Http\Controllers\Admin\UnitController;
 use App\Http\Controllers\Admin\AccountController;
 use App\Http\Controllers\Admin\AccessLevelController;
 use App\Http\Controllers\Admin\TransactionController;
+use App\Http\Controllers\Admin\PurchaseController;
+use App\Http\Controllers\Admin\WBPurchaseController;
 use App\Http\Controllers\Admin\InventoryController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\SettingController;
@@ -140,8 +142,27 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // Transaction Routes
         Route::prefix('transactions')->name('transactions.')->group(function () {
-            Route::get('/purchase-entry', [TransactionController::class, 'purchaseEntry'])->name('purchase-entry');
-            Route::get('/wb-purchase-entry', [TransactionController::class, 'wbPurchaseEntry'])->name('wb-purchase-entry');
+            // Purchase Entry CRUD (Dedicated Pages)
+            Route::get('/purchase-entry', [PurchaseController::class, 'index'])->name('purchase-entry');
+            Route::get('/purchase-entry/create', [PurchaseController::class, 'create'])->name('purchase-entry.create');
+            Route::get('/purchase-entry/generate-code', [PurchaseController::class, 'generateCode'])->name('purchase-entry.generate-code');
+            Route::post('/purchase-entry', [PurchaseController::class, 'store'])->name('purchase-entry.store');
+            Route::get('/purchase-entry/{purchase}', [PurchaseController::class, 'show'])->name('purchase-entry.show');
+            Route::get('/purchase-entry/{purchase}/edit', [PurchaseController::class, 'edit'])->name('purchase-entry.edit');
+            Route::put('/purchase-entry/{purchase}', [PurchaseController::class, 'update'])->name('purchase-entry.update');
+            Route::delete('/purchase-entry/{purchase}', [PurchaseController::class, 'destroy'])->name('purchase-entry.destroy');
+            Route::patch('/purchase-entry/{purchase}/toggle-status', [PurchaseController::class, 'toggleStatus'])->name('purchase-entry.toggle-status');
+
+            // WB Purchase Entry (Without Bill) CRUD (Dedicated Pages)
+            Route::get('/wb-purchase-entry', [WBPurchaseController::class, 'index'])->name('wb-purchase-entry');
+            Route::get('/wb-purchase-entry/create', [WBPurchaseController::class, 'create'])->name('wb-purchase-entry.create');
+            Route::get('/wb-purchase-entry/generate-code', [WBPurchaseController::class, 'generateCode'])->name('wb-purchase-entry.generate-code');
+            Route::post('/wb-purchase-entry', [WBPurchaseController::class, 'store'])->name('wb-purchase-entry.store');
+            Route::get('/wb-purchase-entry/{wbPurchase}', [WBPurchaseController::class, 'show'])->name('wb-purchase-entry.show');
+            Route::get('/wb-purchase-entry/{wbPurchase}/edit', [WBPurchaseController::class, 'edit'])->name('wb-purchase-entry.edit');
+            Route::put('/wb-purchase-entry/{wbPurchase}', [WBPurchaseController::class, 'update'])->name('wb-purchase-entry.update');
+            Route::delete('/wb-purchase-entry/{wbPurchase}', [WBPurchaseController::class, 'destroy'])->name('wb-purchase-entry.destroy');
+            Route::patch('/wb-purchase-entry/{wbPurchase}/toggle-status', [WBPurchaseController::class, 'toggleStatus'])->name('wb-purchase-entry.toggle-status');
             Route::get('/sales-entry', [TransactionController::class, 'salesEntry'])->name('sales-entry');
             Route::get('/wb-sales-entry', [TransactionController::class, 'wbSalesEntry'])->name('wb-sales-entry');
             Route::get('/order-dispatch', [TransactionController::class, 'orderDispatch'])->name('order-dispatch');

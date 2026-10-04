@@ -27,5 +27,7 @@ Whenever creating or updating ANY module in this ERP (Masters, Transactions, Inv
    - Status must **NEVER** appear as an input, select dropdown, or editable field in `create.blade.php` or `edit.blade.php`.
    - Every new record automatically defaults to `active` on the backend upon creation.
    - Status toggling is handled strictly via the vibrant status button on the table list (`PATCH toggle-status`) and the Danger Zone / Archive actions.
-   - Live preview cards may display status as a read-only badge, but forms must not contain an editable status field.
+5. **Seeders Are Exclusively For Master Modules**:
+   - Seeders must **ONLY** be created and called for Master modules (`Company`, `User`, `Vendor`, `Broker`, `Customer`, `Item`, `Unit`, `Account`).
+   - Transaction modules (`Purchase Entry`, `WB Purchase Entry`, `Sales Entry`, `Orders`, `Vouchers`, etc.) must **NEVER** have database seeders. Transaction tables are populated solely through active user operations or feature test cases.
 
