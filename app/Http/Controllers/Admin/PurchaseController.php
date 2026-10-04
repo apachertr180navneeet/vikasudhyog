@@ -66,6 +66,8 @@ class PurchaseController extends Controller
         $totalBillAmount = Purchase::where('status', '!=', 'cancelled')->sum('bill_total');
         $totalUBAmount = Purchase::where('status', '!=', 'cancelled')->sum('under_billing_total');
         $totalGrandAmount = Purchase::where('status', '!=', 'cancelled')->sum('grand_total');
+        $totalPaidAmount = Purchase::where('status', '!=', 'cancelled')->sum('paid_amount');
+        $totalPendingAmount = max(0, (float)$totalGrandAmount - (float)$totalPaidAmount);
 
         $vendors = Vendor::where('status', 'active')->orderBy('name')->get();
 
@@ -76,6 +78,8 @@ class PurchaseController extends Controller
             'totalBillAmount',
             'totalUBAmount',
             'totalGrandAmount',
+            'totalPaidAmount',
+            'totalPendingAmount',
             'vendors'
         ));
     }
@@ -416,22 +420,32 @@ class PurchaseController extends Controller
     }
 
     /**
-     * Toggle status between received and completed.
+     * Toggle status between received and completed (once completed, status is locked).
      */
     public function toggleStatus(Purchase $purchase)
     {
-        $newStatus = $purchase->status === 'completed' ? 'received' : 'completed';
-        $purchase->update(['status' => $newStatus]);
+        if ($purchase->status === 'completed') {
+            if (request()->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Completed purchase entries are finalized and cannot be changed.'
+                ], 422);
+            }
+
+            return back()->with('error', 'Once completed, purchase voucher status cannot be changed.');
+        }
+
+        $purchase->update(['status' => 'completed']);
 
         if (request()->wantsJson()) {
             return response()->json([
                 'success' => true,
-                'status' => $newStatus,
-                'message' => "Purchase status updated to " . ucfirst($newStatus)
+                'status' => 'completed',
+                'message' => "Purchase status updated to Completed."
             ]);
         }
 
-        return back()->with('success', "Purchase status updated to " . ucfirst($newStatus));
+        return back()->with('success', "Purchase voucher #{$purchase->purchase_no} status marked as Completed.");
     }
 
     /**

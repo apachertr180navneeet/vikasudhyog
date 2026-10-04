@@ -314,6 +314,11 @@ class PurchaseEntryTest extends TestCase
         $response = $this->actingAs($user)->patch(route('admin.transactions.purchase-entry.toggle-status', $purchase));
         $response->assertSessionHas('success');
         $this->assertEquals('completed', $purchase->fresh()->status);
+
+        // Once completed, status must be locked and cannot be changed back
+        $response2 = $this->actingAs($user)->patch(route('admin.transactions.purchase-entry.toggle-status', $purchase));
+        $response2->assertSessionHas('error');
+        $this->assertEquals('completed', $purchase->fresh()->status);
     }
 
     public function test_purchase_can_be_deleted_and_stock_reverted(): void

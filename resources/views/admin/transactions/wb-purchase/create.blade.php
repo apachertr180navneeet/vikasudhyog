@@ -308,16 +308,16 @@
                                             </select>
                                         </td>
                                         <td>
-                                            <input type="number" step="any" min="0.001" name="items[0][quantity]" class="form-control row-qty font-monospace" style="text-align: right;" value="100" required oninput="calcWBRow(this)">
+                                            <input type="number" step="any" min="0" name="items[0][quantity]" class="form-control row-qty font-monospace" style="text-align: right;" value="{{ old('items.0.quantity', '0') }}" required oninput="calcWBRow(this)">
                                         </td>
                                         <td>
-                                            <input type="number" step="0.01" min="0" name="items[0][rate]" class="form-control row-rate font-monospace" style="text-align: right;" value="85.00" required oninput="calcWBRow(this)">
+                                            <input type="number" step="0.01" min="0" name="items[0][rate]" class="form-control row-rate font-monospace" style="text-align: right;" value="{{ old('items.0.rate', '0.00') }}" required oninput="calcWBRow(this)">
                                         </td>
                                         <td style="text-align: right;">
-                                            <span class="font-monospace font-weight-700 text-dark row-amount">₹8,500.00</span>
+                                            <span class="font-monospace font-weight-700 text-dark row-amount">₹0.00</span>
                                         </td>
                                         <td>
-                                            <input type="text" name="items[0][notes]" class="form-control" placeholder="Mandi lot note">
+                                            <input type="text" name="items[0][notes]" class="form-control" placeholder="Mandi lot note" value="{{ old('items.0.notes', '') }}">
                                         </td>
                                         <td class="text-center">
                                             <button type="button" class="delete-row-btn" onclick="removeWBRow(this)" title="Remove item">
@@ -333,11 +333,11 @@
                         <div class="erp-table-totals-bar">
                             <div class="erp-table-total-item">
                                 <span class="erp-table-total-label">Total Inward Qty</span>
-                                <span class="erp-table-total-val font-monospace" id="footer-wb-qty">100.000 KG</span>
+                                <span class="erp-table-total-val font-monospace" id="footer-wb-qty">0.000 KG</span>
                             </div>
                             <div class="erp-table-total-item">
                                 <span class="erp-table-total-label" style="color: #059669;">Grand Mandi Amount</span>
-                                <span class="erp-table-total-val font-monospace" style="color: #059669; font-size: 1.2rem;" id="footer-wb-total">₹8,500.00</span>
+                                <span class="erp-table-total-val font-monospace" style="color: #059669; font-size: 1.2rem;" id="footer-wb-total">₹0.00</span>
                             </div>
                         </div>
                     </div>
@@ -546,7 +546,7 @@
                 </select>
             </td>
             <td>
-                <input type="number" step="any" min="0.001" name="items[${wbRowIndex}][quantity]" class="form-control row-qty font-monospace" style="text-align: right;" value="1" required oninput="calcWBRow(this)">
+                <input type="number" step="any" min="0" name="items[${wbRowIndex}][quantity]" class="form-control row-qty font-monospace" style="text-align: right;" value="0" required oninput="calcWBRow(this)">
             </td>
             <td>
                 <input type="number" step="0.01" min="0" name="items[${wbRowIndex}][rate]" class="form-control row-rate font-monospace" style="text-align: right;" value="0.00" required oninput="calcWBRow(this)">
@@ -645,9 +645,9 @@
         document.getElementById('prev-wb-ded').textContent = ded.toFixed(2) + ' KG';
         document.getElementById('prev-wb-net-wt').textContent = net.toFixed(2) + ' KG';
 
-        // Auto-sync first line item quantity if default 100 or 0
+        // Auto-sync first line item quantity if default 0
         const firstRowQty = document.querySelector('#wb-items-body .item-row .row-qty');
-        if (firstRowQty && net > 0 && (parseFloat(firstRowQty.value) === 100 || parseFloat(firstRowQty.value) === 0)) {
+        if (firstRowQty && net > 0 && parseFloat(firstRowQty.value) === 0) {
             firstRowQty.value = net.toFixed(2);
             calcWBRow(firstRowQty);
         }

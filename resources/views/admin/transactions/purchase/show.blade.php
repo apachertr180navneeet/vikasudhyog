@@ -95,19 +95,19 @@
 
             <!-- Status Pill -->
             <div>
-                <form action="{{ route('admin.transactions.purchase-entry.toggle-status', $purchase) }}" method="POST" style="display: inline-block;">
-                    @csrf
-                    @method('PATCH')
-                    @if(in_array($purchase->status, ['received', 'completed']))
-                        <button type="submit" class="erp-status-btn erp-status-btn-active" title="Click to Change Status">
-                            <span class="erp-status-dot-green"></span> {{ ucfirst($purchase->status) }}
+                @if($purchase->status === 'completed')
+                    <span class="erp-status-btn erp-status-btn-active" style="cursor: default; opacity: 0.95; user-select: none;" title="Voucher Completed (Locked - Status cannot be changed)">
+                        <i class="fa-solid fa-lock me-1" style="font-size: 0.68rem;"></i> Completed
+                    </span>
+                @else
+                    <form action="{{ route('admin.transactions.purchase-entry.toggle-status', $purchase) }}" method="POST" style="display: inline-block;">
+                        @csrf
+                        @method('PATCH')
+                        <button type="submit" class="erp-status-btn erp-status-btn-active" title="Click to Mark as Completed">
+                            <span class="erp-status-dot-green"></span> Received
                         </button>
-                    @else
-                        <button type="submit" class="erp-status-btn erp-status-btn-inactive" title="Click to Change Status">
-                            <span class="erp-status-dot-red"></span> {{ ucfirst($purchase->status) }}
-                        </button>
-                    @endif
-                </form>
+                    </form>
+                @endif
             </div>
         </div>
     </div>
@@ -378,6 +378,15 @@
                     <div style="display: flex; justify-content: space-between; border-top: 1px dashed #CBD5E1; padding-top: 0.65rem; margin-top: 0.2rem;">
                         <span class="text-muted">Paid / Settled:</span>
                         <span class="font-monospace font-weight-600 text-dark">₹{{ number_format($purchase->paid_amount, 2) }}</span>
+                    </div>
+                    @php
+                        $pendingCollection = max(0, (float)$purchase->grand_total - (float)$purchase->paid_amount);
+                    @endphp
+                    <div style="display: flex; justify-content: space-between;">
+                        <span class="font-weight-600" style="color: {{ $pendingCollection > 0.01 ? '#DC2626' : '#059669' }};">Pending Collection / Due:</span>
+                        <strong class="font-monospace" style="color: {{ $pendingCollection > 0.01 ? '#DC2626' : '#059669' }}; font-size: 1.05rem;">
+                            ₹{{ number_format($pendingCollection, 2) }}
+                        </strong>
                     </div>
                     <div style="display: flex; justify-content: space-between;">
                         <span class="text-muted">Payment Status:</span>

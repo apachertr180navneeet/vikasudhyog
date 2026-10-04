@@ -392,22 +392,32 @@ class WBPurchaseController extends Controller
     }
 
     /**
-     * Toggle status between received and completed.
+     * Toggle status between received and completed (once completed, status is locked).
      */
     public function toggleStatus(WBPurchase $wbPurchase)
     {
-        $newStatus = $wbPurchase->status === 'completed' ? 'received' : 'completed';
-        $wbPurchase->update(['status' => $newStatus]);
+        if ($wbPurchase->status === 'completed') {
+            if (request()->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Completed weighbridge purchase entries are finalized and cannot be changed.'
+                ], 422);
+            }
+
+            return back()->with('error', 'Once completed, weighbridge purchase status cannot be changed.');
+        }
+
+        $wbPurchase->update(['status' => 'completed']);
 
         if (request()->wantsJson()) {
             return response()->json([
                 'success' => true,
-                'status' => $newStatus,
-                'message' => "WB Purchase status updated to " . ucfirst($newStatus)
+                'status' => 'completed',
+                'message' => "WB Purchase status updated to Completed."
             ]);
         }
 
-        return back()->with('success', "WB Purchase status updated to " . ucfirst($newStatus));
+        return back()->with('success', "WB Purchase status updated to Completed.");
     }
 
     /**

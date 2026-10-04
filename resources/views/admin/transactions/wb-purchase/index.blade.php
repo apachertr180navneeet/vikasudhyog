@@ -242,19 +242,19 @@
 
                             <!-- Status Button -->
                             <td style="text-align: center;">
-                                <form method="POST" action="{{ route('admin.transactions.wb-purchase-entry.toggle-status', $wb) }}" style="display:inline-block;">
-                                    @csrf
-                                    @method('PATCH')
-                                    @if(in_array($wb->status, ['received', 'completed']))
-                                        <button type="submit" class="erp-status-btn erp-status-btn-active" title="Click to Change Status (Current: {{ ucfirst($wb->status) }})">
-                                            <span class="erp-status-dot-green"></span> {{ ucfirst($wb->status) }}
+                                @if($wb->status === 'completed')
+                                    <span class="erp-status-btn erp-status-btn-active" style="cursor: default; opacity: 0.95; user-select: none;" title="Slip Completed (Locked - Status cannot be changed)">
+                                        <i class="fa-solid fa-lock me-1" style="font-size: 0.68rem;"></i> Completed
+                                    </span>
+                                @else
+                                    <form method="POST" action="{{ route('admin.transactions.wb-purchase-entry.toggle-status', $wb) }}" style="display:inline-block;">
+                                        @csrf
+                                        @method('PATCH')
+                                        <button type="submit" class="erp-status-btn erp-status-btn-active" title="Click to Complete Slip (Current: Received)">
+                                            <span class="erp-status-dot-green"></span> Received
                                         </button>
-                                    @else
-                                        <button type="submit" class="erp-status-btn erp-status-btn-inactive" title="Click to Change Status (Current: {{ ucfirst($wb->status) }})">
-                                            <span class="erp-status-dot-red"></span> {{ ucfirst($wb->status) }}
-                                        </button>
-                                    @endif
-                                </form>
+                                    </form>
+                                @endif
                             </td>
 
                             <!-- Actions -->

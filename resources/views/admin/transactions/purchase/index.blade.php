@@ -55,23 +55,23 @@
             </div>
         </div>
 
-        <div class="card erp-kpi-card erp-kpi-purple">
-            <div class="erp-kpi-icon-box erp-kpi-icon-purple">
-                <i class="fa-solid fa-receipt"></i>
-            </div>
-            <div>
-                <div class="erp-kpi-label">Official Billing Total</div>
-                <div class="erp-kpi-val font-monospace">₹{{ number_format($totalBillAmount, 2) }}</div>
-            </div>
-        </div>
-
-        <div class="card erp-kpi-card" style="border-left: 4px solid #D97706;">
-            <div class="erp-kpi-icon-box" style="background: rgba(217, 119, 6, 0.12); color: #D97706;">
-                <i class="fa-solid fa-hand-holding-dollar"></i>
+        <div class="card erp-kpi-card" style="border-left: 4px solid #059669;">
+            <div class="erp-kpi-icon-box" style="background: rgba(5, 150, 105, 0.12); color: #059669;">
+                <i class="fa-solid fa-sack-dollar"></i>
             </div>
             <div>
                 <div class="erp-kpi-label">Grand Total Procured</div>
-                <div class="erp-kpi-val font-monospace" style="color: #0F172A;">₹{{ number_format($totalGrandAmount, 2) }}</div>
+                <div class="erp-kpi-val font-monospace" style="color: #059669;">₹{{ number_format($totalGrandAmount, 2) }}</div>
+            </div>
+        </div>
+
+        <div class="card erp-kpi-card" style="border-left: 4px solid #DC2626;">
+            <div class="erp-kpi-icon-box" style="background: rgba(220, 38, 38, 0.12); color: #DC2626;">
+                <i class="fa-solid fa-hourglass-half"></i>
+            </div>
+            <div>
+                <div class="erp-kpi-label">Pending Payment Collection</div>
+                <div class="erp-kpi-val font-monospace" style="color: #DC2626;">₹{{ number_format($totalPendingAmount, 2) }}</div>
             </div>
         </div>
     </div>
@@ -238,23 +238,35 @@
                                 <div class="font-monospace" style="font-weight: 700; color: #059669; font-size: 0.95rem;">
                                     ₹{{ number_format($pur->grand_total, 2) }}
                                 </div>
+                                @php
+                                    $pendingBal = max(0, (float)$pur->grand_total - (float)$pur->paid_amount);
+                                @endphp
+                                @if($pendingBal > 0.01)
+                                    <div class="font-monospace" style="font-size: 0.72rem; color: #DC2626; font-weight: 600;" title="Pending Payment Collection to Supplier">
+                                        <i class="fa-solid fa-hourglass-half me-1"></i>Due: ₹{{ number_format($pendingBal, 2) }}
+                                    </div>
+                                @else
+                                    <div class="font-monospace" style="font-size: 0.72rem; color: #059669; font-weight: 600;" title="Payment Fully Cleared">
+                                        <i class="fa-solid fa-check me-1"></i>Settled
+                                    </div>
+                                @endif
                             </td>
 
                             <!-- Status Button -->
                             <td style="text-align: center;">
-                                <form method="POST" action="{{ route('admin.transactions.purchase-entry.toggle-status', $pur) }}" style="display:inline-block;">
-                                    @csrf
-                                    @method('PATCH')
-                                    @if(in_array($pur->status, ['received', 'completed']))
-                                        <button type="submit" class="erp-status-btn erp-status-btn-active" title="Click to Change Status (Current: {{ ucfirst($pur->status) }})">
-                                            <span class="erp-status-dot-green"></span> {{ ucfirst($pur->status) }}
+                                @if($pur->status === 'completed')
+                                    <span class="erp-status-btn erp-status-btn-active" style="cursor: default; opacity: 0.95; user-select: none;" title="Voucher Completed (Locked - Status cannot be changed)">
+                                        <i class="fa-solid fa-lock me-1" style="font-size: 0.68rem;"></i> Completed
+                                    </span>
+                                @else
+                                    <form method="POST" action="{{ route('admin.transactions.purchase-entry.toggle-status', $pur) }}" style="display:inline-block;">
+                                        @csrf
+                                        @method('PATCH')
+                                        <button type="submit" class="erp-status-btn erp-status-btn-active" title="Click to Complete Voucher (Current: Received)">
+                                            <span class="erp-status-dot-green"></span> Received
                                         </button>
-                                    @else
-                                        <button type="submit" class="erp-status-btn erp-status-btn-inactive" title="Click to Change Status (Current: {{ ucfirst($pur->status) }})">
-                                            <span class="erp-status-dot-red"></span> {{ ucfirst($pur->status) }}
-                                        </button>
-                                    @endif
-                                </form>
+                                    </form>
+                                @endif
                             </td>
 
                             <!-- Actions -->

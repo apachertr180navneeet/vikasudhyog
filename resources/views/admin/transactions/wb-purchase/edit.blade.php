@@ -578,7 +578,7 @@
                 </select>
             </td>
             <td>
-                <input type="number" step="any" min="0.001" name="items[${wbRowIndex}][quantity]" class="form-control row-qty font-monospace" style="text-align: right;" value="1" required oninput="calcWBRow(this)">
+                <input type="number" step="any" min="0" name="items[${wbRowIndex}][quantity]" class="form-control row-qty font-monospace" style="text-align: right;" value="0" required oninput="calcWBRow(this)">
             </td>
             <td>
                 <input type="number" step="0.01" min="0" name="items[${wbRowIndex}][rate]" class="form-control row-rate font-monospace" style="text-align: right;" value="0.00" required oninput="calcWBRow(this)">

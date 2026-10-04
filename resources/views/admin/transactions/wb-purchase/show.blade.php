@@ -95,19 +95,19 @@
 
             <!-- Status Pill -->
             <div>
-                <form action="{{ route('admin.transactions.wb-purchase-entry.toggle-status', $wbPurchase) }}" method="POST" style="display: inline-block;">
-                    @csrf
-                    @method('PATCH')
-                    @if(in_array($wbPurchase->status, ['received', 'completed']))
-                        <button type="submit" class="erp-status-btn erp-status-btn-active" title="Click to Change Status">
-                            <span class="erp-status-dot-green"></span> {{ ucfirst($wbPurchase->status) }}
+                @if($wbPurchase->status === 'completed')
+                    <span class="erp-status-btn erp-status-btn-active" style="cursor: default; opacity: 0.95; user-select: none;" title="Slip Completed (Locked - Status cannot be changed)">
+                        <i class="fa-solid fa-lock me-1" style="font-size: 0.68rem;"></i> Completed
+                    </span>
+                @else
+                    <form action="{{ route('admin.transactions.wb-purchase-entry.toggle-status', $wbPurchase) }}" method="POST" style="display: inline-block;">
+                        @csrf
+                        @method('PATCH')
+                        <button type="submit" class="erp-status-btn erp-status-btn-active" title="Click to Mark as Completed">
+                            <span class="erp-status-dot-green"></span> Received
                         </button>
-                    @else
-                        <button type="submit" class="erp-status-btn erp-status-btn-inactive" title="Click to Change Status">
-                            <span class="erp-status-dot-red"></span> {{ ucfirst($wbPurchase->status) }}
-                        </button>
-                    @endif
-                </form>
+                    </form>
+                @endif
             </div>
         </div>
     </div>

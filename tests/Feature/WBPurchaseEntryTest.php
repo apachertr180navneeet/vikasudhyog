@@ -275,6 +275,11 @@ class WBPurchaseEntryTest extends TestCase
         $response = $this->actingAs($user)->patch(route('admin.transactions.wb-purchase-entry.toggle-status', $wb));
         $response->assertSessionHas('success');
         $this->assertEquals('completed', $wb->fresh()->status);
+
+        // Once completed, status must be locked and cannot be changed back
+        $response2 = $this->actingAs($user)->patch(route('admin.transactions.wb-purchase-entry.toggle-status', $wb));
+        $response2->assertSessionHas('error');
+        $this->assertEquals('completed', $wb->fresh()->status);
     }
 
     public function test_wb_purchase_can_be_deleted(): void
