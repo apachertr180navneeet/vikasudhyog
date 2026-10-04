@@ -107,6 +107,12 @@
                     <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by voucher no, invoice, vendor, vehicle..." class="form-control erp-search-input">
                 </div>
 
+                <select name="bill_type" class="form-control erp-filter-select" onchange="this.form.submit()">
+                    <option value="">All Bill Types</option>
+                    <option value="with_bill" {{ request('bill_type', 'with_bill') == 'with_bill' ? 'selected' : '' }}>With Bill (Default)</option>
+                    <option value="without_bill" {{ request('bill_type') == 'without_bill' ? 'selected' : '' }}>Without Bill</option>
+                </select>
+
                 <select name="vendor_id" class="form-control erp-filter-select" onchange="this.form.submit()">
                     <option value="">All Vendors</option>
                     @foreach($vendors as $vnd)
@@ -125,7 +131,7 @@
                     <i class="fa-solid fa-filter"></i> Filter
                 </button>
 
-                @if(request('search') || request('vendor_id') || request('status'))
+                @if(request('search') || request('vendor_id') || request('status') || (request('bill_type') && request('bill_type') !== 'with_bill'))
                     <a href="{{ route('admin.transactions.purchase-entry') }}" class="btn btn-outline erp-btn-filter-clear" title="Clear Filters">
                         <i class="fa-solid fa-xmark"></i> Clear
                     </a>
@@ -167,7 +173,16 @@
                                         <a href="{{ route('admin.transactions.purchase-entry.show', $pur) }}" style="font-weight: 600; color: #1E293B; text-decoration: none; display: block;" class="erp-table-title-link font-monospace">
                                             {{ $pur->purchase_no }}
                                         </a>
-                                        <div style="display: flex; align-items: center; gap: 0.4rem; margin-top: 0.15rem;">
+                                        <div style="display: flex; align-items: center; gap: 0.4rem; margin-top: 0.15rem; flex-wrap: wrap;">
+                                            @if(($pur->bill_type ?? 'with_bill') === 'without_bill')
+                                                <span class="badge" style="background: #FEF3C7; color: #92400E; font-size: 0.7rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; border: 1px solid #FDE68A;">
+                                                    Without Bill
+                                                </span>
+                                            @else
+                                                <span class="badge" style="background: #EFF6FF; color: #1D4ED8; font-size: 0.7rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; border: 1px solid #BFDBFE;">
+                                                    With Bill
+                                                </span>
+                                            @endif
                                             @if($pur->invoice_no)
                                                 <span class="badge font-monospace" style="background: #F1F5F9; color: #475569; font-size: 0.72rem; padding: 2px 6px; border-radius: 4px; border: 1px solid #E2E8F0;">
                                                     <i class="fa-solid fa-receipt me-1"></i>{{ $pur->invoice_no }}

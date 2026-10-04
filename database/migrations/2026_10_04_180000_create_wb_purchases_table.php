@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('wb_purchases', function (Blueprint $table) {
             $table->id();
             $table->string('slip_no', 30)->unique();
+            $table->string('bill_type', 30)->default('without_bill');
+            $table->string('invoice_no', 50)->nullable();
             $table->date('entry_date');
             $table->foreignId('vendor_id')->constrained('vendors')->cascadeOnDelete();
             $table->foreignId('broker_id')->nullable()->constrained('brokers')->nullOnDelete();
@@ -21,11 +23,13 @@ return new class extends Migration
             $table->string('vehicle_no', 50)->nullable();
             $table->string('driver_name', 100)->nullable();
             $table->string('driver_phone', 25)->nullable();
+            $table->string('payment_terms', 50)->default('30 Days');
             $table->decimal('gross_weight', 12, 3)->default(0.000);
             $table->decimal('tare_weight', 12, 3)->default(0.000);
             $table->decimal('deduction_weight', 12, 3)->default(0.000);
             $table->decimal('net_weight', 12, 3)->default(0.000);
             $table->decimal('total_amount', 14, 2)->default(0.00);
+            $table->decimal('paid_amount', 14, 2)->default(0.00);
             $table->string('payment_status', 30)->default('unpaid'); // unpaid, paid
             $table->string('payment_mode', 50)->default('Cash'); // Cash, Bank Transfer, Mandi Slip, Cheque
             $table->foreignId('company_id')->nullable()->constrained('companies')->nullOnDelete();

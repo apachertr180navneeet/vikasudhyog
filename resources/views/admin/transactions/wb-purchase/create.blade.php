@@ -1,6 +1,6 @@
 @extends('admin.layouts.app')
 
-@section('title', 'New WB Purchase Entry - VIKAS UDHYOG ERP')
+@section('title', 'New WB Purchase Entry (Without Bill) - VIKAS UDHYOG ERP')
 @section('page_code', 'txn-wb-purchase')
 
 @section('content')
@@ -15,13 +15,13 @@
                 <i class="fa-solid fa-chevron-right erp-breadcrumb-sep"></i>
                 <a href="{{ route('admin.transactions.wb-purchase-entry') }}">WB Purchase Entry</a>
                 <i class="fa-solid fa-chevron-right erp-breadcrumb-sep"></i>
-                <span class="erp-breadcrumb-active">New WB Entry</span>
+                <span class="erp-breadcrumb-active">New WB Entry (Without Bill)</span>
             </div>
             <h1 class="erp-page-title">
-                <i class="fa-solid fa-scale-balanced text-primary"></i> New WB Purchase Entry (Without Bill)
+                <i class="fa-solid fa-file-circle-plus text-primary"></i> New WB Purchase Entry (Without Bill)
             </h1>
             <p class="erp-page-subtitle">
-                Record direct mandi cash procurement, weighbridge gross/tare weighments, and moisture tare deductions.
+                Record raw materials, herbs &amp; inward consignments at direct agreed procurement rates without official GST billing.
             </p>
         </div>
 
@@ -54,467 +54,448 @@
     <form action="{{ route('admin.transactions.wb-purchase-entry.store') }}" method="POST" id="wb-purchase-form">
         @csrf
 
-        <div class="erp-form-layout-2col">
-            <!-- Left Main Column -->
-            <div class="erp-form-main-col">
+        <div class="erp-form-layout-full">
 
-                <!-- 1. Weighbridge Slip Identification & Supplier -->
-                <div class="card erp-form-section-card">
-                    <div class="erp-form-section-header">
-                        <div class="erp-form-section-header-left">
-                            <div class="erp-form-section-icon-box erp-form-icon-primary">
-                                <i class="fa-solid fa-receipt"></i>
-                            </div>
-                            <div>
-                                <h3 class="erp-form-section-title">1. Weighbridge Slip Identification &amp; Supplier</h3>
-                                <p class="erp-form-section-desc">Slip reference, procurement date, supplier coordinates &amp; vehicle details</p>
-                            </div>
+            <!-- 1. WB Slip & Supplier Identity -->
+            <div class="card erp-form-section-card">
+                <div class="erp-form-section-header">
+                    <div class="erp-form-section-header-left">
+                        <div class="erp-form-section-icon-box erp-form-icon-primary">
+                            <i class="fa-solid fa-receipt"></i>
                         </div>
-                    </div>
-
-                    <div class="erp-form-section-body">
-                        <!-- Slip No -->
-                        <div class="form-group">
-                            <label class="erp-field-label">
-                                WB Slip No <span class="erp-req-star">*</span>
-                            </label>
-                            <div class="erp-field-icon-wrap">
-                                <i class="fa-solid fa-hashtag erp-field-icon"></i>
-                                <input type="text" name="slip_no" id="field-slip-no" class="form-control erp-field-input-iconified erp-field-input-mono" value="{{ old('slip_no', $nextSlipNo) }}" readonly required>
-                            </div>
-                            <span class="erp-field-hint">Auto-generated weighbridge slip identifier</span>
-                        </div>
-
-                        <!-- Entry Date -->
-                        <div class="form-group">
-                            <label class="erp-field-label">
-                                Inward Entry Date <span class="erp-req-star">*</span>
-                            </label>
-                            <div class="erp-field-icon-wrap">
-                                <i class="fa-solid fa-calendar-day erp-field-icon"></i>
-                                <input type="date" name="entry_date" id="field-entry-date" class="form-control erp-field-input-iconified" value="{{ old('entry_date', date('Y-m-d')) }}" required onchange="updateLivePreview()">
-                            </div>
-                            <span class="erp-field-hint">Date truck arrived at factory weighbridge</span>
-                        </div>
-
-                        <!-- Vendor / Farmer Supplier Select -->
-                        <div class="form-group erp-form-col-full">
-                            <label class="erp-field-label">
-                                Vendor / Mandi Farmer Supplier <span class="erp-req-star">*</span>
-                            </label>
-                            <div class="erp-field-icon-wrap">
-                                <i class="fa-solid fa-user-tag erp-field-icon"></i>
-                                <select name="vendor_id" id="field-vendor-id" class="form-control erp-field-input-iconified" required onchange="onVendorChange(this)">
-                                    <option value="">Select Supplier / Farmer...</option>
-                                    @foreach($vendors as $vnd)
-                                        <option value="{{ $vnd->id }}" data-name="{{ $vnd->name }}" data-city="{{ $vnd->city }}" {{ old('vendor_id') == $vnd->id ? 'selected' : '' }}>
-                                            {{ $vnd->name }} ({{ $vnd->code }}{{ $vnd->city ? ' - ' . $vnd->city : '' }})
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <span class="erp-field-hint">Payable ledger recipient for this mandi slip</span>
-                        </div>
-
-                        <!-- Broker / Agent Select -->
-                        <div class="form-group">
-                            <label class="erp-field-label">
-                                Mandi Broker / Commission Agent <span class="text-muted">(Optional)</span>
-                            </label>
-                            <div class="erp-field-icon-wrap">
-                                <i class="fa-solid fa-handshake erp-field-icon"></i>
-                                <select name="broker_id" id="field-broker-id" class="form-control erp-field-input-iconified" onchange="updateLivePreview()">
-                                    <option value="">Direct Mandi (No Broker)...</option>
-                                    @foreach($brokers as $brk)
-                                        <option value="{{ $brk->id }}" data-name="{{ $brk->name }}" {{ old('broker_id') == $brk->id ? 'selected' : '' }}>
-                                            {{ $brk->name }} ({{ $brk->city ?? 'Sojat' }})
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <span class="erp-field-hint">Local sourcing broker</span>
-                        </div>
-
-                        <!-- Order Urgency / Type -->
-                        <div class="form-group">
-                            <label class="erp-field-label">
-                                Order Classification / Priority <span class="erp-req-star">*</span>
-                            </label>
-                            <div class="erp-field-icon-wrap">
-                                <i class="fa-solid fa-tag erp-field-icon"></i>
-                                <select name="order_type" id="field-order-type" class="form-control erp-field-input-iconified" required onchange="updateLivePreview()">
-                                    <option value="Medium" {{ old('order_type', 'Medium') === 'Medium' ? 'selected' : '' }}>Medium (Standard Processing)</option>
-                                    <option value="Urgent" {{ old('order_type') === 'Urgent' ? 'selected' : '' }}>Urgent Mandi Lot</option>
-                                    <option value="Fast" {{ old('order_type') === 'Fast' ? 'selected' : '' }}>Fast Track</option>
-                                    <option value="Ready Delivery" {{ old('order_type') === 'Ready Delivery' ? 'selected' : '' }}>Ready Delivery</option>
-                                </select>
-                            </div>
-                            <span class="erp-field-hint">Inward lot processing urgency</span>
-                        </div>
-
-                        <!-- Vehicle No -->
-                        <div class="form-group">
-                            <label class="erp-field-label">
-                                Vehicle / Truck Registration No
-                            </label>
-                            <div class="erp-field-icon-wrap">
-                                <i class="fa-solid fa-truck-moving erp-field-icon"></i>
-                                <input type="text" name="vehicle_no" id="field-vehicle-no" class="form-control erp-field-input-iconified erp-field-input-mono" placeholder="Enter vehicle registration number" value="{{ old('vehicle_no') }}" oninput="this.value = this.value.toUpperCase(); updateLivePreview();">
-                            </div>
-                            <span class="erp-field-hint">Truck number weighed on scale</span>
-                        </div>
-
-                        <!-- Driver Name -->
-                        <div class="form-group">
-                            <label class="erp-field-label">
-                                Driver Name
-                            </label>
-                            <div class="erp-field-icon-wrap">
-                                <i class="fa-solid fa-user erp-field-icon"></i>
-                                <input type="text" name="driver_name" id="field-driver-name" class="form-control erp-field-input-iconified" placeholder="Enter driver name" value="{{ old('driver_name') }}" oninput="updateLivePreview()">
-                            </div>
-                            <span class="erp-field-hint">Name of driver presenting the consignment</span>
+                        <div>
+                            <h3 class="erp-form-section-title">1. Inward Slip &amp; Supplier Identity</h3>
+                            <p class="erp-form-section-desc">Consignment slip coordinates, procurement date, supplier coordinates &amp; transport details</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- 2. Weighbridge Scale Measurements -->
-                <div class="card erp-form-section-card">
-                    <div class="erp-form-section-header">
-                        <div class="erp-form-section-header-left">
-                            <div class="erp-form-section-icon-box erp-form-icon-success">
-                                <i class="fa-solid fa-weight-scale"></i>
-                            </div>
-                            <div>
-                                <h3 class="erp-form-section-title">2. Weighbridge Scale Measurements</h3>
-                                <p class="erp-form-section-desc">Gross loaded scale weight, empty vehicle tare, and moisture deduction tare</p>
-                            </div>
+                <div class="erp-form-section-body-4col">
+                    <!-- Slip No -->
+                    <div class="form-group">
+                        <label class="erp-field-label">
+                            WB Slip No <span class="erp-req-star">*</span>
+                        </label>
+                        <div class="erp-field-icon-wrap">
+                            <i class="fa-solid fa-hashtag erp-field-icon"></i>
+                            <input type="text" name="slip_no" id="field-slip-no" class="form-control erp-field-input-iconified erp-field-input-mono" value="{{ old('slip_no', $nextSlipNo) }}" readonly required>
                         </div>
+                        <span class="erp-field-hint">Auto-generated inward slip reference</span>
                     </div>
 
-                    <div class="erp-form-section-body">
-                        <!-- Gross Weight -->
-                        <div class="form-group">
-                            <label class="erp-field-label">
-                                Gross Weight (KG) <span class="erp-req-star">*</span>
-                            </label>
-                            <div class="erp-field-icon-wrap">
-                                <i class="fa-solid fa-truck-ramp-box erp-field-icon"></i>
-                                <input type="number" step="0.01" min="0" name="gross_weight" id="field-gross-weight" class="form-control erp-field-input-iconified erp-field-input-mono font-weight-bold" style="text-align: right;" placeholder="0.00" value="{{ old('gross_weight', '0.00') }}" required oninput="calcWeighbridge()">
-                            </div>
-                            <span class="erp-field-hint">First weighment: Loaded truck weight</span>
+                    <!-- Inward Entry Date -->
+                    <div class="form-group">
+                        <label class="erp-field-label">
+                            Entry Date <span class="erp-req-star">*</span>
+                        </label>
+                        <div class="erp-field-icon-wrap">
+                            <i class="fa-solid fa-calendar-day erp-field-icon"></i>
+                            <input type="date" name="entry_date" id="field-entry-date" class="form-control erp-field-input-iconified" value="{{ old('entry_date', date('Y-m-d')) }}" required onchange="updateLiveSummary()">
                         </div>
+                        <span class="erp-field-hint">Consignment inward arrival date</span>
+                    </div>
 
-                        <!-- Tare Weight -->
-                        <div class="form-group">
-                            <label class="erp-field-label">
-                                Tare Weight (KG) <span class="erp-req-star">*</span>
-                            </label>
-                            <div class="erp-field-icon-wrap">
-                                <i class="fa-solid fa-truck erp-field-icon"></i>
-                                <input type="number" step="0.01" min="0" name="tare_weight" id="field-tare-weight" class="form-control erp-field-input-iconified erp-field-input-mono font-weight-bold" style="text-align: right;" placeholder="0.00" value="{{ old('tare_weight', '0.00') }}" required oninput="calcWeighbridge()">
-                            </div>
-                            <span class="erp-field-hint">Second weighment: Empty vehicle tare</span>
+                    <!-- Supplier Slip / Challan No -->
+                    <div class="form-group">
+                        <label class="erp-field-label">
+                            Supplier Slip / Challan No
+                        </label>
+                        <div class="erp-field-icon-wrap">
+                            <i class="fa-solid fa-file-invoice erp-field-icon"></i>
+                            <input type="text" name="invoice_no" id="field-invoice-no" class="form-control erp-field-input-iconified erp-field-input-mono" placeholder="Enter supplier slip or challan number" value="{{ old('invoice_no') }}" oninput="updateLiveSummary()">
                         </div>
+                        <span class="erp-field-hint">Vendor's printed delivery slip or challan number</span>
+                    </div>
 
-                        <!-- Deduction / Moisture Tare -->
-                        <div class="form-group">
-                            <label class="erp-field-label">
-                                Deduction / Bag Tare (KG)
-                            </label>
-                            <div class="erp-field-icon-wrap">
-                                <i class="fa-solid fa-droplet-slash erp-field-icon"></i>
-                                <input type="number" step="0.01" min="0" name="deduction_weight" id="field-deduction-weight" class="form-control erp-field-input-iconified erp-field-input-mono" style="text-align: right;" placeholder="0.00" value="{{ old('deduction_weight', '0.00') }}" oninput="calcWeighbridge()">
-                            </div>
-                            <span class="erp-field-hint">Gunny bags, moisture loss, or dust deduction</span>
+                    <!-- Vehicle / Transport No -->
+                    <div class="form-group">
+                        <label class="erp-field-label">
+                            Vehicle / Transport No
+                        </label>
+                        <div class="erp-field-icon-wrap">
+                            <i class="fa-solid fa-truck-moving erp-field-icon"></i>
+                            <input type="text" name="vehicle_no" id="field-vehicle-no" class="form-control erp-field-input-iconified erp-field-input-mono" placeholder="Enter vehicle registration number" value="{{ old('vehicle_no') }}" oninput="this.value = this.value.toUpperCase(); updateLiveSummary();">
                         </div>
+                        <span class="erp-field-hint">Truck or transport registration number</span>
+                    </div>
 
-                        <!-- Net Weight (Calculated) -->
-                        <div class="form-group">
-                            <label class="erp-field-label">
-                                Net Billable Weight (KG)
-                            </label>
-                            <div class="erp-field-icon-wrap">
-                                <i class="fa-solid fa-scale-unbalanced erp-field-icon"></i>
-                                <input type="number" step="0.01" min="0" name="net_weight" id="field-net-weight" class="form-control erp-field-input-iconified erp-field-input-mono font-weight-bold" style="text-align: right; background: #F8FAFC; color: #059669;" value="{{ old('net_weight', '0.00') }}" readonly>
-                            </div>
-                            <span class="erp-field-hint">Formula: Gross - Tare - Deduction</span>
+                    <!-- Vendor / Supplier Select (Spans 2 Columns) -->
+                    <div class="form-group erp-col-span-2">
+                        <label class="erp-field-label">
+                            Vendor / Supplier Firm <span class="erp-req-star">*</span>
+                        </label>
+                        <div class="erp-field-icon-wrap">
+                            <i class="fa-solid fa-truck-field erp-field-icon"></i>
+                            <select name="vendor_id" id="field-vendor-id" class="form-control erp-field-input-iconified" required onchange="onVendorChange(this)">
+                                <option value="">Select Vendor / Supplier Firm...</option>
+                                @foreach($vendors as $vnd)
+                                    <option value="{{ $vnd->id }}" data-name="{{ $vnd->name }}" data-city="{{ $vnd->city }}" {{ old('vendor_id') == $vnd->id ? 'selected' : '' }}>
+                                        {{ $vnd->name }} ({{ $vnd->code }}{{ $vnd->city ? ' - ' . $vnd->city : '' }})
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
+                        <span class="erp-field-hint">Creditor account whose ledger balance will be updated</span>
+                    </div>
+
+                    <!-- Broker / Agent Select -->
+                    <div class="form-group">
+                        <label class="erp-field-label">
+                            Broker / Mandi Commission Agent <span class="text-muted">(Optional)</span>
+                        </label>
+                        <div class="erp-field-icon-wrap">
+                            <i class="fa-solid fa-handshake erp-field-icon"></i>
+                            <select name="broker_id" id="field-broker-id" class="form-control erp-field-input-iconified" onchange="updateLiveSummary()">
+                                <option value="">Direct Mandi (No Broker)...</option>
+                                @foreach($brokers as $brk)
+                                    <option value="{{ $brk->id }}" data-name="{{ $brk->name }}" data-comm="{{ $brk->commission_rate }}" {{ old('broker_id') == $brk->id ? 'selected' : '' }}>
+                                        {{ $brk->name }} ({{ $brk->city ?? 'Sojat' }} - {{ $brk->commission_rate }}%)
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <span class="erp-field-hint">Commission tracking agent</span>
+                    </div>
+
+                    <!-- Order Urgency / Type -->
+                    <div class="form-group">
+                        <label class="erp-field-label">
+                            Order Classification / Urgency <span class="erp-req-star">*</span>
+                        </label>
+                        <div class="erp-field-icon-wrap">
+                            <i class="fa-solid fa-tag erp-field-icon"></i>
+                            <select name="order_type" id="field-order-type" class="form-control erp-field-input-iconified" required onchange="updateLiveSummary()">
+                                <option value="Medium" {{ old('order_type', 'Medium') === 'Medium' ? 'selected' : '' }}>Medium (Standard Processing)</option>
+                                <option value="Urgent" {{ old('order_type') === 'Urgent' ? 'selected' : '' }}>Urgent Mandi Lot</option>
+                                <option value="Fast" {{ old('order_type') === 'Fast' ? 'selected' : '' }}>Fast Track</option>
+                                <option value="Ready Delivery" {{ old('order_type') === 'Ready Delivery' ? 'selected' : '' }}>Ready Delivery</option>
+                            </select>
+                        </div>
+                        <span class="erp-field-hint">Operational delivery tag</span>
+                    </div>
+
+                    <!-- Payment Terms (Spans 2 Columns) -->
+                    <div class="form-group erp-col-span-2">
+                        <label class="erp-field-label">
+                            Payment Terms
+                        </label>
+                        <div class="erp-field-icon-wrap">
+                            <i class="fa-solid fa-clock erp-field-icon"></i>
+                            <select name="payment_terms" class="form-control erp-field-input-iconified">
+                                <option value="Cash" {{ old('payment_terms') === 'Cash' ? 'selected' : '' }}>Cash on Delivery (Immediate)</option>
+                                <option value="15 Days" {{ old('payment_terms') === '15 Days' ? 'selected' : '' }}>Credit 15 Days</option>
+                                <option value="30 Days" {{ old('payment_terms', '30 Days') === '30 Days' ? 'selected' : '' }}>Credit 30 Days</option>
+                                <option value="45 Days" {{ old('payment_terms') === '45 Days' ? 'selected' : '' }}>Credit 45 Days</option>
+                                <option value="Bank Transfer" {{ old('payment_terms') === 'Bank Transfer' ? 'selected' : '' }}>Bank RTGS / NEFT</option>
+                            </select>
+                        </div>
+                        <span class="erp-field-hint">Agreed credit repayment cycle</span>
                     </div>
                 </div>
+            </div>
 
-                <!-- 3. Inward Raw Materials Line Items -->
-                <div class="card erp-form-section-card">
-                    <div class="erp-form-section-header">
-                        <div class="erp-form-section-header-left">
-                            <div class="erp-form-section-icon-box erp-form-icon-purple">
-                                <i class="fa-solid fa-boxes-stacked"></i>
-                            </div>
-                            <div>
-                                <h3 class="erp-form-section-title">3. Inward Raw Materials &amp; Mandi Items</h3>
-                                <p class="erp-form-section-desc">Henna leaves, herbs, and direct procurement lots at agreed mandi cash rates</p>
-                            </div>
+            <!-- 2. Inward Product Line Items (Same Place, Without Tax/UB Calculation) -->
+            <div class="card erp-form-section-card">
+                <div class="erp-form-section-header">
+                    <div class="erp-form-section-header-left">
+                        <div class="erp-form-section-icon-box erp-form-icon-success">
+                            <i class="fa-solid fa-boxes-stacked"></i>
                         </div>
-                        <button type="button" class="btn btn-outline" style="font-size: 0.8rem; padding: 0.4rem 0.85rem;" onclick="addWBRow()">
-                            <i class="fa-solid fa-plus me-1"></i> Add Line Item
-                        </button>
+                        <div>
+                            <h3 class="erp-form-section-title">2. Inward Product Line Items</h3>
+                            <p class="erp-form-section-desc">Raw materials, herbs &amp; inward lots at direct agreed rates (without GST or under-billing calculation)</p>
+                        </div>
                     </div>
+                    <button type="button" class="btn btn-outline erp-btn-add-row" style="font-size: 0.8rem; padding: 0.4rem 0.85rem;" onclick="addPurchaseRow()">
+                        <i class="fa-solid fa-plus me-1"></i> Add Line Item
+                    </button>
+                </div>
 
-                    <div class="erp-form-section-body p-0" style="padding: 0 !important;">
-                        <div class="erp-items-table-wrapper" style="border: none; border-radius: 0;">
-                            <table class="erp-items-table" id="wb-items-table">
-                                <thead>
-                                    <tr>
-                                        <th style="width: 38px; text-align: center;">S No</th>
-                                        <th style="min-width: 220px;">Item Description <span class="text-danger">*</span></th>
-                                        <th style="width: 100px;">Unit Type <span class="text-danger">*</span></th>
-                                        <th style="width: 115px; text-align: right;">Net Qty <span class="text-danger">*</span></th>
-                                        <th style="width: 115px; text-align: right;">Mandi Rate (₹) <span class="text-danger">*</span></th>
-                                        <th style="width: 130px; text-align: right;">Line Total (₹)</th>
-                                        <th style="min-width: 140px;">Remarks</th>
-                                        <th style="width: 40px; text-align: center;"></th>
-                                    </tr>
-                                </thead>
-                                <tbody id="wb-items-body">
+                <div class="erp-form-section-body p-0 erp-form-section-body-table" style="display: block !important; padding: 0 !important; width: 100%;">
+                    <div class="erp-items-table-wrapper" style="border: none; border-radius: 0; overflow-x: auto; width: 100%;">
+                        <table class="erp-items-table" id="items-table" style="width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50px; text-align: center;">S.NO</th>
+                                    <th style="min-width: 280px;">ITEM <span class="text-danger">*</span></th>
+                                    <th style="width: 120px;">HSN</th>
+                                    <th style="width: 120px;">UNIT TYPE <span class="text-danger">*</span></th>
+                                    <th style="width: 130px; text-align: right;">NET WT <span class="text-danger">*</span></th>
+                                    <th style="width: 140px; text-align: right;">RATE (₹) <span class="text-danger">*</span></th>
+                                    <th style="width: 150px; text-align: right;">LINE TOTAL (₹)</th>
+                                    <th style="min-width: 160px;">REMARKS</th>
+                                    <th style="width: 48px; text-align: center;"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="wb-items-body">
+                                @php
+                                    $initialItems = old('items', [
+                                        [
+                                            'item_id' => '',
+                                            'batch_no' => '',
+                                            'hsn_code' => '',
+                                            'unit' => 'KG',
+                                            'quantity' => '0',
+                                            'rate' => '0.00',
+                                            'notes' => '',
+                                        ]
+                                    ]);
+                                @endphp
+                                @foreach($initialItems as $idx => $row)
                                     <tr class="item-row">
-                                        <td class="text-center row-sno font-weight-600 font-monospace text-muted">1</td>
+                                        <td class="text-center row-sno">
+                                            <span class="badge" style="background: #F1F5F9; color: #475569; font-weight: 700; font-size: 0.78rem; padding: 4px 8px; border-radius: 6px;">{{ $idx + 1 }}</span>
+                                        </td>
                                         <td>
-                                            <select name="items[0][item_id]" class="form-select erp-item-select" required onchange="onWBItemSelect(this)">
-                                                <option value="">Select Raw Material / Herb...</option>
+                                            <select name="items[{{ $idx }}][item_id]" class="form-select erp-item-select" required onchange="onItemSelect(this)">
+                                                <option value="">Select Item...</option>
                                                 @foreach($items as $itm)
                                                     <option value="{{ $itm->id }}"
                                                             data-code="{{ $itm->code }}"
+                                                            data-hsn="{{ $itm->hsn_code }}"
                                                             data-unit="{{ $itm->unit }}"
-                                                            data-purchase-rate="{{ $itm->purchase_rate }}">
+                                                            data-purchase-rate="{{ $itm->purchase_rate }}"
+                                                            data-batch="{{ $itm->batch_no }}"
+                                                            {{ ($row['item_id'] ?? '') == $itm->id ? 'selected' : '' }}>
                                                         {{ $itm->name }} ({{ $itm->code }})
                                                     </option>
                                                 @endforeach
                                             </select>
-                                            <input type="hidden" name="items[0][batch_no]" class="row-batch" value="">
-                                            <input type="hidden" name="items[0][hsn_code]" class="row-hsn" value="">
+                                            <input type="hidden" name="items[{{ $idx }}][batch_no]" class="row-batch" value="{{ $row['batch_no'] ?? '' }}">
                                         </td>
                                         <td>
-                                            <select name="items[0][unit]" class="form-select row-unit" required>
-                                                <option value="KG">KG</option>
-                                                <option value="BAG">BAG</option>
-                                                <option value="QUINTAL">QUINTAL</option>
-                                                <option value="TON">TON</option>
-                                                <option value="BOX">BOX</option>
+                                            <input type="text" name="items[{{ $idx }}][hsn_code]" class="form-control row-hsn font-monospace" placeholder="Enter HSN" value="{{ $row['hsn_code'] ?? '' }}">
+                                        </td>
+                                        <td>
+                                            <select name="items[{{ $idx }}][unit]" class="form-select row-unit" required>
+                                                @php $rowUnit = strtoupper($row['unit'] ?? 'KG'); @endphp
+                                                <option value="KG" {{ $rowUnit === 'KG' ? 'selected' : '' }}>KG</option>
+                                                <option value="BAG" {{ $rowUnit === 'BAG' ? 'selected' : '' }}>BAG</option>
+                                                <option value="QUINTAL" {{ $rowUnit === 'QUINTAL' ? 'selected' : '' }}>QUINTAL</option>
+                                                <option value="TON" {{ $rowUnit === 'TON' ? 'selected' : '' }}>TON</option>
+                                                <option value="BOX" {{ $rowUnit === 'BOX' ? 'selected' : '' }}>BOX</option>
+                                                <option value="PCS" {{ $rowUnit === 'PCS' ? 'selected' : '' }}>PCS</option>
                                                 @foreach($units as $u)
-                                                    @if(!in_array(strtoupper($u->name), ['KG', 'BAG', 'QUINTAL', 'TON', 'BOX']))
-                                                        <option value="{{ $u->name }}">{{ $u->name }}</option>
+                                                    @if(!in_array(strtoupper($u->name), ['KG', 'BAG', 'QUINTAL', 'TON', 'BOX', 'PCS']))
+                                                        <option value="{{ $u->name }}" {{ $rowUnit === strtoupper($u->name) ? 'selected' : '' }}>{{ $u->name }}</option>
                                                     @endif
                                                 @endforeach
                                             </select>
                                         </td>
                                         <td>
-                                            <input type="number" step="any" min="0" name="items[0][quantity]" class="form-control row-qty font-monospace" style="text-align: right;" value="{{ old('items.0.quantity', '0') }}" required oninput="calcWBRow(this)">
+                                            <input type="number" step="any" min="0" name="items[{{ $idx }}][quantity]" class="form-control row-qty font-monospace" style="text-align: right;" value="{{ $row['quantity'] ?? '0' }}" required oninput="calcRow(this)">
                                         </td>
                                         <td>
-                                            <input type="number" step="0.01" min="0" name="items[0][rate]" class="form-control row-rate font-monospace" style="text-align: right;" value="{{ old('items.0.rate', '0.00') }}" required oninput="calcWBRow(this)">
+                                            <input type="number" step="0.01" min="0" name="items[{{ $idx }}][rate]" class="form-control row-rate font-monospace" style="text-align: right;" value="{{ number_format((float)($row['rate'] ?? 0), 2, '.', '') }}" required oninput="calcRow(this)">
                                         </td>
                                         <td style="text-align: right;">
-                                            <span class="font-monospace font-weight-700 text-dark row-amount">₹0.00</span>
+                                            @php
+                                                $rQty = (float)($row['quantity'] ?? 0);
+                                                $rRate = (float)($row['rate'] ?? 0);
+                                            @endphp
+                                            <span class="font-monospace text-dark font-weight-700 row-total-amt">₹{{ number_format($rQty * $rRate, 2) }}</span>
                                         </td>
                                         <td>
-                                            <input type="text" name="items[0][notes]" class="form-control" placeholder="Mandi lot note" value="{{ old('items.0.notes', '') }}">
+                                            <input type="text" name="items[{{ $idx }}][notes]" class="form-control font-monospace" placeholder="Enter remarks" value="{{ $row['notes'] ?? '' }}" style="font-size: 0.83rem;">
                                         </td>
                                         <td class="text-center">
-                                            <button type="button" class="delete-row-btn" onclick="removeWBRow(this)" title="Remove item">
+                                            <button type="button" class="delete-row-btn" onclick="removeRow(this)" title="Remove line item">
                                                 <i class="fa-solid fa-xmark"></i>
                                             </button>
                                         </td>
                                     </tr>
-                                </tbody>
-                            </table>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Unified Compact Action & Totals Toolbar -->
+                    <div class="erp-table-action-bar">
+                        <div style="display: flex; align-items: center; gap: 0.85rem; flex-wrap: wrap;">
+                            <button type="button" class="btn btn-outline erp-btn-add-row" onclick="addPurchaseRow()">
+                                <i class="fa-solid fa-plus me-1"></i> Add Another Item Row
+                            </button>
+                            <span class="erp-table-action-hint">
+                                <i class="fa-solid fa-calculator me-1" style="color: #5B841E;"></i>
+                                <span><strong>Line Total</strong> = Net Wt &times; Rate (Direct Procurement without tax calculation)</span>
+                            </span>
                         </div>
 
-                        <!-- Real-Time Totals Bar Beneath Table -->
-                        <div class="erp-table-totals-bar">
+                        <div class="erp-table-totals-grid">
                             <div class="erp-table-total-item">
-                                <span class="erp-table-total-label">Total Inward Qty</span>
-                                <span class="erp-table-total-val font-monospace" id="footer-wb-qty">0.000 KG</span>
+                                <span class="erp-table-total-label">Total Net Wt</span>
+                                <span class="erp-table-total-val font-monospace" id="footer-total-qty">0.000</span>
                             </div>
                             <div class="erp-table-total-item">
-                                <span class="erp-table-total-label" style="color: #059669;">Grand Mandi Amount</span>
-                                <span class="erp-table-total-val font-monospace" style="color: #059669; font-size: 1.2rem;" id="footer-wb-total">₹0.00</span>
+                                <span class="erp-table-total-label">Procurement Subtotal</span>
+                                <span class="erp-table-total-val font-monospace" id="footer-subtotal">₹0.00</span>
+                            </div>
+                            <div class="erp-table-total-item erp-table-total-grand" onclick="setPaidAmountToGrandTotal()" style="cursor: pointer;" title="Click to set this value in Paid Amount (₹)">
+                                <span class="erp-table-total-label" style="color: #059669; display: flex; align-items: center; justify-content: space-between; gap: 0.35rem;">
+                                    <span>Total Grand Value</span>
+                                    <i class="fa-solid fa-arrow-down" style="font-size: 0.65rem;" title="Copy to Paid Amount"></i>
+                                </span>
+                                <span class="erp-table-total-val font-monospace" style="color: #059669; font-size: 1.1rem;" id="footer-grand-total">₹0.00</span>
+                            </div>
+                            <div class="erp-table-total-item" style="border-left: 1px dashed #CBD5E1; padding-left: 0.85rem;">
+                                <span class="erp-table-total-label" style="color: #DC2626;" id="footer-pending-label">Pending Collection</span>
+                                <span class="erp-table-total-val font-monospace" style="color: #DC2626; font-size: 1.05rem;" id="footer-pending-total">₹0.00</span>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <!-- 4. Payment Settlement & Mandi Notes -->
-                <div class="card erp-form-section-card">
-                    <div class="erp-form-section-header">
-                        <div class="erp-form-section-header-left">
-                            <div class="erp-form-section-icon-box" style="background: rgba(217, 119, 6, 0.12); color: #D97706;">
-                                <i class="fa-solid fa-coins"></i>
-                            </div>
-                            <div>
-                                <h3 class="erp-form-section-title">4. Settlement Mode &amp; Mandi Notes</h3>
-                                <p class="erp-form-section-desc">Mandi cash voucher details and observations</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="erp-form-section-body">
-                        <!-- Payment Mode -->
-                        <div class="form-group">
-                            <label class="erp-field-label">
-                                Mandi Settlement Mode
-                            </label>
-                            <div class="erp-field-icon-wrap">
-                                <i class="fa-solid fa-money-bill-wave erp-field-icon"></i>
-                                <select name="payment_mode" class="form-control erp-field-input-iconified">
-                                    <option value="Cash" {{ old('payment_mode', 'Cash') === 'Cash' ? 'selected' : '' }}>Mandi Spot Cash</option>
-                                    <option value="Bank Transfer" {{ old('payment_mode') === 'Bank Transfer' ? 'selected' : '' }}>Bank RTGS / IMPS</option>
-                                    <option value="Mandi Slip" {{ old('payment_mode') === 'Mandi Slip' ? 'selected' : '' }}>Mandi Slip / Voucher</option>
-                                    <option value="Cheque" {{ old('payment_mode') === 'Cheque' ? 'selected' : '' }}>Cheque</option>
-                                </select>
-                            </div>
-                            <span class="erp-field-hint">Mode of payment release</span>
-                        </div>
-
-                        <!-- Settlement Status -->
-                        <div class="form-group">
-                            <label class="erp-field-label">
-                                Settlement Status
-                            </label>
-                            <div class="erp-field-icon-wrap">
-                                <i class="fa-solid fa-wallet erp-field-icon"></i>
-                                <select name="payment_status" class="form-control erp-field-input-iconified">
-                                    <option value="unpaid" {{ old('payment_status', 'unpaid') === 'unpaid' ? 'selected' : '' }}>Unpaid / On Ledger</option>
-                                    <option value="paid" {{ old('payment_status') === 'paid' ? 'selected' : '' }}>Paid Cash Instantly</option>
-                                </select>
-                            </div>
-                            <span class="erp-field-hint">Payment status</span>
-                        </div>
-
-                        <!-- Consignment Notes -->
-                        <div class="form-group erp-form-col-full">
-                            <label class="erp-field-label">
-                                Inward Inspection Remarks
-                            </label>
-                            <textarea name="notes" rows="3" class="form-control" style="border-radius: 8px; font-size: 0.88rem;" placeholder="Enter mandi slip notes, moisture percentage, lot cleanliness, or farmer remarks...">{{ old('notes') }}</textarea>
-                            <span class="erp-field-hint">Internal warehouse &amp; weighbridge observations</span>
-                        </div>
-                    </div>
-                </div>
-
             </div>
 
-            <!-- Right Sidebar Column -->
-            <div class="erp-form-sidebar-col">
-
-                <!-- 1. Real-Time Live Preview Card -->
-                <div class="card erp-preview-card">
-                    <div class="erp-preview-header">
-                        <div class="erp-preview-avatar" id="prev-wb-avatar">
-                            WB
+            <!-- 3. Settlement & Operational Notes -->
+            <div class="card erp-form-section-card">
+                <div class="erp-form-section-header">
+                    <div class="erp-form-section-header-left">
+                        <div class="erp-form-section-icon-box erp-form-icon-purple">
+                            <i class="fa-solid fa-clipboard-list"></i>
                         </div>
                         <div>
-                            <div class="erp-preview-title" id="prev-wb-title">New WB Entry Slip</div>
-                            <div class="erp-preview-subtitle font-monospace" id="prev-wb-code">{{ old('slip_no', $nextSlipNo) }}</div>
-                        </div>
-                    </div>
-
-                    <div class="erp-preview-badge-row">
-                        <span class="badge" style="background: rgba(91, 132, 30, 0.1); color: #5B841E; font-size: 0.75rem; font-weight: 600; padding: 4px 10px; border-radius: 9999px;" id="prev-wb-order-type">
-                            Standard
-                        </span>
-                        <span class="badge font-monospace" style="background: #F1F5F9; color: #475569; font-size: 0.72rem; padding: 4px 8px; border-radius: 6px;" id="prev-wb-item-count">
-                            1 Item(s)
-                        </span>
-                    </div>
-
-                    <div style="margin: 1.25rem 0 1rem; padding: 1rem; background: #F8FAFC; border-radius: 10px; border: 1px solid #E2E8F0; text-align: center;">
-                        <div style="font-size: 0.73rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.04em; color: #64748B; margin-bottom: 0.25rem;">
-                            Net Billable Scale Weight
-                        </div>
-                        <div class="font-monospace" style="font-size: 1.6rem; font-weight: 800; color: #059669;" id="prev-wb-net-wt">
-                            0.00 KG
-                        </div>
-                        <div style="font-size: 0.74rem; color: #64748B; margin-top: 0.2rem;">
-                            Gross - Tare - Deduction
-                        </div>
-                    </div>
-
-                    <div class="erp-preview-meta-list">
-                        <div class="erp-preview-meta-item">
-                            <span class="erp-preview-meta-key">Supplier / Farmer</span>
-                            <span class="erp-preview-meta-val" id="prev-wb-vendor">Select Supplier...</span>
-                        </div>
-                        <div class="erp-preview-meta-item">
-                            <span class="erp-preview-meta-key">Vehicle Registration</span>
-                            <span class="erp-preview-meta-val font-monospace" id="prev-wb-veh">—</span>
-                        </div>
-                        <div class="erp-preview-meta-item">
-                            <span class="erp-preview-meta-key">Gross Scale Wt</span>
-                            <span class="erp-preview-meta-val font-monospace" id="prev-wb-gross">0.00 KG</span>
-                        </div>
-                        <div class="erp-preview-meta-item">
-                            <span class="erp-preview-meta-key">Tare Wt</span>
-                            <span class="erp-preview-meta-val font-monospace" id="prev-wb-tare">0.00 KG</span>
-                        </div>
-                        <div class="erp-preview-meta-item">
-                            <span class="erp-preview-meta-key">Moisture Tare</span>
-                            <span class="erp-preview-meta-val font-monospace" id="prev-wb-ded">0.00 KG</span>
-                        </div>
-                        <div class="erp-preview-meta-item" style="border-top: 1px dashed #CBD5E1; padding-top: 0.6rem;">
-                            <span class="erp-preview-meta-key" style="color: #D97706; font-weight: 700;">Total Mandi Value</span>
-                            <span class="erp-preview-meta-val font-monospace" style="color: #D97706; font-weight: 800; font-size: 1.1rem;" id="prev-wb-amount">₹8,500.00</span>
+                            <h3 class="erp-form-section-title">3. Settlement &amp; Consignment Notes</h3>
+                            <p class="erp-form-section-desc">Immediate settlement, payment recording &amp; factory inward observations</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- 2. Sidebar Action Buttons -->
-                <div class="card erp-sidebar-actions-card">
-                    <button type="submit" class="btn btn-primary erp-btn-action-submit" id="btn-save-wb">
-                        <i class="fa-solid fa-floppy-disk me-1"></i> Save WB Purchase Slip
-                    </button>
-                    <a href="{{ route('admin.transactions.wb-purchase-entry') }}" class="btn btn-outline erp-btn-action-cancel">
+                <div class="erp-form-section-body-4col">
+                    <!-- Paid Amount -->
+                    <div class="form-group">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+                            <label class="erp-field-label mb-0" style="margin-bottom: 0 !important;">
+                                Paid Amount (₹)
+                            </label>
+                            <div style="display: flex; align-items: center; gap: 0.4rem;">
+                                <span id="auto-sync-status-badge" class="badge" style="background: #E8F5E9; color: #2E7D32; font-size: 0.7rem; font-weight: 600; padding: 2px 7px; border-radius: 4px; border: 1px solid #A5D6A7;" title="Automatically tracks and updates with Total Grand Value">
+                                    <i class="fa-solid fa-arrows-rotate fa-spin-pulse me-1"></i> Auto-Syncing
+                                </span>
+                                <button type="button" class="btn btn-link p-0 text-decoration-none" style="font-size: 0.74rem; color: #5B841E; font-weight: 700; cursor: pointer; border: none; background: none;" onclick="setPaidAmountToGrandTotal(true)" title="Auto-fill with Total Grand Value">
+                                    <i class="fa-solid fa-bolt me-1"></i> Match Total
+                                </button>
+                            </div>
+                        </div>
+                        <div class="erp-field-icon-wrap">
+                            <i class="fa-solid fa-indian-rupee-sign erp-field-icon"></i>
+                            <input type="number" step="0.01" min="0" name="paid_amount" id="field-paid-amount" class="form-control erp-field-input-iconified erp-field-input-mono" placeholder="Enter amount paid" value="{{ old('paid_amount', '0.00') }}" oninput="onPaidAmountInput()">
+                        </div>
+                        <span class="erp-field-hint" id="paid-amount-hint">Automatically updated from Total Grand Value (<span id="hint-grand-total">₹0.00</span>)</span>
+                    </div>
+
+                    <!-- Pending Payment Collection (₹) -->
+                    <div class="form-group">
+                        <label class="erp-field-label">
+                            Pending Payment Collection (₹)
+                        </label>
+                        <div class="erp-field-icon-wrap">
+                            <i class="fa-solid fa-hourglass-half erp-field-icon" id="pending-amount-icon" style="color: #DC2626;"></i>
+                            <input type="text" id="field-pending-amount" class="form-control erp-field-input-iconified erp-field-input-mono font-weight-700" readonly style="background: #FEF2F2; color: #DC2626; font-weight: 700; border-color: #FECACA;" value="₹0.00">
+                        </div>
+                        <span class="erp-field-hint" id="pending-amount-hint">Outstanding balance payable to vendor</span>
+                    </div>
+
+                    <!-- Payment Status -->
+                    <div class="form-group">
+                        <label class="erp-field-label">
+                            Settlement Status
+                        </label>
+                        <div class="erp-field-icon-wrap">
+                            <i class="fa-solid fa-wallet erp-field-icon"></i>
+                            <select name="payment_status" id="field-payment-status" class="form-control erp-field-input-iconified" onchange="onPaymentStatusChange()">
+                                <option value="unpaid" {{ old('payment_status', 'unpaid') === 'unpaid' ? 'selected' : '' }}>Unpaid / On Credit</option>
+                                <option value="partial" {{ old('payment_status', 'partial') === 'partial' ? 'selected' : '' }}>Partially Paid</option>
+                                <option value="paid" {{ old('payment_status', 'paid') === 'paid' ? 'selected' : '' }}>Fully Settled</option>
+                            </select>
+                        </div>
+                        <span class="erp-field-hint">Accounts payable settlement status</span>
+                    </div>
+
+                    <!-- Consignment Notes -->
+                    <div class="form-group">
+                        <label class="erp-field-label">
+                            Consignment Remarks / Inward Notes
+                        </label>
+                        <div class="erp-field-icon-wrap">
+                            <i class="fa-solid fa-comment-dots erp-field-icon"></i>
+                            <input type="text" name="notes" class="form-control erp-field-input-iconified" placeholder="Enter consignment notes" value="{{ old('notes') }}">
+                        </div>
+                        <span class="erp-field-hint">Internal warehouse &amp; procurement observations</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. Grand Total Financial Summary & Action Toolbar -->
+            <div class="erp-voucher-summary-card">
+                <div class="erp-voucher-summary-metrics">
+                    <div class="erp-voucher-metric">
+                        <span class="erp-voucher-metric-label">Total Net Weight</span>
+                        <span class="erp-voucher-metric-val font-monospace" id="prev-net-wt">0.000 KG</span>
+                    </div>
+                    <div class="erp-voucher-metric" style="border-left: 2px solid #E2E8F0; padding-left: 1.5rem;">
+                        <span class="erp-voucher-metric-label" style="color: #059669;">Total Procurement Value</span>
+                        <span class="erp-voucher-metric-val font-monospace" style="color: #059669; font-size: 1.65rem;" id="prev-grand-total">₹0.00</span>
+                    </div>
+                    <div class="erp-voucher-metric" style="border-left: 1px solid #E2E8F0; padding-left: 1.25rem;">
+                        <span class="erp-voucher-metric-label" style="color: #059669;">Paid Amount</span>
+                        <span class="erp-voucher-metric-val font-monospace" style="color: #059669; font-size: 1.25rem;" id="summary-paid-amount">₹0.00</span>
+                    </div>
+                    <div class="erp-voucher-metric" style="border-left: 1px solid #E2E8F0; padding-left: 1.25rem;">
+                        <span class="erp-voucher-metric-label" id="summary-pending-label" style="color: #DC2626;">Pending Collection</span>
+                        <span class="erp-voucher-metric-val font-monospace" style="color: #DC2626; font-size: 1.35rem;" id="summary-pending-amount">₹0.00</span>
+                    </div>
+                </div>
+
+                <div class="erp-voucher-actions">
+                    <a href="{{ route('admin.transactions.wb-purchase-entry') }}" class="btn btn-outline" style="padding: 0.65rem 1.4rem; font-weight: 600; border-radius: 8px;">
                         <i class="fa-solid fa-xmark me-1"></i> Cancel &amp; Return
                     </a>
+                    <button type="submit" class="btn btn-primary" id="btn-save-purchase" style="padding: 0.65rem 1.85rem; font-weight: 700; font-size: 0.95rem; border-radius: 8px; box-shadow: 0 4px 14px rgba(91, 132, 30, 0.25);">
+                        <i class="fa-solid fa-floppy-disk me-1"></i> Save WB Purchase Slip
+                    </button>
                 </div>
-
-                <!-- 3. Policy & Inward Rules -->
-                <div class="card" style="padding: 1.15rem; border-radius: 14px; border: 1px solid #E2E8F0; background: #FFFFFF; font-size: 0.8rem; color: #64748B;">
-                    <div style="font-weight: 700; color: #334155; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.4rem;">
-                        <i class="fa-solid fa-circle-info" style="color: #5B841E;"></i> Weighbridge Inward Policy
-                    </div>
-                    <ul style="margin: 0; padding-left: 1.15rem; line-height: 1.55;">
-                        <li>This entry records direct farm / mandi procurements without official tax bills.</li>
-                        <li>Inventory stock is increased by the product quantities entered.</li>
-                        <li>Status automatically defaults to <strong>Received</strong> upon submission.</li>
-                    </ul>
-                </div>
-
             </div>
+
+            <!-- Inward Accounting Rules Card -->
+            <div class="card" style="padding: 1.15rem 1.5rem; border-radius: 14px; border: 1px solid #E2E8F0; background: #FFFFFF; font-size: 0.82rem; color: #64748B;">
+                <div style="font-weight: 700; color: #334155; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.4rem;">
+                    <i class="fa-solid fa-circle-info" style="color: #5B841E;"></i> Inward Accounting Rules (Without Bill)
+                </div>
+                <div style="display: flex; flex-wrap: wrap; gap: 2rem; line-height: 1.5;">
+                    <span>&bull; Saving this entry increments product physical stock inward immediately.</span>
+                    <span>&bull; Supplier accounts payable ledger will be updated by the total procurement amount.</span>
+                    <span>&bull; Status automatically defaults to <strong>Received</strong> upon submission.</span>
+                </div>
+            </div>
+
         </div>
     </form>
 </section>
 
 <!-- Item Dropdown Options Template (Hidden) -->
-<template id="wb-item-options-template">
-    <option value="">Select Raw Material / Herb...</option>
+<template id="item-options-template">
+    <option value="">Select Item...</option>
     @foreach($items as $itm)
         <option value="{{ $itm->id }}"
                 data-code="{{ $itm->code }}"
+                data-hsn="{{ $itm->hsn_code }}"
                 data-unit="{{ $itm->unit }}"
-                data-purchase-rate="{{ $itm->purchase_rate }}">
+                data-purchase-rate="{{ $itm->purchase_rate }}"
+                data-batch="{{ $itm->batch_no }}">
             {{ $itm->name }} ({{ $itm->code }})
         </option>
     @endforeach
 </template>
 
-<template id="wb-unit-options-template">
+<template id="unit-options-template">
     <option value="KG">KG</option>
     <option value="BAG">BAG</option>
     <option value="QUINTAL">QUINTAL</option>
     <option value="TON">TON</option>
     <option value="BOX">BOX</option>
+    <option value="PCS">PCS</option>
     @foreach($units as $u)
-        @if(!in_array(strtoupper($u->name), ['KG', 'BAG', 'QUINTAL', 'TON', 'BOX']))
+        @if(!in_array(strtoupper($u->name), ['KG', 'BAG', 'QUINTAL', 'TON', 'BOX', 'PCS']))
             <option value="{{ $u->name }}">{{ $u->name }}</option>
         @endif
     @endforeach
@@ -522,191 +503,337 @@
 
 @push('scripts')
 <script>
-    let wbRowIndex = 1;
+    let rowIndex = {{ count($initialItems ?? [1]) }};
+    let isUserEditingPaidAmount = false;
 
-    function addWBRow() {
+    function addPurchaseRow() {
         const tbody = document.getElementById('wb-items-body');
-        const itemOptions = document.getElementById('wb-item-options-template').innerHTML;
-        const unitOptions = document.getElementById('wb-unit-options-template').innerHTML;
+        const itemOptions = document.getElementById('item-options-template').innerHTML;
+        const unitOptions = document.getElementById('unit-options-template').innerHTML;
 
         const tr = document.createElement('tr');
         tr.className = 'item-row';
         tr.innerHTML = `
-            <td class="text-center row-sno font-weight-600 font-monospace text-muted">${tbody.children.length + 1}</td>
-            <td>
-                <select name="items[${wbRowIndex}][item_id]" class="form-select erp-item-select" required onchange="onWBItemSelect(this)">
-                    ${itemOptions}
-                </select>
-                <input type="hidden" name="items[${wbRowIndex}][batch_no]" class="row-batch" value="">
-                <input type="hidden" name="items[${wbRowIndex}][hsn_code]" class="row-hsn" value="">
+            <td class="text-center row-sno">
+                <span class="badge" style="background: #F1F5F9; color: #475569; font-weight: 700; font-size: 0.78rem; padding: 4px 8px; border-radius: 6px;">${tbody.children.length + 1}</span>
             </td>
             <td>
-                <select name="items[${wbRowIndex}][unit]" class="form-select row-unit" required>
+                <select name="items[${rowIndex}][item_id]" class="form-select erp-item-select" required onchange="onItemSelect(this)">
+                    ${itemOptions}
+                </select>
+                <input type="hidden" name="items[${rowIndex}][batch_no]" class="row-batch" value="">
+            </td>
+            <td>
+                <input type="text" name="items[${rowIndex}][hsn_code]" class="form-control row-hsn font-monospace" placeholder="Enter HSN" value="">
+            </td>
+            <td>
+                <select name="items[${rowIndex}][unit]" class="form-select row-unit" required>
                     ${unitOptions}
                 </select>
             </td>
             <td>
-                <input type="number" step="any" min="0" name="items[${wbRowIndex}][quantity]" class="form-control row-qty font-monospace" style="text-align: right;" value="0" required oninput="calcWBRow(this)">
+                <input type="number" step="any" min="0" name="items[${rowIndex}][quantity]" class="form-control row-qty font-monospace" style="text-align: right;" value="0" required oninput="calcRow(this)">
             </td>
             <td>
-                <input type="number" step="0.01" min="0" name="items[${wbRowIndex}][rate]" class="form-control row-rate font-monospace" style="text-align: right;" value="0.00" required oninput="calcWBRow(this)">
+                <input type="number" step="0.01" min="0" name="items[${rowIndex}][rate]" class="form-control row-rate font-monospace" style="text-align: right;" value="0.00" required oninput="calcRow(this)">
             </td>
             <td style="text-align: right;">
-                <span class="font-monospace font-weight-700 text-dark row-amount">₹0.00</span>
+                <span class="font-monospace text-dark font-weight-700 row-total-amt">₹0.00</span>
             </td>
             <td>
-                <input type="text" name="items[${wbRowIndex}][notes]" class="form-control" placeholder="Mandi lot note">
+                <input type="text" name="items[${rowIndex}][notes]" class="form-control font-monospace" placeholder="Enter remarks" value="" style="font-size: 0.83rem;">
             </td>
             <td class="text-center">
-                <button type="button" class="delete-row-btn" onclick="removeWBRow(this)" title="Remove item">
+                <button type="button" class="delete-row-btn" onclick="removeRow(this)" title="Remove line item">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </td>
         `;
+
         tbody.appendChild(tr);
-        wbRowIndex++;
-        updateWBRowNumbers();
-        calcWBTotals();
+        rowIndex++;
+        renumberRows();
+        calcAll();
     }
 
-    function removeWBRow(btn) {
+    function removeRow(btn) {
         const tbody = document.getElementById('wb-items-body');
-        if (tbody.querySelectorAll('.item-row').length <= 1) {
-            if (typeof toastr !== 'undefined') {
-                toastr.warning('At least one line item is required.');
-            } else {
-                alert('At least one line item is required.');
-            }
+        if (tbody.querySelectorAll('tr.item-row').length <= 1) {
+            alert('At least one item line is required for this WB purchase voucher.');
             return;
         }
-        btn.closest('tr').remove();
-        updateWBRowNumbers();
-        calcWBTotals();
+        btn.closest('tr.item-row').remove();
+        renumberRows();
+        calcAll();
     }
 
-    function updateWBRowNumbers() {
-        document.querySelectorAll('#wb-items-body .row-sno').forEach((el, idx) => {
-            el.textContent = idx + 1;
+    function renumberRows() {
+        const rows = document.querySelectorAll('#wb-items-body tr.item-row');
+        rows.forEach((row, i) => {
+            const badge = row.querySelector('.row-sno .badge');
+            if (badge) badge.textContent = i + 1;
         });
     }
 
-    function onWBItemSelect(selectEl) {
-        const row = selectEl.closest('tr');
-        const selected = selectEl.selectedOptions[0];
-        if (!selected || !selected.value) return;
+    function onItemSelect(sel) {
+        const row = sel.closest('tr.item-row');
+        const opt = sel.options[sel.selectedIndex];
+        if (!opt || !opt.value) return;
 
-        const unit = selected.getAttribute('data-unit') || 'KG';
-        const purchaseRate = parseFloat(selected.getAttribute('data-purchase-rate')) || 0.0;
+        const hsn = opt.dataset.hsn || '';
+        const unit = opt.dataset.unit || 'KG';
+        const purchaseRate = parseFloat(opt.dataset.purchaseRate) || 0;
+        const batch = opt.dataset.batch || '';
+
+        const hsnInput = row.querySelector('.row-hsn');
+        if (hsnInput) hsnInput.value = hsn;
 
         const unitSelect = row.querySelector('.row-unit');
         if (unitSelect) {
-            let found = false;
             for (let i = 0; i < unitSelect.options.length; i++) {
                 if (unitSelect.options[i].value.toUpperCase() === unit.toUpperCase()) {
                     unitSelect.selectedIndex = i;
-                    found = true;
                     break;
                 }
-            }
-            if (!found && unit) {
-                const newOpt = new Option(unit, unit, true, true);
-                unitSelect.add(newOpt);
             }
         }
 
         const rateInput = row.querySelector('.row-rate');
-        if (parseFloat(rateInput.value) === 0 && purchaseRate > 0) {
+        if (rateInput && (!parseFloat(rateInput.value) || parseFloat(rateInput.value) === 0)) {
             rateInput.value = purchaseRate.toFixed(2);
         }
 
-        calcWBRow(selectEl);
+        const batchHidden = row.querySelector('.row-batch');
+        if (batchHidden) batchHidden.value = batch;
+
+        calcRow(sel);
     }
 
-    function calcWBRow(el) {
-        const row = el.closest('tr');
+    function calcRow(elem) {
+        const row = elem.closest('tr.item-row');
         const qty = parseFloat(row.querySelector('.row-qty').value) || 0;
         const rate = parseFloat(row.querySelector('.row-rate').value) || 0;
-        const total = qty * rate;
 
-        row.querySelector('.row-amount').textContent = '₹' + total.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        calcWBTotals();
-    }
+        const lineTotal = qty * rate;
 
-    function calcWeighbridge() {
-        const gross = parseFloat(document.getElementById('field-gross-weight').value) || 0;
-        const tare = parseFloat(document.getElementById('field-tare-weight').value) || 0;
-        const ded = parseFloat(document.getElementById('field-deduction-weight').value) || 0;
-
-        const net = Math.max(0, gross - tare - ded);
-        document.getElementById('field-net-weight').value = net.toFixed(2);
-
-        document.getElementById('prev-wb-gross').textContent = gross.toFixed(2) + ' KG';
-        document.getElementById('prev-wb-tare').textContent = tare.toFixed(2) + ' KG';
-        document.getElementById('prev-wb-ded').textContent = ded.toFixed(2) + ' KG';
-        document.getElementById('prev-wb-net-wt').textContent = net.toFixed(2) + ' KG';
-
-        // Auto-sync first line item quantity if default 0
-        const firstRowQty = document.querySelector('#wb-items-body .item-row .row-qty');
-        if (firstRowQty && net > 0 && parseFloat(firstRowQty.value) === 0) {
-            firstRowQty.value = net.toFixed(2);
-            calcWBRow(firstRowQty);
+        const totalAmtSpan = row.querySelector('.row-total-amt');
+        if (totalAmtSpan) {
+            totalAmtSpan.textContent = '₹' + lineTotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         }
 
-        updateLivePreview();
+        calcAll();
     }
 
-    function calcWBTotals() {
+    function calcAll() {
+        const rows = document.querySelectorAll('#wb-items-body tr.item-row');
         let totalQty = 0;
         let totalAmt = 0;
-        let count = 0;
 
-        document.querySelectorAll('#wb-items-body .item-row').forEach(row => {
-            const qty = parseFloat(row.querySelector('.row-qty').value) || 0;
-            const rate = parseFloat(row.querySelector('.row-rate').value) || 0;
+        rows.forEach(row => {
+            const qty = parseFloat(row.querySelector('.row-qty')?.value) || 0;
+            const rate = parseFloat(row.querySelector('.row-rate')?.value) || 0;
+
             totalQty += qty;
             totalAmt += (qty * rate);
-            count++;
         });
 
-        document.getElementById('footer-wb-qty').textContent = totalQty.toFixed(3) + ' KG';
-        document.getElementById('footer-wb-total').textContent = '₹' + totalAmt.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        // Update footer totals
+        const footerTotalQty = document.getElementById('footer-total-qty');
+        if (footerTotalQty) footerTotalQty.textContent = totalQty.toFixed(3);
 
-        document.getElementById('prev-wb-amount').textContent = '₹' + totalAmt.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        document.getElementById('prev-wb-item-count').textContent = `${count} Item(s)`;
+        const footerSubtotal = document.getElementById('footer-subtotal');
+        if (footerSubtotal) footerSubtotal.textContent = '₹' + totalAmt.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+        const footerGrand = document.getElementById('footer-grand-total');
+        if (footerGrand) footerGrand.textContent = '₹' + totalAmt.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+        // Update bottom floating summary
+        const prevNetWt = document.getElementById('prev-net-wt');
+        if (prevNetWt) prevNetWt.textContent = totalQty.toFixed(3) + ' KG';
+
+        const prevGrand = document.getElementById('prev-grand-total');
+        if (prevGrand) prevGrand.textContent = '₹' + totalAmt.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+        const hintGrand = document.getElementById('hint-grand-total');
+        if (hintGrand) hintGrand.textContent = '₹' + totalAmt.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+        // Auto-sync Paid Amount if user hasn't explicitly diverged
+        const paidAmountInput = document.getElementById('field-paid-amount');
+        if (!isUserEditingPaidAmount && paidAmountInput) {
+            paidAmountInput.value = totalAmt.toFixed(2);
+        }
+
+        calculatePendingPayment();
     }
 
-    function onVendorChange(selectEl) {
-        const selected = selectEl.selectedOptions[0];
-        const prevTitle = document.getElementById('prev-wb-title');
-        const prevVendor = document.getElementById('prev-wb-vendor');
-        const prevAvatar = document.getElementById('prev-wb-avatar');
+    function onPaidAmountInput() {
+        isUserEditingPaidAmount = true;
+        const autoBadge = document.getElementById('auto-sync-status-badge');
+        if (autoBadge) {
+            autoBadge.style.display = 'none';
+        }
+        calculatePendingPayment();
+    }
 
-        if (selected && selected.value) {
-            const name = selected.getAttribute('data-name');
-            prevTitle.textContent = name;
-            prevVendor.textContent = name;
-            prevAvatar.textContent = name.substring(0, 2).toUpperCase();
+    function setPaidAmountToGrandTotal(manualClick = false) {
+        const rows = document.querySelectorAll('#wb-items-body tr.item-row');
+        let totalAmt = 0;
+        rows.forEach(row => {
+            const qty = parseFloat(row.querySelector('.row-qty')?.value) || 0;
+            const rate = parseFloat(row.querySelector('.row-rate')?.value) || 0;
+            totalAmt += (qty * rate);
+        });
+
+        const paidInput = document.getElementById('field-paid-amount');
+        if (paidInput) {
+            paidInput.value = totalAmt.toFixed(2);
+        }
+
+        if (manualClick) {
+            isUserEditingPaidAmount = false;
+            const autoBadge = document.getElementById('auto-sync-status-badge');
+            if (autoBadge) {
+                autoBadge.style.display = 'inline-flex';
+            }
+        }
+
+        calculatePendingPayment();
+    }
+
+    function calculatePendingPayment() {
+        const rows = document.querySelectorAll('#wb-items-body tr.item-row');
+        let totalAmt = 0;
+        rows.forEach(row => {
+            const qty = parseFloat(row.querySelector('.row-qty')?.value) || 0;
+            const rate = parseFloat(row.querySelector('.row-rate')?.value) || 0;
+            totalAmt += (qty * rate);
+        });
+
+        const paidInput = document.getElementById('field-paid-amount');
+        const paidVal = parseFloat(paidInput ? paidInput.value : 0) || 0;
+        const pending = Math.max(0, totalAmt - paidVal);
+
+        const pendingField = document.getElementById('field-pending-amount');
+        const pendingIcon = document.getElementById('pending-amount-icon');
+        const pendingHint = document.getElementById('pending-amount-hint');
+
+        const footerPending = document.getElementById('footer-pending-total');
+        const footerPendingLabel = document.getElementById('footer-pending-label');
+        const summaryPaid = document.getElementById('summary-paid-amount');
+        const summaryPending = document.getElementById('summary-pending-amount');
+        const summaryPendingLabel = document.getElementById('summary-pending-label');
+
+        if (summaryPaid) {
+            summaryPaid.textContent = '₹' + paidVal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        const formattedPending = '₹' + pending.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+        if (pendingField) pendingField.value = formattedPending;
+        if (footerPending) footerPending.textContent = formattedPending;
+        if (summaryPending) summaryPending.textContent = formattedPending;
+
+        const paymentStatusSelect = document.getElementById('field-payment-status');
+
+        if (pending <= 0.009) {
+            if (pendingField) {
+                pendingField.style.background = '#ECFDF5';
+                pendingField.style.color = '#059669';
+                pendingField.style.borderColor = '#A7F3D0';
+            }
+            if (pendingIcon) pendingIcon.style.color = '#059669';
+            if (pendingHint) pendingHint.textContent = 'Full payment settled upon entry creation';
+            if (footerPending) footerPending.style.color = '#059669';
+            if (footerPendingLabel) {
+                footerPendingLabel.textContent = 'Settled In Full';
+                footerPendingLabel.style.color = '#059669';
+            }
+            if (summaryPending) summaryPending.style.color = '#059669';
+            if (summaryPendingLabel) {
+                summaryPendingLabel.textContent = 'Settled In Full';
+                summaryPendingLabel.style.color = '#059669';
+            }
+
+            if (paymentStatusSelect && !paymentStatusSelect.dataset.manuallyTouched) {
+                paymentStatusSelect.value = 'paid';
+            }
         } else {
-            prevTitle.textContent = 'New WB Entry Slip';
-            prevVendor.textContent = 'Select Supplier...';
-            prevAvatar.textContent = 'WB';
+            if (pendingField) {
+                pendingField.style.background = '#FEF2F2';
+                pendingField.style.color = '#DC2626';
+                pendingField.style.borderColor = '#FECACA';
+            }
+            if (pendingIcon) pendingIcon.style.color = '#DC2626';
+            if (pendingHint) pendingHint.textContent = 'Outstanding balance payable to vendor';
+            if (footerPending) footerPending.style.color = '#DC2626';
+            if (footerPendingLabel) {
+                footerPendingLabel.textContent = 'Pending Collection';
+                footerPendingLabel.style.color = '#DC2626';
+            }
+            if (summaryPending) summaryPending.style.color = '#DC2626';
+            if (summaryPendingLabel) {
+                summaryPendingLabel.textContent = 'Pending Collection';
+                summaryPendingLabel.style.color = '#DC2626';
+            }
+
+            if (paymentStatusSelect && !paymentStatusSelect.dataset.manuallyTouched) {
+                if (paidVal > 0) {
+                    paymentStatusSelect.value = 'partial';
+                } else {
+                    paymentStatusSelect.value = 'unpaid';
+                }
+            }
         }
-        updateLivePreview();
     }
 
-    function updateLivePreview() {
-        const veh = document.getElementById('field-vehicle-no').value.trim();
-        document.getElementById('prev-wb-veh').textContent = veh ? veh : '—';
-
-        const orderType = document.getElementById('field-order-type');
-        if (orderType) {
-            document.getElementById('prev-wb-order-type').textContent = orderType.value;
+    function onPaymentStatusChange() {
+        const paymentStatusSelect = document.getElementById('field-payment-status');
+        if (paymentStatusSelect) {
+            paymentStatusSelect.dataset.manuallyTouched = 'true';
         }
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-        calcWeighbridge();
-        calcWBTotals();
+    function onVendorChange(sel) {
+        updateLiveSummary();
+    }
+
+    function updateLiveSummary() {
+        // Keeps state refreshed
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        calcAll();
+    });
+
+    // Form submit validation
+    document.getElementById('wb-purchase-form')?.addEventListener('submit', function(e) {
+        const rows = document.querySelectorAll('#wb-items-body tr.item-row');
+        if (rows.length === 0) {
+            e.preventDefault();
+            alert('Please add at least one line item to the voucher.');
+            return false;
+        }
+
+        let hasValidItem = false;
+        rows.forEach(r => {
+            const itemSelect = r.querySelector('.erp-item-select');
+            const qty = parseFloat(r.querySelector('.row-qty')?.value) || 0;
+            if (itemSelect && itemSelect.value && qty > 0) {
+                hasValidItem = true;
+            }
+        });
+
+        if (!hasValidItem) {
+            e.preventDefault();
+            alert('Please select an item and provide a valid Net Weight quantity greater than 0.');
+            return false;
+        }
+
+        const saveBtn = document.getElementById('btn-save-purchase');
+        if (saveBtn) {
+            saveBtn.disabled = true;
+            saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-1"></i> Saving Slip...';
+        }
     });
 </script>
 @endpush

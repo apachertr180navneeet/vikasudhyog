@@ -37,7 +37,7 @@
     <div class="erp-kpi-grid">
         <div class="card erp-kpi-card erp-kpi-primary">
             <div class="erp-kpi-icon-box erp-kpi-icon-primary">
-                <i class="fa-solid fa-scale-unbalanced"></i>
+                <i class="fa-solid fa-file-invoice"></i>
             </div>
             <div>
                 <div class="erp-kpi-label">Total WB Slips</div>
@@ -45,19 +45,9 @@
             </div>
         </div>
 
-        <div class="card erp-kpi-card erp-kpi-success">
-            <div class="erp-kpi-icon-box erp-kpi-icon-success">
-                <i class="fa-solid fa-circle-check"></i>
-            </div>
-            <div>
-                <div class="erp-kpi-label">Received Batches</div>
-                <div class="erp-kpi-val erp-kpi-val-success">{{ number_format($completedCount) }}</div>
-            </div>
-        </div>
-
         <div class="card erp-kpi-card" style="border-left: 4px solid #3B82F6;">
             <div class="erp-kpi-icon-box" style="background: rgba(59, 130, 246, 0.12); color: #2563EB;">
-                <i class="fa-solid fa-weight-scale"></i>
+                <i class="fa-solid fa-boxes-stacked"></i>
             </div>
             <div>
                 <div class="erp-kpi-label">Total Net Weight</div>
@@ -67,13 +57,23 @@
             </div>
         </div>
 
-        <div class="card erp-kpi-card" style="border-left: 4px solid #D97706;">
-            <div class="erp-kpi-icon-box" style="background: rgba(217, 119, 6, 0.12); color: #D97706;">
+        <div class="card erp-kpi-card erp-kpi-success">
+            <div class="erp-kpi-icon-box erp-kpi-icon-success">
                 <i class="fa-solid fa-money-bill-wave"></i>
             </div>
             <div>
-                <div class="erp-kpi-label">Total Mandi Cash Amount</div>
-                <div class="erp-kpi-val font-monospace" style="color: #D97706;">₹{{ number_format($totalAmount, 2) }}</div>
+                <div class="erp-kpi-label">Total Procurement Value</div>
+                <div class="erp-kpi-val erp-kpi-val-success font-monospace">₹{{ number_format($totalAmount, 2) }}</div>
+            </div>
+        </div>
+
+        <div class="card erp-kpi-card" style="border-left: 4px solid {{ ($totalPendingAmount ?? 0) > 0 ? '#DC2626' : '#059669' }};">
+            <div class="erp-kpi-icon-box" style="background: {{ ($totalPendingAmount ?? 0) > 0 ? 'rgba(220, 38, 38, 0.12)' : 'rgba(5, 150, 105, 0.12)' }}; color: {{ ($totalPendingAmount ?? 0) > 0 ? '#DC2626' : '#059669' }};">
+                <i class="fa-solid fa-hourglass-half"></i>
+            </div>
+            <div>
+                <div class="erp-kpi-label">Pending Collection</div>
+                <div class="erp-kpi-val font-monospace" style="color: {{ ($totalPendingAmount ?? 0) > 0 ? '#DC2626' : '#059669' }};">₹{{ number_format($totalPendingAmount ?? 0, 2) }}</div>
             </div>
         </div>
     </div>
@@ -146,33 +146,43 @@
                     <tr>
                         <th style="padding-left: 1.5rem;">WB Slip Identity</th>
                         <th>Date</th>
-                        <th>Farmer / Supplier</th>
-                        <th>Vehicle &amp; Driver</th>
-                        <th style="text-align: right;">Gross (KG)</th>
-                        <th style="text-align: right;">Tare (KG)</th>
+                        <th>Vendor / Supplier</th>
+                        <th>Vehicle No</th>
                         <th style="text-align: right;">Net Weight</th>
-                        <th style="text-align: right;">Mandi Amount</th>
+                        <th style="text-align: right;">Total Value</th>
+                        <th style="text-align: right;">Paid (₹)</th>
+                        <th style="text-align: right;">Pending (₹)</th>
                         <th style="text-align: center;">Status</th>
                         <th style="text-align: right; padding-right: 1.5rem;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse($wbPurchases as $wb)
+                        @php
+                            $wbTotal = (float)$wb->total_amount;
+                            $wbPaid = (float)($wb->paid_amount ?? 0);
+                            $wbPending = max(0, $wbTotal - $wbPaid);
+                        @endphp
                         <tr>
                             <!-- WB Slip Identity -->
                             <td style="padding-left: 1.5rem;">
                                 <div style="display: flex; align-items: center; gap: 0.85rem;">
                                     <div class="avatar" style="background: linear-gradient(135deg, #5B841E, #3D5A12); color: #FFFFFF; font-weight: 700; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.88rem; flex-shrink: 0; box-shadow: 0 2px 6px rgba(91, 132, 30, 0.25);">
-                                        {{ strtoupper(substr($wb->vendor->name ?? 'F', 0, 2)) }}
+                                        {{ strtoupper(substr($wb->vendor->name ?? 'W', 0, 2)) }}
                                     </div>
                                     <div>
                                         <a href="{{ route('admin.transactions.wb-purchase-entry.show', $wb) }}" style="font-weight: 600; color: #1E293B; text-decoration: none; display: block;" class="erp-table-title-link font-monospace">
                                             {{ $wb->slip_no }}
                                         </a>
-                                        <div style="display: flex; align-items: center; gap: 0.4rem; margin-top: 0.15rem;">
-                                            <span class="badge font-monospace" style="background: #F1F5F9; color: #475569; font-size: 0.72rem; padding: 2px 6px; border-radius: 4px; border: 1px solid #E2E8F0;">
-                                                {{ $wb->payment_mode }}
+                                        <div style="display: flex; align-items: center; gap: 0.4rem; margin-top: 0.15rem; flex-wrap: wrap;">
+                                            <span class="badge" style="background: #FEF3C7; color: #92400E; font-size: 0.7rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; border: 1px solid #FDE68A;">
+                                                Without Bill
                                             </span>
+                                            @if($wb->invoice_no)
+                                                <span class="badge font-monospace" style="background: #F1F5F9; color: #475569; font-size: 0.72rem; padding: 2px 6px; border-radius: 4px; border: 1px solid #E2E8F0;">
+                                                    <i class="fa-solid fa-receipt me-1"></i>{{ $wb->invoice_no }}
+                                                </span>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>
@@ -188,10 +198,10 @@
                                 </div>
                             </td>
 
-                            <!-- Farmer / Supplier -->
+                            <!-- Vendor / Supplier -->
                             <td>
                                 <div style="font-weight: 600; color: #1E293B;">
-                                    {{ $wb->vendor->name ?? 'Direct Farmer' }}
+                                    {{ $wb->vendor->name ?? 'Supplier' }}
                                 </div>
                                 @if($wb->broker)
                                     <div style="font-size: 0.75rem; color: #64748B; margin-top: 0.1rem;">
@@ -200,43 +210,41 @@
                                 @endif
                             </td>
 
-                            <!-- Vehicle & Driver -->
+                            <!-- Vehicle & Terms -->
                             <td>
                                 <div class="font-monospace" style="font-weight: 600; color: #334155;">
-                                    {{ $wb->vehicle_no ?: 'Trolley / Direct' }}
+                                    {{ $wb->vehicle_no ?: 'Direct / Trolley' }}
                                 </div>
-                                @if($wb->driver_name)
-                                    <div style="font-size: 0.74rem; color: #64748B;">
-                                        <i class="fa-solid fa-user" style="font-size: 0.65rem;"></i> {{ $wb->driver_name }}
-                                    </div>
-                                @endif
-                            </td>
-
-                            <!-- Gross Weight -->
-                            <td style="text-align: right;">
-                                <div class="font-monospace" style="font-size: 0.85rem; color: #64748B;">
-                                    {{ number_format($wb->gross_weight, 2) }}
-                                </div>
-                            </td>
-
-                            <!-- Tare Weight -->
-                            <td style="text-align: right;">
-                                <div class="font-monospace" style="font-size: 0.85rem; color: #64748B;">
-                                    {{ number_format($wb->tare_weight, 2) }}
+                                <div style="font-size: 0.74rem; color: #64748B;">
+                                    {{ $wb->payment_terms ?? '30 Days' }}
                                 </div>
                             </td>
 
                             <!-- Net Weight -->
                             <td style="text-align: right;">
                                 <div class="font-monospace" style="font-weight: 700; color: #1E293B; font-size: 0.95rem;">
-                                    {{ number_format($wb->net_weight, 2) }} <span style="font-size: 0.75rem; color: #64748B; font-weight: normal;">KG</span>
+                                    {{ number_format($wb->items->sum('quantity') ?: $wb->net_weight, 2) }} <span style="font-size: 0.75rem; color: #64748B; font-weight: normal;">KG</span>
                                 </div>
                             </td>
 
-                            <!-- Mandi Amount -->
+                            <!-- Total Value -->
                             <td style="text-align: right;">
-                                <div class="font-monospace" style="font-weight: 700; color: #D97706; font-size: 0.95rem;">
-                                    ₹{{ number_format($wb->total_amount, 2) }}
+                                <div class="font-monospace" style="font-weight: 700; color: #059669; font-size: 0.95rem;">
+                                    ₹{{ number_format($wbTotal, 2) }}
+                                </div>
+                            </td>
+
+                            <!-- Paid (₹) -->
+                            <td style="text-align: right;">
+                                <div class="font-monospace" style="font-weight: 600; color: #2563EB; font-size: 0.9rem;">
+                                    ₹{{ number_format($wbPaid, 2) }}
+                                </div>
+                            </td>
+
+                            <!-- Pending (₹) -->
+                            <td style="text-align: right;">
+                                <div class="font-monospace" style="font-weight: 700; color: {{ $wbPending > 0 ? '#DC2626' : '#059669' }}; font-size: 0.9rem;">
+                                    ₹{{ number_format($wbPending, 2) }}
                                 </div>
                             </td>
 

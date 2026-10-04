@@ -26,6 +26,7 @@ class WBPurchaseController extends Controller
         if ($search = $request->input('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('slip_no', 'like', "%{$search}%")
+                  ->orWhere('invoice_no', 'like', "%{$search}%")
                   ->orWhere('vehicle_no', 'like', "%{$search}%")
                   ->orWhere('driver_name', 'like', "%{$search}%")
                   ->orWhere('notes', 'like', "%{$search}%")
@@ -65,6 +66,8 @@ class WBPurchaseController extends Controller
         $completedCount = WBPurchase::whereIn('status', ['received', 'completed'])->count();
         $totalNetWeight = WBPurchase::where('status', '!=', 'cancelled')->sum('net_weight');
         $totalAmount = WBPurchase::where('status', '!=', 'cancelled')->sum('total_amount');
+        $totalPaidAmount = WBPurchase::where('status', '!=', 'cancelled')->sum('paid_amount');
+        $totalPendingAmount = max(0, (float)$totalAmount - (float)$totalPaidAmount);
 
         $vendors = Vendor::where('status', 'active')->orderBy('name')->get();
 
@@ -74,6 +77,8 @@ class WBPurchaseController extends Controller
             'completedCount',
             'totalNetWeight',
             'totalAmount',
+            'totalPaidAmount',
+            'totalPendingAmount',
             'vendors'
         ));
     }
@@ -105,18 +110,21 @@ class WBPurchaseController extends Controller
     {
         $validated = $request->validate([
             'slip_no' => 'required|string|max:30|unique:wb_purchases,slip_no',
+            'invoice_no' => 'nullable|string|max:50',
             'entry_date' => 'required|date',
             'vendor_id' => 'required|exists:vendors,id',
             'broker_id' => 'nullable|exists:brokers,id',
             'order_type' => 'required|string|max:50',
             'vehicle_no' => 'nullable|string|max:50',
+            'payment_terms' => 'nullable|string|max:50',
             'driver_name' => 'nullable|string|max:100',
             'driver_phone' => 'nullable|string|max:25',
             'gross_weight' => 'nullable|numeric|min:0',
             'tare_weight' => 'nullable|numeric|min:0',
             'deduction_weight' => 'nullable|numeric|min:0',
             'net_weight' => 'nullable|numeric|min:0',
-            'payment_status' => 'nullable|string|in:unpaid,paid',
+            'paid_amount' => 'nullable|numeric|min:0',
+            'payment_status' => 'nullable|string|in:unpaid,partial,paid',
             'payment_mode' => 'nullable|string|max:50',
             'notes' => 'nullable|string',
             'items' => 'required|array|min:1',
@@ -167,11 +175,14 @@ class WBPurchaseController extends Controller
 
             $wbPurchase = WBPurchase::create([
                 'slip_no' => $validated['slip_no'],
+                'bill_type' => 'without_bill',
+                'invoice_no' => $validated['invoice_no'] ?? null,
                 'entry_date' => $validated['entry_date'],
                 'vendor_id' => $validated['vendor_id'],
                 'broker_id' => $validated['broker_id'] ?? null,
                 'order_type' => $validated['order_type'] ?? 'Medium',
                 'vehicle_no' => $validated['vehicle_no'] ?? null,
+                'payment_terms' => $validated['payment_terms'] ?? '30 Days',
                 'driver_name' => $validated['driver_name'] ?? null,
                 'driver_phone' => $validated['driver_phone'] ?? null,
                 'gross_weight' => $gross,
@@ -179,6 +190,7 @@ class WBPurchaseController extends Controller
                 'deduction_weight' => $deduction,
                 'net_weight' => $finalNetWeight,
                 'total_amount' => $calcTotalAmount,
+                'paid_amount' => (float) ($validated['paid_amount'] ?? 0),
                 'payment_status' => $validated['payment_status'] ?? 'unpaid',
                 'payment_mode' => $validated['payment_mode'] ?? 'Cash',
                 'company_id' => $company ? $company->id : null,
@@ -248,18 +260,21 @@ class WBPurchaseController extends Controller
     public function update(Request $request, WBPurchase $wbPurchase)
     {
         $validated = $request->validate([
+            'invoice_no' => 'nullable|string|max:50',
             'entry_date' => 'required|date',
             'vendor_id' => 'required|exists:vendors,id',
             'broker_id' => 'nullable|exists:brokers,id',
             'order_type' => 'required|string|max:50',
             'vehicle_no' => 'nullable|string|max:50',
+            'payment_terms' => 'nullable|string|max:50',
             'driver_name' => 'nullable|string|max:100',
             'driver_phone' => 'nullable|string|max:25',
             'gross_weight' => 'nullable|numeric|min:0',
             'tare_weight' => 'nullable|numeric|min:0',
             'deduction_weight' => 'nullable|numeric|min:0',
             'net_weight' => 'nullable|numeric|min:0',
-            'payment_status' => 'nullable|string|in:unpaid,paid',
+            'paid_amount' => 'nullable|numeric|min:0',
+            'payment_status' => 'nullable|string|in:unpaid,partial,paid',
             'payment_mode' => 'nullable|string|max:50',
             'notes' => 'nullable|string',
             'items' => 'required|array|min:1',
@@ -317,11 +332,13 @@ class WBPurchaseController extends Controller
             $finalNetWeight = $wbNet > 0 ? $wbNet : $calcNetWeight;
 
             $wbPurchase->update([
+                'invoice_no' => $validated['invoice_no'] ?? null,
                 'entry_date' => $validated['entry_date'],
                 'vendor_id' => $validated['vendor_id'],
                 'broker_id' => $validated['broker_id'] ?? null,
                 'order_type' => $validated['order_type'] ?? 'Medium',
                 'vehicle_no' => $validated['vehicle_no'] ?? null,
+                'payment_terms' => $validated['payment_terms'] ?? '30 Days',
                 'driver_name' => $validated['driver_name'] ?? null,
                 'driver_phone' => $validated['driver_phone'] ?? null,
                 'gross_weight' => $gross,
@@ -329,6 +346,7 @@ class WBPurchaseController extends Controller
                 'deduction_weight' => $deduction,
                 'net_weight' => $finalNetWeight,
                 'total_amount' => $calcTotalAmount,
+                'paid_amount' => (float) ($validated['paid_amount'] ?? 0),
                 'payment_status' => $validated['payment_status'] ?? $wbPurchase->payment_status,
                 'payment_mode' => $validated['payment_mode'] ?? $wbPurchase->payment_mode,
                 'notes' => $validated['notes'] ?? null,

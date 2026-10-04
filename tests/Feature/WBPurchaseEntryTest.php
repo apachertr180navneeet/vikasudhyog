@@ -60,7 +60,7 @@ class WBPurchaseEntryTest extends TestCase
         $response->assertSee('WB Purchase Entry (Without Bill)');
         $response->assertSee('Total WB Slips');
         $response->assertSee('Total Net Weight');
-        $response->assertSee('Total Mandi Cash Amount');
+        $response->assertSee('Total Procurement Value');
     }
 
     public function test_wb_purchase_create_page_can_be_rendered_without_status_field(): void
@@ -69,9 +69,11 @@ class WBPurchaseEntryTest extends TestCase
 
         $response = $this->actingAs($user)->get(route('admin.transactions.wb-purchase-entry.create'));
         $response->assertStatus(200);
-        $response->assertSee('New WB Purchase Entry');
-        $response->assertSee('1. Weighbridge Slip Identification &amp; Supplier', false);
-        $response->assertSee('2. Weighbridge Scale Measurements');
+        $response->assertSee('New WB Purchase Entry (Without Bill)');
+        $response->assertSee('1. Inward Slip &amp; Supplier Identity', false);
+        $response->assertSee('2. Inward Product Line Items');
+        $response->assertSee('RATE (₹)');
+        $response->assertSee('LINE TOTAL (₹)');
         // Critical requirement: Ensure NO editable status field in create form
         $response->assertDontSee('name="status"', false);
     }
@@ -164,8 +166,8 @@ class WBPurchaseEntryTest extends TestCase
         $response = $this->actingAs($user)->get(route('admin.transactions.wb-purchase-entry.show', $wb));
         $response->assertStatus(200);
         $response->assertSee('WBP-2026-0077');
-        $response->assertSee('Grand Mandi Cash Value');
-        $response->assertSee('Weighbridge Scale Breakdown');
+        $response->assertSee('Total Procurement Value');
+        $response->assertSee('Inward Product Line Items');
     }
 
     public function test_wb_purchase_edit_page_can_be_rendered_without_status_field(): void

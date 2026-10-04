@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('purchases', function (Blueprint $table) {
             $table->id();
             $table->string('purchase_no', 30)->unique();
+            $table->string('bill_type', 30)->default('with_bill');
             $table->string('invoice_no', 50)->nullable();
             $table->date('invoice_date');
             $table->foreignId('vendor_id')->constrained('vendors')->cascadeOnDelete();

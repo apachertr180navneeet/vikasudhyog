@@ -54,6 +54,11 @@ class PurchaseController extends Controller
             $query->whereDate('invoice_date', '<=', $endDate);
         }
 
+        // Bill Type Filter (With Bill vs Without Bill)
+        if ($billType = $request->input('bill_type')) {
+            $query->where('bill_type', $billType);
+        }
+
         // Order
         $purchases = $query->orderBy('invoice_date', 'desc')
                            ->orderBy('id', 'desc')
@@ -111,6 +116,7 @@ class PurchaseController extends Controller
     {
         $validated = $request->validate([
             'purchase_no' => 'required|string|max:30|unique:purchases,purchase_no',
+            'bill_type' => 'nullable|string|in:with_bill,without_bill',
             'invoice_no' => 'nullable|string|max:50',
             'invoice_date' => 'required|date',
             'vendor_id' => 'required|exists:vendors,id',
@@ -181,6 +187,7 @@ class PurchaseController extends Controller
 
             $purchase = Purchase::create([
                 'purchase_no' => $validated['purchase_no'],
+                'bill_type' => $validated['bill_type'] ?? 'with_bill',
                 'invoice_no' => $validated['invoice_no'] ?? null,
                 'invoice_date' => $validated['invoice_date'],
                 'vendor_id' => $validated['vendor_id'],
@@ -263,6 +270,7 @@ class PurchaseController extends Controller
     public function update(Request $request, Purchase $purchase)
     {
         $validated = $request->validate([
+            'bill_type' => 'nullable|string|in:with_bill,without_bill',
             'invoice_no' => 'nullable|string|max:50',
             'invoice_date' => 'required|date',
             'vendor_id' => 'required|exists:vendors,id',
@@ -341,6 +349,7 @@ class PurchaseController extends Controller
             $grandTotal = $billTotal + $underBillingTotal;
 
             $purchase->update([
+                'bill_type' => $validated['bill_type'] ?? $purchase->bill_type ?? 'with_bill',
                 'invoice_no' => $validated['invoice_no'] ?? null,
                 'invoice_date' => $validated['invoice_date'],
                 'vendor_id' => $validated['vendor_id'],

@@ -14,11 +14,14 @@ class WBPurchase extends Model
 
     protected $fillable = [
         'slip_no',
+        'bill_type',
+        'invoice_no',
         'entry_date',
         'vendor_id',
         'broker_id',
         'order_type',
         'vehicle_no',
+        'payment_terms',
         'driver_name',
         'driver_phone',
         'gross_weight',
@@ -26,6 +29,7 @@ class WBPurchase extends Model
         'deduction_weight',
         'net_weight',
         'total_amount',
+        'paid_amount',
         'payment_status',
         'payment_mode',
         'company_id',
@@ -40,6 +44,7 @@ class WBPurchase extends Model
         'deduction_weight' => 'decimal:3',
         'net_weight' => 'decimal:3',
         'total_amount' => 'decimal:2',
+        'paid_amount' => 'decimal:2',
     ];
 
     public function vendor()
