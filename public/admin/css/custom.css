@@ -2733,3 +2733,130 @@
     transform: translateY(-1px) !important;
 }
 
+/* ==========================================================================
+   Transaction Modules: High-Density Line Items Table & Live Compute
+   ========================================================================== */
+.erp-items-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.erp-items-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 0;
+}
+
+.erp-items-table thead th {
+    background: #F8FAFC !important;
+    color: #475569 !important;
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    padding: 0.85rem 0.65rem !important;
+    border-bottom: 2px solid #E2E8F0 !important;
+    border-top: none !important;
+    white-space: nowrap !important;
+}
+
+.erp-items-table tbody td {
+    padding: 0.6rem 0.55rem !important;
+    border-bottom: 1px solid #F1F5F9 !important;
+    border-top: none !important;
+    vertical-align: middle !important;
+    background: #FFFFFF !important;
+}
+
+.erp-items-table tbody tr:hover td {
+    background: #FBFDF9 !important;
+}
+
+.erp-items-table tbody tr:last-child td {
+    border-bottom: none !important;
+}
+
+.erp-items-table .form-control,
+.erp-items-table .form-select {
+    font-size: 0.84rem !important;
+    padding: 0.38rem 0.55rem !important;
+    height: 36px !important;
+    border: 1px solid #CBD5E1 !important;
+    border-radius: 7px !important;
+    background-color: #FFFFFF !important;
+    color: #1E293B !important;
+    transition: all 0.15s ease !important;
+}
+
+.erp-items-table .form-control:focus,
+.erp-items-table .form-select:focus {
+    border-color: #5B841E !important;
+    box-shadow: 0 0 0 3px rgba(91, 132, 30, 0.14) !important;
+    outline: none !important;
+}
+
+.erp-items-table .form-control[readonly] {
+    background-color: #F8FAFC !important;
+    color: #475569 !important;
+    border-color: #E2E8F0 !important;
+}
+
+.erp-items-table .delete-row-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    border: 1px solid #FEE2E2;
+    background: #FEF2F2;
+    color: #DC2626;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.erp-items-table .delete-row-btn:hover {
+    background: #DC2626;
+    color: #FFFFFF;
+    border-color: #DC2626;
+    transform: scale(1.05);
+}
+
+.erp-table-totals-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 1.5rem;
+    padding: 1rem 1.25rem;
+    background: #F8FAFC;
+    border-top: 2px solid #E2E8F0;
+    border-radius: 0 0 12px 12px;
+}
+
+.erp-table-total-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.erp-table-total-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #64748B;
+}
+
+.erp-table-total-val {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #0F172A;
+}
+
+

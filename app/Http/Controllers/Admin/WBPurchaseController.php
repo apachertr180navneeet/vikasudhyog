@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Broker;
 use App\Models\Company;
 use App\Models\Item;
+use App\Models\Unit;
 use App\Models\Vendor;
 use App\Models\WBPurchase;
 use App\Models\WBPurchaseItem;
@@ -86,12 +87,14 @@ class WBPurchaseController extends Controller
         $vendors = Vendor::where('status', 'active')->orderBy('name')->get();
         $brokers = Broker::where('status', 'active')->orderBy('name')->get();
         $items = Item::where('status', 'active')->orderBy('name')->get();
+        $units = Unit::active()->orderBy('name')->get();
 
         return view('admin.transactions.wb-purchase.create', compact(
             'nextSlipNo',
             'vendors',
             'brokers',
-            'items'
+            'items',
+            'units'
         ));
     }
 
@@ -228,12 +231,14 @@ class WBPurchaseController extends Controller
         $vendors = Vendor::where('status', 'active')->orderBy('name')->get();
         $brokers = Broker::where('status', 'active')->orderBy('name')->get();
         $items = Item::where('status', 'active')->orderBy('name')->get();
+        $units = Unit::active()->orderBy('name')->get();
 
         return view('admin.transactions.wb-purchase.edit', compact(
             'wbPurchase',
             'vendors',
             'brokers',
-            'items'
+            'items',
+            'units'
         ));
     }
 

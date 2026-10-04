@@ -4,8 +4,8 @@
 
 const Transactions = {
     render(viewId) {
-        if (viewId === 'txn-purchase') this.renderPurchaseEntry();
-        if (viewId === 'txn-wb-purchase') this.renderWBPurchaseEntry();
+        if (viewId === 'txn-purchase') return; // Handled by Laravel Blade PurchaseController
+        if (viewId === 'txn-wb-purchase') return; // Handled by Laravel Blade WBPurchaseController
         if (viewId === 'txn-sales-order') this.renderSalesOrder();
         if (viewId === 'txn-wb-sales') this.renderWBSalesEntry();
         if (viewId === 'txn-order-dispatch') this.renderOrderDispatch();

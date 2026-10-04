@@ -1,274 +1,331 @@
 @extends('admin.layouts.app')
 
-@section('title', 'Edit WB Purchase Entry - VIKAS UDHYOG ERP')
+@section('title', 'Edit WB Slip ' . $wbPurchase->slip_no . ' - VIKAS UDHYOG ERP')
 @section('page_code', 'txn-wb-purchase')
 
 @section('content')
-<div class="erp-module-wrapper">
-    <!-- Top Bar & Breadcrumb -->
-    <div class="erp-header-toolbar mb-4">
-        <div class="erp-breadcrumb-wrap">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb mb-1">
-                    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="{{ route('admin.transactions.wb-purchase-entry') }}">WB Purchase Entry</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Edit #{{ $wbPurchase->slip_no }}</li>
-                </ol>
-            </nav>
-            <h1 class="erp-page-title">Edit WB Purchase Slip #{{ $wbPurchase->slip_no }}</h1>
-            <p class="erp-page-desc">Modify weighbridge readings, net weight deductions, and Mandi cash purchase items</p>
+<section class="view-section active" id="view-wb-purchase-edit">
+    <!-- Breadcrumb & Top Bar -->
+    <div class="erp-page-top-bar">
+        <div>
+            <div class="erp-breadcrumb-trail">
+                <a href="{{ route('admin.dashboard') }}">Dashboard</a>
+                <i class="fa-solid fa-chevron-right erp-breadcrumb-sep"></i>
+                <a href="{{ route('admin.transactions.wb-purchase-entry') }}">Transactions</a>
+                <i class="fa-solid fa-chevron-right erp-breadcrumb-sep"></i>
+                <a href="{{ route('admin.transactions.wb-purchase-entry') }}">WB Purchase Entry</a>
+                <i class="fa-solid fa-chevron-right erp-breadcrumb-sep"></i>
+                <span class="erp-breadcrumb-active">Edit #{{ $wbPurchase->slip_no }}</span>
+            </div>
+            <h1 class="erp-page-title">
+                <i class="fa-solid fa-pen-to-square text-primary"></i> Edit WB Purchase Slip #{{ $wbPurchase->slip_no }}
+            </h1>
+            <p class="erp-page-subtitle">
+                Modify weighbridge scale weighments, tare deductions, raw material items &amp; supplier settlement.
+            </p>
         </div>
+
         <div class="erp-header-actions">
-            <a href="{{ route('admin.transactions.wb-purchase-entry.show', $wbPurchase) }}" class="erp-btn-outline me-2">
-                <i class="fa-solid fa-eye"></i> View 360
+            <a href="{{ route('admin.transactions.wb-purchase-entry.show', $wbPurchase) }}" class="btn btn-outline">
+                <i class="fa-solid fa-eye"></i> View Slip Dossier
             </a>
-            <a href="{{ route('admin.transactions.wb-purchase-entry') }}" class="erp-btn-outline">
+            <a href="{{ route('admin.transactions.wb-purchase-entry') }}" class="btn btn-outline">
                 <i class="fa-solid fa-arrow-left"></i> Back to WB Slips
             </a>
         </div>
     </div>
 
-    <!-- Alert Messages -->
-    @if($errors->any())
-        <div class="alert alert-danger erp-alert alert-dismissible fade show mb-4" role="alert">
-            <i class="fa-solid fa-triangle-exclamation me-2"></i>
-            <strong>Please correct the following errors:</strong>
-            <ul class="mb-0 mt-2 ps-3">
-                @foreach($errors->all() as $err)
-                    <li>{{ $err }}</li>
-                @endforeach
-            </ul>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <!-- Alert Notifications -->
+    @if(isset($errors) && $errors->any())
+        <div class="alert erp-alert-danger">
+            <div class="erp-alert-content">
+                <i class="fa-solid fa-circle-exclamation erp-alert-icon-danger"></i>
+                <div>
+                    <strong>Please correct the following errors:</strong>
+                    <ul class="mb-0 mt-1 ps-3" style="font-size: 0.85rem;">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
+            <button type="button" class="erp-alert-close-btn" onclick="this.parentElement.remove()">&times;</button>
         </div>
     @endif
 
-    <form method="POST" action="{{ route('admin.transactions.wb-purchase-entry.update', $wbPurchase) }}" id="wb-purchase-edit-form">
+    <!-- Form Container -->
+    <form action="{{ route('admin.transactions.wb-purchase-entry.update', $wbPurchase) }}" method="POST" id="wb-purchase-form">
         @csrf
         @method('PUT')
 
-        <div class="row g-4">
-            <!-- Left Column: Form Sections -->
-            <div class="col-lg-8">
-                <!-- Section 1: Slip Coordinates & Supplier -->
-                <div class="card erp-form-section-card mb-4">
-                    <div class="erp-section-header">
-                        <div class="erp-section-icon" style="background: rgba(91, 132, 30, 0.1); color: #5B841E;">
-                            <i class="fa-solid fa-receipt"></i>
-                        </div>
-                        <div>
-                            <h3 class="erp-section-title">Weighbridge Inward Coordinates</h3>
-                            <p class="erp-section-desc">Slip identification, arrival date, farmer/vendor details, and vehicle</p>
+        <div class="erp-form-layout-2col">
+            <!-- Left Main Column -->
+            <div class="erp-form-main-col">
+
+                <!-- 1. Weighbridge Slip Identification & Supplier -->
+                <div class="card erp-form-section-card">
+                    <div class="erp-form-section-header">
+                        <div class="erp-form-section-header-left">
+                            <div class="erp-form-section-icon-box erp-form-icon-primary">
+                                <i class="fa-solid fa-receipt"></i>
+                            </div>
+                            <div>
+                                <h3 class="erp-form-section-title">1. Weighbridge Slip Identification &amp; Supplier</h3>
+                                <p class="erp-form-section-desc">Slip reference, procurement date, supplier coordinates &amp; vehicle details</p>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="erp-section-body">
-                        <div class="row g-3">
-                            <!-- WB Slip No (Readonly) -->
-                            <div class="col-md-4">
-                                <label class="erp-field-label">WB Slip No</label>
-                                <div class="erp-input-group-icon">
-                                    <i class="fa-solid fa-hashtag erp-field-icon"></i>
-                                    <input type="text" class="form-control erp-field-input font-monospace font-weight-bold" value="{{ $wbPurchase->slip_no }}" readonly>
-                                </div>
+                    <div class="erp-form-section-body">
+                        <!-- Slip No (Readonly) -->
+                        <div class="form-group">
+                            <label class="erp-field-label">
+                                WB Slip No <span class="erp-req-star">*</span>
+                            </label>
+                            <div class="erp-field-icon-wrap">
+                                <i class="fa-solid fa-hashtag erp-field-icon"></i>
+                                <input type="text" class="form-control erp-field-input-iconified erp-field-input-mono font-weight-bold" value="{{ $wbPurchase->slip_no }}" readonly>
                             </div>
+                            <span class="erp-field-hint">Fixed weighbridge slip reference</span>
+                        </div>
 
-                            <!-- Entry Date -->
-                            <div class="col-md-4">
-                                <label class="erp-field-label">Entry Date <span class="text-danger">*</span></label>
-                                <div class="erp-input-group-icon">
-                                    <i class="fa-solid fa-calendar-day erp-field-icon"></i>
-                                    <input type="date" name="entry_date" id="field-entry-date" class="form-control erp-field-input" value="{{ old('entry_date', $wbPurchase->entry_date->format('Y-m-d')) }}" required onchange="updateLivePreview()">
-                                </div>
+                        <!-- Entry Date -->
+                        <div class="form-group">
+                            <label class="erp-field-label">
+                                Inward Entry Date <span class="erp-req-star">*</span>
+                            </label>
+                            <div class="erp-field-icon-wrap">
+                                <i class="fa-solid fa-calendar-day erp-field-icon"></i>
+                                <input type="date" name="entry_date" id="field-entry-date" class="form-control erp-field-input-iconified" value="{{ old('entry_date', $wbPurchase->entry_date->format('Y-m-d')) }}" required onchange="updateLivePreview()">
                             </div>
+                            <span class="erp-field-hint">Consignment arrival date</span>
+                        </div>
 
-                            <!-- Payment Mode -->
-                            <div class="col-md-4">
-                                <label class="erp-field-label">Payment Mode</label>
-                                <select name="payment_mode" id="field-payment-mode" class="form-select erp-field-input" onchange="updateLivePreview()">
-                                    <option value="Cash" {{ old('payment_mode', $wbPurchase->payment_mode) == 'Cash' ? 'selected' : '' }}>Mandi Cash</option>
-                                    <option value="Bank Transfer" {{ old('payment_mode', $wbPurchase->payment_mode) == 'Bank Transfer' ? 'selected' : '' }}>Bank Transfer / IMPS</option>
-                                    <option value="Mandi Slip" {{ old('payment_mode', $wbPurchase->payment_mode) == 'Mandi Slip' ? 'selected' : '' }}>Mandi Slip / Voucher</option>
-                                    <option value="Cheque" {{ old('payment_mode', $wbPurchase->payment_mode) == 'Cheque' ? 'selected' : '' }}>Cheque</option>
+                        <!-- Vendor / Farmer Supplier Select -->
+                        <div class="form-group erp-form-col-full">
+                            <label class="erp-field-label">
+                                Vendor / Mandi Farmer Supplier <span class="erp-req-star">*</span>
+                            </label>
+                            <div class="erp-field-icon-wrap">
+                                <i class="fa-solid fa-user-tag erp-field-icon"></i>
+                                <select name="vendor_id" id="field-vendor-id" class="form-control erp-field-input-iconified" required onchange="onVendorChange(this)">
+                                    @foreach($vendors as $vnd)
+                                        <option value="{{ $vnd->id }}" data-name="{{ $vnd->name }}" data-city="{{ $vnd->city }}" {{ old('vendor_id', $wbPurchase->vendor_id) == $vnd->id ? 'selected' : '' }}>
+                                            {{ $vnd->name }} ({{ $vnd->code }}{{ $vnd->city ? ' - ' . $vnd->city : '' }})
+                                        </option>
+                                    @endforeach
                                 </select>
                             </div>
+                            <span class="erp-field-hint">Payable ledger recipient for this mandi slip</span>
+                        </div>
 
-                            <!-- Vendor / Farmer Select -->
-                            <div class="col-md-6">
-                                <label class="erp-field-label">Vendor / Farmer Supplier <span class="text-danger">*</span></label>
-                                <div class="erp-input-group-icon">
-                                    <i class="fa-solid fa-user-tag erp-field-icon"></i>
-                                    <select name="vendor_id" id="field-vendor-id" class="form-select erp-field-input" required onchange="onVendorChange(this)">
-                                        @foreach($vendors as $vnd)
-                                            <option value="{{ $vnd->id }}" data-name="{{ $vnd->name }}" {{ old('vendor_id', $wbPurchase->vendor_id) == $vnd->id ? 'selected' : '' }}>
-                                                {{ $vnd->name }} ({{ $vnd->city ?? 'Rajasthan' }})
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-
-                            <!-- Broker / Agent Select -->
-                            <div class="col-md-6">
-                                <label class="erp-field-label">Broker / Agent <span class="text-muted">(Optional)</span></label>
-                                <div class="erp-input-group-icon">
-                                    <i class="fa-solid fa-handshake erp-field-icon"></i>
-                                    <select name="broker_id" id="field-broker-id" class="form-select erp-field-input" onchange="updateLivePreview()">
-                                        <option value="">Direct Mandi Purchase (No Broker)</option>
-                                        @foreach($brokers as $brk)
-                                            <option value="{{ $brk->id }}" data-name="{{ $brk->name }}" {{ old('broker_id', $wbPurchase->broker_id) == $brk->id ? 'selected' : '' }}>
-                                                {{ $brk->name }} ({{ $brk->city ?? 'Sojat' }} - {{ $brk->commission_rate }}%)
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-
-                            <!-- Vehicle No -->
-                            <div class="col-md-4">
-                                <label class="erp-field-label">Vehicle No / Trolley</label>
-                                <div class="erp-input-group-icon">
-                                    <i class="fa-solid fa-truck erp-field-icon"></i>
-                                    <input type="text" name="vehicle_no" id="field-vehicle-no" class="form-control erp-field-input font-monospace" placeholder="Enter Vehicle No" value="{{ old('vehicle_no', $wbPurchase->vehicle_no) }}" oninput="updateLivePreview()">
-                                </div>
-                            </div>
-
-                            <!-- Driver Name -->
-                            <div class="col-md-4">
-                                <label class="erp-field-label">Driver Name</label>
-                                <div class="erp-input-group-icon">
-                                    <i class="fa-solid fa-user erp-field-icon"></i>
-                                    <input type="text" name="driver_name" id="field-driver-name" class="form-control erp-field-input" placeholder="Enter Driver Name" value="{{ old('driver_name', $wbPurchase->driver_name) }}" oninput="updateLivePreview()">
-                                </div>
-                            </div>
-
-                            <!-- Driver Phone -->
-                            <div class="col-md-4">
-                                <label class="erp-field-label">Driver Phone</label>
-                                <div class="erp-input-group-icon">
-                                    <i class="fa-solid fa-phone erp-field-icon"></i>
-                                    <input type="text" name="driver_phone" class="form-control erp-field-input font-monospace" placeholder="Enter Driver Phone" value="{{ old('driver_phone', $wbPurchase->driver_phone) }}">
-                                </div>
-                            </div>
-
-                            <!-- Order Urgency -->
-                            <div class="col-md-4">
-                                <label class="erp-field-label">Consignment Urgency</label>
-                                <select name="order_type" class="form-select erp-field-input">
-                                    <option value="Medium" {{ old('order_type', $wbPurchase->order_type) == 'Medium' ? 'selected' : '' }}>Medium (Regular)</option>
-                                    <option value="Urgent" {{ old('order_type', $wbPurchase->order_type) == 'Urgent' ? 'selected' : '' }}>Urgent</option>
-                                    <option value="Fast" {{ old('order_type', $wbPurchase->order_type) == 'Fast' ? 'selected' : '' }}>Fast</option>
-                                    <option value="Ready Delivery" {{ old('order_type', $wbPurchase->order_type) == 'Ready Delivery' ? 'selected' : '' }}>Ready Delivery</option>
+                        <!-- Broker / Agent Select -->
+                        <div class="form-group">
+                            <label class="erp-field-label">
+                                Mandi Broker / Commission Agent <span class="text-muted">(Optional)</span>
+                            </label>
+                            <div class="erp-field-icon-wrap">
+                                <i class="fa-solid fa-handshake erp-field-icon"></i>
+                                <select name="broker_id" id="field-broker-id" class="form-control erp-field-input-iconified" onchange="updateLivePreview()">
+                                    <option value="">Direct Mandi (No Broker)...</option>
+                                    @foreach($brokers as $brk)
+                                        <option value="{{ $brk->id }}" data-name="{{ $brk->name }}" {{ old('broker_id', $wbPurchase->broker_id) == $brk->id ? 'selected' : '' }}>
+                                            {{ $brk->name }} ({{ $brk->city ?? 'Sojat' }})
+                                        </option>
+                                    @endforeach
                                 </select>
                             </div>
+                            <span class="erp-field-hint">Local sourcing broker</span>
+                        </div>
+
+                        <!-- Order Urgency / Type -->
+                        <div class="form-group">
+                            <label class="erp-field-label">
+                                Order Classification / Priority <span class="erp-req-star">*</span>
+                            </label>
+                            <div class="erp-field-icon-wrap">
+                                <i class="fa-solid fa-tag erp-field-icon"></i>
+                                <select name="order_type" id="field-order-type" class="form-control erp-field-input-iconified" required onchange="updateLivePreview()">
+                                    <option value="Medium" {{ old('order_type', $wbPurchase->order_type) === 'Medium' ? 'selected' : '' }}>Medium (Standard Processing)</option>
+                                    <option value="Urgent" {{ old('order_type', $wbPurchase->order_type) === 'Urgent' ? 'selected' : '' }}>Urgent Mandi Lot</option>
+                                    <option value="Fast" {{ old('order_type', $wbPurchase->order_type) === 'Fast' ? 'selected' : '' }}>Fast Track</option>
+                                    <option value="Ready Delivery" {{ old('order_type', $wbPurchase->order_type) === 'Ready Delivery' ? 'selected' : '' }}>Ready Delivery</option>
+                                </select>
+                            </div>
+                            <span class="erp-field-hint">Inward lot processing urgency</span>
+                        </div>
+
+                        <!-- Vehicle No -->
+                        <div class="form-group">
+                            <label class="erp-field-label">
+                                Vehicle / Truck Registration No
+                            </label>
+                            <div class="erp-field-icon-wrap">
+                                <i class="fa-solid fa-truck-moving erp-field-icon"></i>
+                                <input type="text" name="vehicle_no" id="field-vehicle-no" class="form-control erp-field-input-iconified erp-field-input-mono" placeholder="Enter vehicle registration number" value="{{ old('vehicle_no', $wbPurchase->vehicle_no) }}" oninput="this.value = this.value.toUpperCase(); updateLivePreview();">
+                            </div>
+                            <span class="erp-field-hint">Truck number weighed on scale</span>
+                        </div>
+
+                        <!-- Driver Name -->
+                        <div class="form-group">
+                            <label class="erp-field-label">
+                                Driver Name
+                            </label>
+                            <div class="erp-field-icon-wrap">
+                                <i class="fa-solid fa-user erp-field-icon"></i>
+                                <input type="text" name="driver_name" id="field-driver-name" class="form-control erp-field-input-iconified" placeholder="Enter driver name" value="{{ old('driver_name', $wbPurchase->driver_name) }}" oninput="updateLivePreview()">
+                            </div>
+                            <span class="erp-field-hint">Name of driver presenting the consignment</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Section 2: Weighbridge Scale Tare & Net Weighments -->
-                <div class="card erp-form-section-card mb-4">
-                    <div class="erp-section-header">
-                        <div class="erp-section-icon" style="background: rgba(37, 99, 235, 0.1); color: #2563EB;">
-                            <i class="fa-solid fa-scale-balanced"></i>
-                        </div>
-                        <div>
-                            <h3 class="erp-section-title">Weighbridge Scale Readings (Kanta Weighment)</h3>
-                            <p class="erp-section-desc">Gross truck weight, empty tare weight, and moisture/bag deduction in KG</p>
+                <!-- 2. Weighbridge Scale Measurements -->
+                <div class="card erp-form-section-card">
+                    <div class="erp-form-section-header">
+                        <div class="erp-form-section-header-left">
+                            <div class="erp-form-section-icon-box erp-form-icon-success">
+                                <i class="fa-solid fa-weight-scale"></i>
+                            </div>
+                            <div>
+                                <h3 class="erp-form-section-title">2. Weighbridge Scale Measurements</h3>
+                                <p class="erp-form-section-desc">Gross loaded scale weight, empty vehicle tare, and moisture deduction tare</p>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="erp-section-body">
-                        <div class="row g-3">
-                            <div class="col-md-3">
-                                <label class="erp-field-label">Gross Weight (KG)</label>
-                                <input type="number" step="0.01" min="0" name="gross_weight" id="field-gross-weight" class="form-control erp-field-input font-monospace" placeholder="Enter Gross Weight" value="{{ old('gross_weight', $wbPurchase->gross_weight) }}" oninput="calcWBWeights()">
+                    <div class="erp-form-section-body">
+                        <!-- Gross Weight -->
+                        <div class="form-group">
+                            <label class="erp-field-label">
+                                Gross Weight (KG) <span class="erp-req-star">*</span>
+                            </label>
+                            <div class="erp-field-icon-wrap">
+                                <i class="fa-solid fa-truck-ramp-box erp-field-icon"></i>
+                                <input type="number" step="0.01" min="0" name="gross_weight" id="field-gross-weight" class="form-control erp-field-input-iconified erp-field-input-mono font-weight-bold" style="text-align: right;" value="{{ old('gross_weight', $wbPurchase->gross_weight) }}" required oninput="calcWeighbridge()">
                             </div>
-                            <div class="col-md-3">
-                                <label class="erp-field-label">Tare / Empty Weight (KG)</label>
-                                <input type="number" step="0.01" min="0" name="tare_weight" id="field-tare-weight" class="form-control erp-field-input font-monospace" placeholder="Enter Tare Weight" value="{{ old('tare_weight', $wbPurchase->tare_weight) }}" oninput="calcWBWeights()">
+                            <span class="erp-field-hint">First weighment: Loaded truck weight</span>
+                        </div>
+
+                        <!-- Tare Weight -->
+                        <div class="form-group">
+                            <label class="erp-field-label">
+                                Tare Weight (KG) <span class="erp-req-star">*</span>
+                            </label>
+                            <div class="erp-field-icon-wrap">
+                                <i class="fa-solid fa-truck erp-field-icon"></i>
+                                <input type="number" step="0.01" min="0" name="tare_weight" id="field-tare-weight" class="form-control erp-field-input-iconified erp-field-input-mono font-weight-bold" style="text-align: right;" value="{{ old('tare_weight', $wbPurchase->tare_weight) }}" required oninput="calcWeighbridge()">
                             </div>
-                            <div class="col-md-3">
-                                <label class="erp-field-label">Deduction / Moisture (KG)</label>
-                                <input type="number" step="0.01" min="0" name="deduction_weight" id="field-deduction-weight" class="form-control erp-field-input font-monospace" placeholder="Enter Deduction" value="{{ old('deduction_weight', $wbPurchase->deduction_weight) }}" oninput="calcWBWeights()">
+                            <span class="erp-field-hint">Second weighment: Empty vehicle tare</span>
+                        </div>
+
+                        <!-- Deduction / Moisture Tare -->
+                        <div class="form-group">
+                            <label class="erp-field-label">
+                                Deduction / Bag Tare (KG)
+                            </label>
+                            <div class="erp-field-icon-wrap">
+                                <i class="fa-solid fa-droplet-slash erp-field-icon"></i>
+                                <input type="number" step="0.01" min="0" name="deduction_weight" id="field-deduction-weight" class="form-control erp-field-input-iconified erp-field-input-mono" style="text-align: right;" value="{{ old('deduction_weight', $wbPurchase->deduction_weight) }}" oninput="calcWeighbridge()">
                             </div>
-                            <div class="col-md-3">
-                                <label class="erp-field-label">Scale Net Weight (KG)</label>
-                                <input type="number" step="0.01" min="0" name="net_weight" id="field-net-weight" class="form-control erp-field-input font-monospace font-weight-bold" style="background: #F1F5F9; color: #0F172A;" value="{{ old('net_weight', $wbPurchase->net_weight) }}" readonly>
+                            <span class="erp-field-hint">Gunny bags, moisture loss, or dust deduction</span>
+                        </div>
+
+                        <!-- Net Weight (Calculated) -->
+                        <div class="form-group">
+                            <label class="erp-field-label">
+                                Net Billable Weight (KG)
+                            </label>
+                            <div class="erp-field-icon-wrap">
+                                <i class="fa-solid fa-scale-unbalanced erp-field-icon"></i>
+                                <input type="number" step="0.01" min="0" name="net_weight" id="field-net-weight" class="form-control erp-field-input-iconified erp-field-input-mono font-weight-bold" style="text-align: right; background: #F8FAFC; color: #059669;" value="{{ old('net_weight', $wbPurchase->net_weight) }}" readonly>
                             </div>
+                            <span class="erp-field-hint">Formula: Gross - Tare - Deduction</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Section 3: Line Items (Item, Quantity, WB Rate, Amount) -->
-                <div class="card erp-form-section-card mb-4">
-                    <div class="erp-section-header d-flex justify-content-between align-items-center">
-                        <div class="d-flex align-items-center">
-                            <div class="erp-section-icon" style="background: rgba(16, 185, 129, 0.1); color: #10B981;">
+                <!-- 3. Inward Raw Materials Line Items -->
+                <div class="card erp-form-section-card">
+                    <div class="erp-form-section-header">
+                        <div class="erp-form-section-header-left">
+                            <div class="erp-form-section-icon-box erp-form-icon-purple">
                                 <i class="fa-solid fa-boxes-stacked"></i>
                             </div>
                             <div>
-                                <h3 class="erp-section-title">Raw Material Line Items</h3>
-                                <p class="erp-section-desc">Item allocated, inward weight, and mandi cash rate</p>
+                                <h3 class="erp-form-section-title">3. Inward Raw Materials &amp; Mandi Items</h3>
+                                <p class="erp-form-section-desc">Henna leaves, herbs, and direct procurement lots at agreed mandi cash rates</p>
                             </div>
                         </div>
-                        <button type="button" class="erp-btn-outline erp-btn-sm" onclick="addWBItemRow()">
+                        <button type="button" class="btn btn-outline" style="font-size: 0.8rem; padding: 0.4rem 0.85rem;" onclick="addWBRow()">
                             <i class="fa-solid fa-plus me-1"></i> Add Line Item
                         </button>
                     </div>
 
-                    <div class="erp-section-body p-0">
-                        <div class="table-responsive">
-                            <table class="table erp-line-items-table mb-0" id="wb-items-table">
-                                <thead style="background: #F8FAFC;">
+                    <div class="erp-form-section-body p-0" style="padding: 0 !important;">
+                        <div class="erp-items-table-wrapper" style="border: none; border-radius: 0;">
+                            <table class="erp-items-table" id="wb-items-table">
+                                <thead>
                                     <tr>
-                                        <th style="width: 40px; text-align: center;">#</th>
-                                        <th style="min-width: 220px;">Product / Herb Item <span class="text-danger">*</span></th>
-                                        <th style="width: 110px;">Batch No</th>
-                                        <th style="width: 85px;">Unit</th>
-                                        <th style="width: 120px;">Net Weight <span class="text-danger">*</span></th>
-                                        <th style="width: 120px;">WB Rate (₹) <span class="text-danger">*</span></th>
-                                        <th style="width: 130px; text-align: right;">Amount (₹)</th>
-                                        <th style="width: 120px;">Remarks</th>
-                                        <th style="width: 45px; text-align: center;"></th>
+                                        <th style="width: 38px; text-align: center;">S No</th>
+                                        <th style="min-width: 220px;">Item Description <span class="text-danger">*</span></th>
+                                        <th style="width: 100px;">Unit Type <span class="text-danger">*</span></th>
+                                        <th style="width: 115px; text-align: right;">Net Qty <span class="text-danger">*</span></th>
+                                        <th style="width: 115px; text-align: right;">Mandi Rate (₹) <span class="text-danger">*</span></th>
+                                        <th style="width: 130px; text-align: right;">Line Total (₹)</th>
+                                        <th style="min-width: 140px;">Remarks</th>
+                                        <th style="width: 40px; text-align: center;"></th>
                                     </tr>
                                 </thead>
                                 <tbody id="wb-items-body">
-                                    @foreach($wbPurchase->items as $idx => $item)
+                                    @foreach($wbPurchase->items as $idx => $line)
                                         <tr class="item-row">
                                             <td class="text-center row-sno font-weight-600 font-monospace text-muted">{{ $idx + 1 }}</td>
                                             <td>
                                                 <select name="items[{{ $idx }}][item_id]" class="form-select erp-item-select" required onchange="onWBItemSelect(this)">
+                                                    <option value="">Select Raw Material / Herb...</option>
                                                     @foreach($items as $itm)
                                                         <option value="{{ $itm->id }}"
                                                                 data-code="{{ $itm->code }}"
                                                                 data-unit="{{ $itm->unit }}"
-                                                                data-rate="{{ $itm->purchase_rate }}"
-                                                                data-batch="{{ $itm->batch_no }}"
-                                                                {{ $item->item_id == $itm->id ? 'selected' : '' }}>
+                                                                data-purchase-rate="{{ $itm->purchase_rate }}"
+                                                                {{ $line->item_id == $itm->id ? 'selected' : '' }}>
                                                             {{ $itm->name }} ({{ $itm->code }})
                                                         </option>
                                                     @endforeach
                                                 </select>
+                                                <input type="hidden" name="items[{{ $idx }}][batch_no]" class="row-batch" value="{{ $line->batch_no }}">
+                                                <input type="hidden" name="items[{{ $idx }}][hsn_code]" class="row-hsn" value="{{ $line->hsn_code }}">
                                             </td>
                                             <td>
-                                                <input type="text" name="items[{{ $idx }}][batch_no]" class="form-control erp-field-input-sm row-batch font-monospace" placeholder="Enter Batch" value="{{ $item->batch_no }}">
+                                                <select name="items[{{ $idx }}][unit]" class="form-select row-unit" required>
+                                                    <option value="KG" {{ strtoupper($line->unit) === 'KG' ? 'selected' : '' }}>KG</option>
+                                                    <option value="BAG" {{ strtoupper($line->unit) === 'BAG' ? 'selected' : '' }}>BAG</option>
+                                                    <option value="QUINTAL" {{ strtoupper($line->unit) === 'QUINTAL' ? 'selected' : '' }}>QUINTAL</option>
+                                                    <option value="TON" {{ strtoupper($line->unit) === 'TON' ? 'selected' : '' }}>TON</option>
+                                                    <option value="BOX" {{ strtoupper($line->unit) === 'BOX' ? 'selected' : '' }}>BOX</option>
+                                                    @foreach($units as $u)
+                                                        @if(!in_array(strtoupper($u->name), ['KG', 'BAG', 'QUINTAL', 'TON', 'BOX']))
+                                                            <option value="{{ $u->name }}" {{ strtoupper($line->unit) === strtoupper($u->name) ? 'selected' : '' }}>{{ $u->name }}</option>
+                                                        @endif
+                                                    @endforeach
+                                                </select>
                                             </td>
                                             <td>
-                                                <input type="text" name="items[{{ $idx }}][unit]" class="form-control erp-field-input-sm row-unit" value="{{ $item->unit }}" required>
+                                                <input type="number" step="any" min="0.001" name="items[{{ $idx }}][quantity]" class="form-control row-qty font-monospace" style="text-align: right;" value="{{ $line->quantity }}" required oninput="calcWBRow(this)">
                                             </td>
                                             <td>
-                                                <input type="number" step="any" min="0.001" name="items[{{ $idx }}][quantity]" class="form-control erp-field-input-sm row-qty font-monospace font-weight-600" value="{{ (float)$item->quantity }}" required oninput="calcWBRow(this)">
-                                            </td>
-                                            <td>
-                                                <input type="number" step="0.01" min="0" name="items[{{ $idx }}][rate]" class="form-control erp-field-input-sm row-rate font-monospace font-weight-600" value="{{ (float)$item->rate }}" required oninput="calcWBRow(this)">
+                                                <input type="number" step="0.01" min="0" name="items[{{ $idx }}][rate]" class="form-control row-rate font-monospace" style="text-align: right;" value="{{ number_format($line->rate, 2, '.', '') }}" required oninput="calcWBRow(this)">
                                             </td>
                                             <td style="text-align: right;">
-                                                <strong class="font-monospace text-dark row-amount" style="color: #D97706 !important;">₹{{ number_format($item->amount, 2) }}</strong>
+                                                <span class="font-monospace font-weight-700 text-dark row-amount">₹{{ number_format($line->total_amount, 2) }}</span>
                                             </td>
                                             <td>
-                                                <input type="text" name="items[{{ $idx }}][notes]" class="form-control erp-field-input-sm font-size-xs" placeholder="Bag notes" value="{{ $item->notes }}">
+                                                <input type="text" name="items[{{ $idx }}][notes]" class="form-control" placeholder="Mandi lot note" value="{{ $line->notes }}">
                                             </td>
                                             <td class="text-center">
-                                                <button type="button" class="btn btn-sm text-danger p-0 delete-row-btn" onclick="removeWBRow(this)" title="Remove item">
+                                                <button type="button" class="delete-row-btn" onclick="removeWBRow(this)" title="Remove item">
                                                     <i class="fa-solid fa-xmark"></i>
                                                 </button>
                                             </td>
@@ -277,189 +334,263 @@
                                 </tbody>
                             </table>
                         </div>
+
+                        <!-- Real-Time Totals Bar Beneath Table -->
+                        <div class="erp-table-totals-bar">
+                            <div class="erp-table-total-item">
+                                <span class="erp-table-total-label">Total Inward Qty</span>
+                                <span class="erp-table-total-val font-monospace" id="footer-wb-qty">{{ number_format($wbPurchase->items->sum('quantity'), 3) }} KG</span>
+                            </div>
+                            <div class="erp-table-total-item">
+                                <span class="erp-table-total-label" style="color: #059669;">Grand Mandi Amount</span>
+                                <span class="erp-table-total-val font-monospace" style="color: #059669; font-size: 1.2rem;" id="footer-wb-total">₹{{ number_format($wbPurchase->total_amount, 2) }}</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Section 4: Remarks & Inward Yard Notes -->
+                <!-- 4. Payment Settlement & Mandi Notes -->
                 <div class="card erp-form-section-card">
-                    <div class="erp-section-header">
-                        <div class="erp-section-icon" style="background: rgba(100, 116, 139, 0.1); color: #475569;">
-                            <i class="fa-solid fa-clipboard-list"></i>
-                        </div>
-                        <div>
-                            <h3 class="erp-section-title">Consignment Notes & Mandi Remarks</h3>
-                            <p class="erp-section-desc">Warehouse yard stack location, bag tare count, or moisture inspection</p>
+                    <div class="erp-form-section-header">
+                        <div class="erp-form-section-header-left">
+                            <div class="erp-form-section-icon-box" style="background: rgba(217, 119, 6, 0.12); color: #D97706;">
+                                <i class="fa-solid fa-coins"></i>
+                            </div>
+                            <div>
+                                <h3 class="erp-form-section-title">4. Settlement Mode &amp; Mandi Notes</h3>
+                                <p class="erp-form-section-desc">Mandi cash voucher details and observations</p>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="erp-section-body">
-                        <textarea name="notes" class="form-control erp-field-input" rows="3" placeholder="Enter consignment notes, weighbridge Dharam Kanta slip remarks...">{{ old('notes', $wbPurchase->notes) }}</textarea>
+                    <div class="erp-form-section-body">
+                        <!-- Payment Mode -->
+                        <div class="form-group">
+                            <label class="erp-field-label">
+                                Mandi Settlement Mode
+                            </label>
+                            <div class="erp-field-icon-wrap">
+                                <i class="fa-solid fa-money-bill-wave erp-field-icon"></i>
+                                <select name="payment_mode" class="form-control erp-field-input-iconified">
+                                    <option value="Cash" {{ old('payment_mode', $wbPurchase->payment_mode) === 'Cash' ? 'selected' : '' }}>Mandi Spot Cash</option>
+                                    <option value="Bank Transfer" {{ old('payment_mode', $wbPurchase->payment_mode) === 'Bank Transfer' ? 'selected' : '' }}>Bank RTGS / IMPS</option>
+                                    <option value="Mandi Slip" {{ old('payment_mode', $wbPurchase->payment_mode) === 'Mandi Slip' ? 'selected' : '' }}>Mandi Slip / Voucher</option>
+                                    <option value="Cheque" {{ old('payment_mode', $wbPurchase->payment_mode) === 'Cheque' ? 'selected' : '' }}>Cheque</option>
+                                </select>
+                            </div>
+                            <span class="erp-field-hint">Mode of payment release</span>
+                        </div>
+
+                        <!-- Settlement Status -->
+                        <div class="form-group">
+                            <label class="erp-field-label">
+                                Settlement Status
+                            </label>
+                            <div class="erp-field-icon-wrap">
+                                <i class="fa-solid fa-wallet erp-field-icon"></i>
+                                <select name="payment_status" class="form-control erp-field-input-iconified">
+                                    <option value="unpaid" {{ old('payment_status', $wbPurchase->payment_status) === 'unpaid' ? 'selected' : '' }}>Unpaid / On Ledger</option>
+                                    <option value="paid" {{ old('payment_status', $wbPurchase->payment_status) === 'paid' ? 'selected' : '' }}>Paid Cash Instantly</option>
+                                </select>
+                            </div>
+                            <span class="erp-field-hint">Payment status</span>
+                        </div>
+
+                        <!-- Consignment Notes -->
+                        <div class="form-group erp-form-col-full">
+                            <label class="erp-field-label">
+                                Inward Inspection Remarks
+                            </label>
+                            <textarea name="notes" rows="3" class="form-control" style="border-radius: 8px; font-size: 0.88rem;" placeholder="Enter mandi slip notes, moisture percentage, lot cleanliness, or farmer remarks...">{{ old('notes', $wbPurchase->notes) }}</textarea>
+                            <span class="erp-field-hint">Internal warehouse &amp; weighbridge observations</span>
+                        </div>
                     </div>
                 </div>
+
             </div>
 
-            <!-- Right Column: Live Preview & Actions -->
-            <div class="col-lg-4">
-                <div class="erp-sticky-sidebar">
-                    <!-- Live Real-Time Preview Card -->
-                    <div class="card erp-preview-card mb-4">
-                        <div class="erp-preview-header">
-                            <div class="d-flex align-items-center">
-                                <div class="erp-preview-avatar me-2" id="preview-avatar">
-                                    {{ strtoupper(substr($wbPurchase->vendor->name ?? 'F', 0, 2)) }}
-                                </div>
-                                <div>
-                                    <h4 class="erp-preview-title" id="preview-vendor-name">{{ $wbPurchase->vendor->name ?? 'Direct Farmer' }}</h4>
-                                    <span class="erp-preview-code font-monospace" id="preview-slip-no">{{ $wbPurchase->slip_no }}</span>
-                                </div>
-                            </div>
-                            <span class="badge {{ $wbPurchase->status === 'completed' ? 'bg-success' : 'bg-warning text-dark' }} px-2 py-1" style="font-size: 0.72rem; font-weight: 700;">
-                                {{ ucfirst($wbPurchase->status) }}
-                            </span>
+            <!-- Right Sidebar Column -->
+            <div class="erp-form-sidebar-col">
+
+                <!-- 1. Real-Time Live Preview Card -->
+                <div class="card erp-preview-card">
+                    <div class="erp-preview-header">
+                        <div class="erp-preview-avatar" id="prev-wb-avatar">
+                            {{ strtoupper(substr($wbPurchase->vendor->name ?? 'WB', 0, 2)) }}
                         </div>
-
-                        <div class="erp-preview-body">
-                            <!-- Slip Meta Info -->
-                            <div class="erp-preview-meta-grid mb-3">
-                                <div>
-                                    <span class="erp-meta-label">Vehicle:</span>
-                                    <strong class="erp-meta-value font-monospace" id="preview-vehicle">{{ $wbPurchase->vehicle_no ?? 'Trolley / Direct' }}</strong>
-                                </div>
-                                <div>
-                                    <span class="erp-meta-label">Driver:</span>
-                                    <strong class="erp-meta-value" id="preview-driver">{{ $wbPurchase->driver_name ?? '-' }}</strong>
-                                </div>
-                                <div>
-                                    <span class="erp-meta-label">Entry Date:</span>
-                                    <strong class="erp-meta-value" id="preview-date">{{ $wbPurchase->entry_date->format('d M Y') }}</strong>
-                                </div>
-                                <div>
-                                    <span class="erp-meta-label">Payment Mode:</span>
-                                    <strong class="erp-meta-value" id="preview-pay-mode">{{ $wbPurchase->payment_mode }}</strong>
-                                </div>
-                            </div>
-
-                            <hr style="border-color: #E2E8F0; margin: 0.75rem 0;">
-
-                            <!-- Weight Breakdown -->
-                            <div class="erp-calc-summary">
-                                <div class="d-flex justify-content-between mb-2">
-                                    <span class="text-muted">Total Line Items:</span>
-                                    <strong class="font-monospace text-dark" id="preview-items-count">{{ count($wbPurchase->items) }} Item(s)</strong>
-                                </div>
-                                <div class="d-flex justify-content-between mb-2">
-                                    <span class="text-muted">Scale Net Weight:</span>
-                                    <strong class="font-monospace text-dark" id="preview-net-weight">{{ number_format($wbPurchase->net_weight, 2) }} KG</strong>
-                                </div>
-
-                                <div class="erp-grand-total-box p-3 rounded mt-3" style="background: #FFFBEB; border: 1px solid #FDE68A;">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <span class="text-dark font-weight-700" style="font-size: 0.95rem;">Total WB Amount:</span>
-                                        <h3 class="font-monospace font-weight-bold mb-0" style="color: #D97706;" id="preview-total-amount">₹{{ number_format($wbPurchase->total_amount, 2) }}</h3>
-                                    </div>
-                                    <div class="text-muted mt-1" style="font-size: 0.75rem;">
-                                        Cash / Unbilled mandi purchase liability
-                                    </div>
-                                </div>
-                            </div>
+                        <div>
+                            <div class="erp-preview-title" id="prev-wb-title">{{ $wbPurchase->vendor->name ?? 'WB Slip' }}</div>
+                            <div class="erp-preview-subtitle font-monospace" id="prev-wb-code">{{ $wbPurchase->slip_no }}</div>
                         </div>
                     </div>
 
-                    <!-- Audit Trail Card -->
-                    <div class="card erp-form-section-card mb-4">
-                        <div class="erp-section-header p-3">
-                            <h4 class="font-weight-600 mb-0 font-size-sm"><i class="fa-solid fa-clock-rotate-left me-2 text-muted"></i> Inward Audit Trail</h4>
+                    <div class="erp-preview-badge-row">
+                        <span class="badge" style="background: rgba(91, 132, 30, 0.1); color: #5B841E; font-size: 0.75rem; font-weight: 600; padding: 4px 10px; border-radius: 9999px;" id="prev-wb-order-type">
+                            {{ $wbPurchase->order_type }}
+                        </span>
+                        <span class="badge font-monospace" style="background: #F1F5F9; color: #475569; font-size: 0.72rem; padding: 4px 8px; border-radius: 6px;" id="prev-wb-item-count">
+                            {{ count($wbPurchase->items) }} Item(s)
+                        </span>
+                    </div>
+
+                    <div style="margin: 1.25rem 0 1rem; padding: 1rem; background: #F8FAFC; border-radius: 10px; border: 1px solid #E2E8F0; text-align: center;">
+                        <div style="font-size: 0.73rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.04em; color: #64748B; margin-bottom: 0.25rem;">
+                            Net Billable Scale Weight
                         </div>
-                        <div class="erp-section-body p-3 font-size-sm">
-                            <div class="d-flex justify-content-between mb-2">
-                                <span class="text-muted">Created:</span>
-                                <span class="font-monospace text-dark">{{ $wbPurchase->created_at->format('d M Y, h:i A') }}</span>
-                            </div>
-                            <div class="d-flex justify-content-between mb-2">
-                                <span class="text-muted">Last Modified:</span>
-                                <span class="font-monospace text-dark">{{ $wbPurchase->updated_at->format('d M Y, h:i A') }}</span>
-                            </div>
-                            <div class="d-flex justify-content-between">
-                                <span class="text-muted">Weighbridge Status:</span>
-                                <span class="text-success font-weight-600"><i class="fa-solid fa-check-double me-1"></i> Tare Deducted</span>
-                            </div>
+                        <div class="font-monospace" style="font-size: 1.6rem; font-weight: 800; color: #059669;" id="prev-wb-net-wt">
+                            {{ number_format($wbPurchase->net_weight, 2) }} KG
+                        </div>
+                        <div style="font-size: 0.74rem; color: #64748B; margin-top: 0.2rem;">
+                            Gross - Tare - Deduction
                         </div>
                     </div>
 
-                    <!-- Sidebar Actions Card -->
-                    <div class="card erp-sidebar-actions-card mb-4">
-                        <div class="card-body">
-                            <button type="submit" class="erp-btn-primary w-100 mb-2 py-2">
-                                <i class="fa-solid fa-floppy-disk me-1"></i> Update WB Purchase Entry
-                            </button>
-                            <a href="{{ route('admin.transactions.wb-purchase-entry') }}" class="erp-btn-outline w-100 text-center py-2">
-                                <i class="fa-solid fa-xmark me-1"></i> Cancel & Return
-                            </a>
+                    <div class="erp-preview-meta-list">
+                        <div class="erp-preview-meta-item">
+                            <span class="erp-preview-meta-key">Supplier / Farmer</span>
+                            <span class="erp-preview-meta-val" id="prev-wb-vendor">{{ $wbPurchase->vendor->name ?? '—' }}</span>
                         </div>
-                    </div>
-
-                    <!-- Danger Zone Card -->
-                    <div class="card border-danger-subtle bg-danger-subtle p-3 rounded">
-                        <h6 class="text-danger font-weight-bold mb-1"><i class="fa-solid fa-triangle-exclamation me-1"></i> Danger Zone</h6>
-                        <p class="text-muted font-size-sm mb-3">Deleting this WB slip will reverse all stock inward weights and adjust supplier balances.</p>
-                        <button type="button" class="btn btn-outline-danger btn-sm w-100" onclick="if(confirm('Are you sure you want to delete WB slip #{{ $wbPurchase->slip_no }}?')) document.getElementById('delete-wb-form').submit();">
-                            <i class="fa-solid fa-trash me-1"></i> Delete WB Slip
-                        </button>
+                        <div class="erp-preview-meta-item">
+                            <span class="erp-preview-meta-key">Vehicle Registration</span>
+                            <span class="erp-preview-meta-val font-monospace" id="prev-wb-veh">{{ $wbPurchase->vehicle_no ?: '—' }}</span>
+                        </div>
+                        <div class="erp-preview-meta-item">
+                            <span class="erp-preview-meta-key">Gross Scale Wt</span>
+                            <span class="erp-preview-meta-val font-monospace" id="prev-wb-gross">{{ number_format($wbPurchase->gross_weight, 2) }} KG</span>
+                        </div>
+                        <div class="erp-preview-meta-item">
+                            <span class="erp-preview-meta-key">Tare Wt</span>
+                            <span class="erp-preview-meta-val font-monospace" id="prev-wb-tare">{{ number_format($wbPurchase->tare_weight, 2) }} KG</span>
+                        </div>
+                        <div class="erp-preview-meta-item">
+                            <span class="erp-preview-meta-key">Moisture Tare</span>
+                            <span class="erp-preview-meta-val font-monospace" id="prev-wb-ded">{{ number_format($wbPurchase->deduction_weight, 2) }} KG</span>
+                        </div>
+                        <div class="erp-preview-meta-item" style="border-top: 1px dashed #CBD5E1; padding-top: 0.6rem;">
+                            <span class="erp-preview-meta-key" style="color: #D97706; font-weight: 700;">Total Mandi Value</span>
+                            <span class="erp-preview-meta-val font-monospace" style="color: #D97706; font-weight: 800; font-size: 1.1rem;" id="prev-wb-amount">₹{{ number_format($wbPurchase->total_amount, 2) }}</span>
+                        </div>
                     </div>
                 </div>
+
+                <!-- 2. Audit Trail Timestamps Card -->
+                <div class="card" style="padding: 1.25rem; border-radius: 14px; border: 1px solid #E2E8F0; background: #FFFFFF; font-size: 0.82rem; color: #64748B;">
+                    <div style="font-weight: 700; color: #334155; margin-bottom: 0.85rem; display: flex; align-items: center; gap: 0.45rem;">
+                        <i class="fa-solid fa-clock-rotate-left" style="color: #3B82F6;"></i> Weighbridge Slip Audit
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span>Slip ID:</span>
+                        <strong class="font-monospace text-dark">#{{ $wbPurchase->id }}</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span>Logged At:</span>
+                        <strong class="text-dark">{{ $wbPurchase->created_at->format('d M Y, h:i A') }}</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>Last Updated:</span>
+                        <strong class="text-dark">{{ $wbPurchase->updated_at->format('d M Y, h:i A') }}</strong>
+                    </div>
+                </div>
+
+                <!-- 3. Sidebar Action Buttons -->
+                <div class="card erp-sidebar-actions-card">
+                    <button type="submit" class="btn btn-primary erp-btn-action-submit" id="btn-save-wb">
+                        <i class="fa-solid fa-floppy-disk me-1"></i> Update WB Slip
+                    </button>
+                    <a href="{{ route('admin.transactions.wb-purchase-entry') }}" class="btn btn-outline erp-btn-action-cancel">
+                        <i class="fa-solid fa-xmark me-1"></i> Cancel Changes
+                    </a>
+                </div>
+
+                <!-- 4. Danger Zone Card -->
+                <div class="card" style="padding: 1.25rem; border-radius: 14px; border: 1px solid #FECACA; background: #FFF5F5;">
+                    <div style="font-weight: 700; color: #B91C1C; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.4rem;">
+                        <i class="fa-solid fa-triangle-exclamation"></i> Danger Zone
+                    </div>
+                    <p style="font-size: 0.78rem; color: #7F1D1D; margin-bottom: 0.85rem;">
+                        Deleting this WB slip will revert inventory inward stock and reverse supplier ledger entries.
+                    </p>
+                    <button type="button" class="btn btn-outline" style="border-color: #F87171; color: #DC2626; width: 100%; font-size: 0.82rem; font-weight: 600;" onclick="confirmDeleteWBSlip()">
+                        <i class="fa-regular fa-trash-can me-1"></i> Delete WB Slip
+                    </button>
+                </div>
+
             </div>
         </div>
     </form>
+</section>
 
-    <form method="POST" action="{{ route('admin.transactions.wb-purchase-entry.destroy', $wbPurchase) }}" id="delete-wb-form" style="display:none;">
-        @csrf
-        @method('DELETE')
-    </form>
-</div>
+<!-- Delete WB Slip Hidden Form -->
+<form id="delete-wb-slip-form" action="{{ route('admin.transactions.wb-purchase-entry.destroy', $wbPurchase) }}" method="POST" style="display: none;">
+    @csrf
+    @method('DELETE')
+</form>
 
+<!-- Item Dropdown Options Template (Hidden) -->
+<template id="wb-item-options-template">
+    <option value="">Select Raw Material / Herb...</option>
+    @foreach($items as $itm)
+        <option value="{{ $itm->id }}"
+                data-code="{{ $itm->code }}"
+                data-unit="{{ $itm->unit }}"
+                data-purchase-rate="{{ $itm->purchase_rate }}">
+            {{ $itm->name }} ({{ $itm->code }})
+        </option>
+    @endforeach
+</template>
+
+<template id="wb-unit-options-template">
+    <option value="KG">KG</option>
+    <option value="BAG">BAG</option>
+    <option value="QUINTAL">QUINTAL</option>
+    <option value="TON">TON</option>
+    <option value="BOX">BOX</option>
+    @foreach($units as $u)
+        @if(!in_array(strtoupper($u->name), ['KG', 'BAG', 'QUINTAL', 'TON', 'BOX']))
+            <option value="{{ $u->name }}">{{ $u->name }}</option>
+        @endif
+    @endforeach
+</template>
+
+@push('scripts')
 <script>
     let wbRowIndex = {{ count($wbPurchase->items) }};
 
-    function addWBItemRow() {
+    function addWBRow() {
         const tbody = document.getElementById('wb-items-body');
+        const itemOptions = document.getElementById('wb-item-options-template').innerHTML;
+        const unitOptions = document.getElementById('wb-unit-options-template').innerHTML;
+
         const tr = document.createElement('tr');
         tr.className = 'item-row';
         tr.innerHTML = `
-            <td class="text-center row-sno font-weight-600 font-monospace text-muted">${wbRowIndex + 1}</td>
+            <td class="text-center row-sno font-weight-600 font-monospace text-muted">${tbody.children.length + 1}</td>
             <td>
                 <select name="items[${wbRowIndex}][item_id]" class="form-select erp-item-select" required onchange="onWBItemSelect(this)">
-                    <option value="">Select Item...</option>
-                    @foreach($items as $itm)
-                        <option value="{{ $itm->id }}"
-                                data-code="{{ $itm->code }}"
-                                data-unit="{{ $itm->unit }}"
-                                data-rate="{{ $itm->purchase_rate }}"
-                                data-batch="{{ $itm->batch_no }}">
-                            {{ $itm->name }} ({{ $itm->code }})
-                        </option>
-                    @endforeach
+                    ${itemOptions}
+                </select>
+                <input type="hidden" name="items[${wbRowIndex}][batch_no]" class="row-batch" value="">
+                <input type="hidden" name="items[${wbRowIndex}][hsn_code]" class="row-hsn" value="">
+            </td>
+            <td>
+                <select name="items[${wbRowIndex}][unit]" class="form-select row-unit" required>
+                    ${unitOptions}
                 </select>
             </td>
             <td>
-                <input type="text" name="items[${wbRowIndex}][batch_no]" class="form-control erp-field-input-sm row-batch font-monospace" placeholder="Enter Batch">
+                <input type="number" step="any" min="0.001" name="items[${wbRowIndex}][quantity]" class="form-control row-qty font-monospace" style="text-align: right;" value="1" required oninput="calcWBRow(this)">
             </td>
             <td>
-                <input type="text" name="items[${wbRowIndex}][unit]" class="form-control erp-field-input-sm row-unit" value="KG" required>
-            </td>
-            <td>
-                <input type="number" step="any" min="0.001" name="items[${wbRowIndex}][quantity]" class="form-control erp-field-input-sm row-qty font-monospace font-weight-600" value="100" required oninput="calcWBRow(this)">
-            </td>
-            <td>
-                <input type="number" step="0.01" min="0" name="items[${wbRowIndex}][rate]" class="form-control erp-field-input-sm row-rate font-monospace font-weight-600" value="60.00" required oninput="calcWBRow(this)">
+                <input type="number" step="0.01" min="0" name="items[${wbRowIndex}][rate]" class="form-control row-rate font-monospace" style="text-align: right;" value="0.00" required oninput="calcWBRow(this)">
             </td>
             <td style="text-align: right;">
-                <strong class="font-monospace text-dark row-amount" style="color: #D97706 !important;">₹6,000.00</strong>
+                <span class="font-monospace font-weight-700 text-dark row-amount">₹0.00</span>
             </td>
             <td>
-                <input type="text" name="items[${wbRowIndex}][notes]" class="form-control erp-field-input-sm font-size-xs" placeholder="Bag notes">
+                <input type="text" name="items[${wbRowIndex}][notes]" class="form-control" placeholder="Mandi lot note">
             </td>
             <td class="text-center">
-                <button type="button" class="btn btn-sm text-danger p-0 delete-row-btn" onclick="removeWBRow(this)" title="Remove item">
+                <button type="button" class="delete-row-btn" onclick="removeWBRow(this)" title="Remove item">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </td>
@@ -467,108 +598,166 @@
         tbody.appendChild(tr);
         wbRowIndex++;
         updateWBRowNumbers();
-        updateLivePreview();
+        calcWBTotals();
     }
 
     function removeWBRow(btn) {
-        const rows = document.querySelectorAll('#wb-items-body .item-row');
-        if (rows.length <= 1) {
-            alert('A WB purchase entry must contain at least one line item.');
+        const tbody = document.getElementById('wb-items-body');
+        if (tbody.querySelectorAll('.item-row').length <= 1) {
+            if (typeof toastr !== 'undefined') {
+                toastr.warning('At least one line item is required.');
+            } else {
+                alert('At least one line item is required.');
+            }
             return;
         }
         btn.closest('tr').remove();
         updateWBRowNumbers();
-        updateLivePreview();
+        calcWBTotals();
     }
 
     function updateWBRowNumbers() {
-        document.querySelectorAll('#wb-items-body .item-row').forEach((tr, index) => {
-            tr.querySelector('.row-sno').innerText = index + 1;
+        document.querySelectorAll('#wb-items-body .row-sno').forEach((el, idx) => {
+            el.textContent = idx + 1;
         });
     }
 
     function onWBItemSelect(selectEl) {
-        const tr = selectEl.closest('tr');
-        const selectedOpt = selectEl.options[selectEl.selectedIndex];
-        if (!selectedOpt || !selectedOpt.value) return;
+        const row = selectEl.closest('tr');
+        const selected = selectEl.selectedOptions[0];
+        if (!selected || !selected.value) return;
 
-        const unit = selectedOpt.getAttribute('data-unit') || 'KG';
-        const rate = parseFloat(selectedOpt.getAttribute('data-rate')) || 60.0;
-        const batch = selectedOpt.getAttribute('data-batch') || ('BAT-WB-' + new Date().getFullYear());
+        const unit = selected.getAttribute('data-unit') || 'KG';
+        const purchaseRate = parseFloat(selected.getAttribute('data-purchase-rate')) || 0.0;
 
-        tr.querySelector('.row-unit').value = unit;
-        tr.querySelector('.row-rate').value = rate.toFixed(2);
-        tr.querySelector('.row-batch').value = batch;
+        const unitSelect = row.querySelector('.row-unit');
+        if (unitSelect) {
+            let found = false;
+            for (let i = 0; i < unitSelect.options.length; i++) {
+                if (unitSelect.options[i].value.toUpperCase() === unit.toUpperCase()) {
+                    unitSelect.selectedIndex = i;
+                    found = true;
+                    break;
+                }
+            }
+            if (!found && unit) {
+                const newOpt = new Option(unit, unit, true, true);
+                unitSelect.add(newOpt);
+            }
+        }
+
+        const rateInput = row.querySelector('.row-rate');
+        if (parseFloat(rateInput.value) === 0 && purchaseRate > 0) {
+            rateInput.value = purchaseRate.toFixed(2);
+        }
 
         calcWBRow(selectEl);
     }
 
     function calcWBRow(el) {
-        const tr = el.closest('tr');
-        const qty = parseFloat(tr.querySelector('.row-qty').value) || 0;
-        const rate = parseFloat(tr.querySelector('.row-rate').value) || 0;
-        const amt = qty * rate;
+        const row = el.closest('tr');
+        const qty = parseFloat(row.querySelector('.row-qty').value) || 0;
+        const rate = parseFloat(row.querySelector('.row-rate').value) || 0;
+        const total = qty * rate;
 
-        tr.querySelector('.row-amount').innerText = '₹' + amt.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        row.querySelector('.row-amount').textContent = '₹' + total.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        calcWBTotals();
+    }
+
+    function calcWeighbridge() {
+        const gross = parseFloat(document.getElementById('field-gross-weight').value) || 0;
+        const tare = parseFloat(document.getElementById('field-tare-weight').value) || 0;
+        const ded = parseFloat(document.getElementById('field-deduction-weight').value) || 0;
+
+        const net = Math.max(0, gross - tare - ded);
+        document.getElementById('field-net-weight').value = net.toFixed(2);
+
+        document.getElementById('prev-wb-gross').textContent = gross.toFixed(2) + ' KG';
+        document.getElementById('prev-wb-tare').textContent = tare.toFixed(2) + ' KG';
+        document.getElementById('prev-wb-ded').textContent = ded.toFixed(2) + ' KG';
+        document.getElementById('prev-wb-net-wt').textContent = net.toFixed(2) + ' KG';
+
         updateLivePreview();
     }
 
-    function calcWBWeights() {
-        const gross = parseFloat(document.getElementById('field-gross-weight').value) || 0;
-        const tare = parseFloat(document.getElementById('field-tare-weight').value) || 0;
-        const deduction = parseFloat(document.getElementById('field-deduction-weight').value) || 0;
-        const net = Math.max(0, gross - tare - deduction);
+    function calcWBTotals() {
+        let totalQty = 0;
+        let totalAmt = 0;
+        let count = 0;
 
-        document.getElementById('field-net-weight').value = net.toFixed(2);
-        updateLivePreview();
+        document.querySelectorAll('#wb-items-body .item-row').forEach(row => {
+            const qty = parseFloat(row.querySelector('.row-qty').value) || 0;
+            const rate = parseFloat(row.querySelector('.row-rate').value) || 0;
+            totalQty += qty;
+            totalAmt += (qty * rate);
+            count++;
+        });
+
+        document.getElementById('footer-wb-qty').textContent = totalQty.toFixed(3) + ' KG';
+        document.getElementById('footer-wb-total').textContent = '₹' + totalAmt.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+        document.getElementById('prev-wb-amount').textContent = '₹' + totalAmt.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById('prev-wb-item-count').textContent = `${count} Item(s)`;
     }
 
     function onVendorChange(selectEl) {
-        const selectedOpt = selectEl.options[selectEl.selectedIndex];
-        const vName = selectedOpt ? selectedOpt.getAttribute('data-name') : 'Direct Farmer / Vendor';
-        document.getElementById('preview-vendor-name').innerText = vName || 'Direct Farmer / Vendor';
-        document.getElementById('preview-avatar').innerText = (vName ? vName.substring(0, 2) : 'F').toUpperCase();
+        const selected = selectEl.selectedOptions[0];
+        const prevTitle = document.getElementById('prev-wb-title');
+        const prevVendor = document.getElementById('prev-wb-vendor');
+        const prevAvatar = document.getElementById('prev-wb-avatar');
+
+        if (selected && selected.value) {
+            const name = selected.getAttribute('data-name');
+            prevTitle.textContent = name;
+            prevVendor.textContent = name;
+            prevAvatar.textContent = name.substring(0, 2).toUpperCase();
+        } else {
+            prevTitle.textContent = 'WB Entry Slip';
+            prevVendor.textContent = 'Select Supplier...';
+            prevAvatar.textContent = 'WB';
+        }
         updateLivePreview();
     }
 
     function updateLivePreview() {
-        let totalWeight = 0;
-        let totalAmount = 0;
-        let totalItems = 0;
+        const veh = document.getElementById('field-vehicle-no').value.trim();
+        document.getElementById('prev-wb-veh').textContent = veh ? veh : '—';
 
-        document.querySelectorAll('#wb-items-body .item-row').forEach(tr => {
-            const qty = parseFloat(tr.querySelector('.row-qty').value) || 0;
-            const rate = parseFloat(tr.querySelector('.row-rate').value) || 0;
-            totalWeight += qty;
-            totalAmount += (qty * rate);
-            totalItems++;
-        });
+        const orderType = document.getElementById('field-order-type');
+        if (orderType) {
+            document.getElementById('prev-wb-order-type').textContent = orderType.value;
+        }
+    }
 
-        const scaleNet = parseFloat(document.getElementById('field-net-weight').value) || 0;
-        const finalWeight = scaleNet > 0 ? scaleNet : totalWeight;
-
-        document.getElementById('preview-net-weight').innerText = finalWeight.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' KG';
-        document.getElementById('preview-total-amount').innerText = '₹' + Math.round(totalAmount).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        document.getElementById('preview-items-count').innerText = totalItems + ' Item(s)';
-
-        const vehicle = document.getElementById('field-vehicle-no').value;
-        document.getElementById('preview-vehicle').innerText = vehicle ? vehicle : 'Trolley / Direct';
-
-        const driver = document.getElementById('field-driver-name').value;
-        document.getElementById('preview-driver').innerText = driver ? driver : '-';
-
-        const payMode = document.getElementById('field-payment-mode').value;
-        document.getElementById('preview-pay-mode').innerText = payMode;
-
-        const dateVal = document.getElementById('field-entry-date').value;
-        if (dateVal) {
-            const d = new Date(dateVal);
-            document.getElementById('preview-date').innerText = d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+    function confirmDeleteWBSlip() {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: 'Delete WB Slip?',
+                html: 'Are you sure you want to permanently delete WB slip <strong>#{{ $wbPurchase->slip_no }}</strong>?<br><span style="font-size: 0.85rem; color: #64748B;">Inventory stock will be reverted and supplier ledger balance reversed.</span>',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#EF4444',
+                cancelButtonColor: '#64748B',
+                confirmButtonText: '<i class="fa-solid fa-trash-can"></i> Yes, Delete Slip',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true,
+                focusCancel: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('delete-wb-slip-form').submit();
+                }
+            });
+        } else {
+            if (confirm('Are you sure you want to delete WB slip #{{ $wbPurchase->slip_no }}? Inward stock will be reverted.')) {
+                document.getElementById('delete-wb-slip-form').submit();
+            }
         }
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        updateLivePreview();
+        calcWeighbridge();
+        calcWBTotals();
     });
 </script>
+@endpush
 @endsection

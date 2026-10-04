@@ -70,8 +70,19 @@ class PurchaseEntryTest extends TestCase
         $response = $this->actingAs($user)->get(route('admin.transactions.purchase-entry.create'));
         $response->assertStatus(200);
         $response->assertSee('New Purchase Entry');
-        $response->assertSee('Purchase Voucher Details');
-        $response->assertSee('Purchase Line Items');
+        $response->assertSee('Purchase Voucher &amp; Supplier Identity', false);
+        $response->assertSee('Inward Product Line Items');
+        $response->assertSee('S.NO');
+        $response->assertSee('ITEM');
+        $response->assertSee('HSN');
+        $response->assertSee('GST');
+        $response->assertSee('UNIT TYPE');
+        $response->assertSee('NET WT');
+        $response->assertSee('BILL RATE (₹)');
+        $response->assertSee('U-B RATE (₹)');
+        $response->assertSee('BILL ARNT (₹)');
+        $response->assertSee('U-B ARNT (₹)');
+        $response->assertSee('Add Another Item Row');
         // Critical requirement: Ensure NO editable status field in create form
         $response->assertDontSee('name="status"', false);
     }
@@ -169,8 +180,8 @@ class PurchaseEntryTest extends TestCase
         $response = $this->actingAs($user)->get(route('admin.transactions.purchase-entry.show', $purchase));
         $response->assertStatus(200);
         $response->assertSee('PUR-2026-0088');
-        $response->assertSee('Grand Total Payable');
-        $response->assertSee('Official Billing Amount');
+        $response->assertSee('Grand Total Procured');
+        $response->assertSee('Official Invoiced Bill');
     }
 
     public function test_purchase_edit_page_can_be_rendered_without_status_field(): void
@@ -206,6 +217,19 @@ class PurchaseEntryTest extends TestCase
         $response = $this->actingAs($user)->get(route('admin.transactions.purchase-entry.edit', $purchase));
         $response->assertStatus(200);
         $response->assertSee('Edit Purchase Entry');
+        $response->assertSee('S.NO');
+        $response->assertSee('ITEM');
+        $response->assertSee('HSN');
+        $response->assertSee('GST');
+        $response->assertSee('UNIT TYPE');
+        $response->assertSee('NET WT');
+        $response->assertSee('BILL RATE (₹)');
+        $response->assertSee('U-B RATE (₹)');
+        $response->assertSee('BILL ARNT (₹)');
+        $response->assertSee('U-B ARNT (₹)');
+        $response->assertSee('Add Another Item Row');
+        $response->assertSee('Voucher Audit Trail');
+        $response->assertSee('Danger Zone');
         // Critical requirement: Ensure NO editable status field in edit form
         $response->assertDontSee('name="status"', false);
     }

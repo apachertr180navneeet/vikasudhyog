@@ -4,258 +4,294 @@
 @section('page_code', 'txn-wb-purchase')
 
 @section('content')
-<div class="erp-module-wrapper">
-    <!-- Top Bar & Breadcrumb -->
-    <div class="erp-header-toolbar">
-        <div class="erp-breadcrumb-wrap">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb mb-1">
-                    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="#">Transactions</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">WB Purchase Entry</li>
-                </ol>
-            </nav>
-            <h1 class="erp-page-title">WB Purchase Entry (Without Bill)</h1>
-            <p class="erp-page-desc">Manage Weighbridge (WB) Mandi Cash Purchases, direct farmer arrivals, and gross-to-net tare weight deductions</p>
+<section class="view-section active" id="view-txn-wb-purchase">
+    <!-- Breadcrumb & Top Bar -->
+    <div class="erp-page-top-bar">
+        <div>
+            <div class="erp-breadcrumb-trail">
+                <a href="{{ route('admin.dashboard') }}">Dashboard</a>
+                <i class="fa-solid fa-chevron-right erp-breadcrumb-sep"></i>
+                <span>Transactions</span>
+                <i class="fa-solid fa-chevron-right erp-breadcrumb-sep"></i>
+                <span class="erp-breadcrumb-active">WB Purchase Entry</span>
+            </div>
+            <h1 class="erp-page-title">
+                <i class="fa-solid fa-scale-unbalanced text-primary"></i> WB Purchase Entry (Without Bill)
+            </h1>
+            <p class="erp-page-subtitle">
+                Manage Weighbridge (WB) Mandi Cash Purchases, direct farmer arrivals, and gross-to-net tare weight deductions.
+            </p>
         </div>
+
         <div class="erp-header-actions">
-            <a href="{{ route('admin.transactions.wb-purchase-entry.create') }}" class="erp-btn-primary">
+            <button type="button" class="btn btn-outline" onclick="window.print()" title="Print WB Inward Register">
+                <i class="fa-solid fa-print"></i> Print List
+            </button>
+            <a href="{{ route('admin.transactions.wb-purchase-entry.create') }}" class="btn btn-primary erp-btn-header-primary">
                 <i class="fa-solid fa-plus"></i> New WB Purchase Entry
             </a>
         </div>
     </div>
 
-    <!-- 4-Card KPI Ribbon -->
+    <!-- 4-Card KPI Summary Grid -->
     <div class="erp-kpi-grid">
-        <div class="erp-kpi-card">
-            <div class="erp-kpi-icon" style="background: rgba(91, 132, 30, 0.12); color: #5B841E;">
+        <div class="card erp-kpi-card erp-kpi-primary">
+            <div class="erp-kpi-icon-box erp-kpi-icon-primary">
                 <i class="fa-solid fa-scale-unbalanced"></i>
             </div>
-            <div class="erp-kpi-content">
-                <span class="erp-kpi-label">Total WB Slips</span>
-                <h3 class="erp-kpi-value font-monospace">{{ number_format($totalSlips) }}</h3>
-                <span class="erp-kpi-meta"><i class="fa-solid fa-truck-ramp-box"></i> Mandi Receipts</span>
+            <div>
+                <div class="erp-kpi-label">Total WB Slips</div>
+                <div class="erp-kpi-val">{{ number_format($totalSlips) }}</div>
             </div>
         </div>
 
-        <div class="erp-kpi-card">
-            <div class="erp-kpi-icon" style="background: rgba(16, 185, 129, 0.12); color: #10B981;">
+        <div class="card erp-kpi-card erp-kpi-success">
+            <div class="erp-kpi-icon-box erp-kpi-icon-success">
                 <i class="fa-solid fa-circle-check"></i>
             </div>
-            <div class="erp-kpi-content">
-                <span class="erp-kpi-label">Received Consignments</span>
-                <h3 class="erp-kpi-value font-monospace" style="color: #059669;">{{ number_format($completedCount) }}</h3>
-                <span class="erp-kpi-meta text-success"><i class="fa-solid fa-warehouse"></i> Stock Unloaded</span>
+            <div>
+                <div class="erp-kpi-label">Received Batches</div>
+                <div class="erp-kpi-val erp-kpi-val-success">{{ number_format($completedCount) }}</div>
             </div>
         </div>
 
-        <div class="erp-kpi-card">
-            <div class="erp-kpi-icon" style="background: rgba(59, 130, 246, 0.12); color: #2563EB;">
+        <div class="card erp-kpi-card" style="border-left: 4px solid #3B82F6;">
+            <div class="erp-kpi-icon-box" style="background: rgba(59, 130, 246, 0.12); color: #2563EB;">
                 <i class="fa-solid fa-weight-scale"></i>
             </div>
-            <div class="erp-kpi-content">
-                <span class="erp-kpi-label">Total Net Weight</span>
-                <h3 class="erp-kpi-value font-monospace" style="color: #2563EB;">{{ number_format($totalNetWeight, 2) }} <span style="font-size: 0.9rem; font-weight: 500;">KG</span></h3>
-                <span class="erp-kpi-meta"><i class="fa-solid fa-truck-moving"></i> Net Weighed Herbal Raw Material</span>
+            <div>
+                <div class="erp-kpi-label">Total Net Weight</div>
+                <div class="erp-kpi-val font-monospace" style="color: #2563EB;">
+                    {{ number_format($totalNetWeight, 2) }} <span style="font-size: 0.85rem; font-weight: normal; color: #64748B;">KG</span>
+                </div>
             </div>
         </div>
 
-        <div class="erp-kpi-card">
-            <div class="erp-kpi-icon" style="background: rgba(217, 119, 6, 0.12); color: #D97706;">
+        <div class="card erp-kpi-card" style="border-left: 4px solid #D97706;">
+            <div class="erp-kpi-icon-box" style="background: rgba(217, 119, 6, 0.12); color: #D97706;">
                 <i class="fa-solid fa-money-bill-wave"></i>
             </div>
-            <div class="erp-kpi-content">
-                <span class="erp-kpi-label">Total Mandi Cash Amount</span>
-                <h3 class="erp-kpi-value font-monospace" style="color: #D97706;">₹{{ number_format($totalAmount, 2) }}</h3>
-                <span class="erp-kpi-meta"><i class="fa-solid fa-coins"></i> Total Unbilled Procurement</span>
+            <div>
+                <div class="erp-kpi-label">Total Mandi Cash Amount</div>
+                <div class="erp-kpi-val font-monospace" style="color: #D97706;">₹{{ number_format($totalAmount, 2) }}</div>
             </div>
         </div>
     </div>
 
-    <!-- Alert Messages -->
+    <!-- Alert Notifications -->
     @if(session('success'))
-        <div class="alert alert-success erp-alert alert-dismissible fade show" role="alert">
-            <i class="fa-solid fa-circle-check me-2"></i> {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    @endif
-    @if(session('error'))
-        <div class="alert alert-danger erp-alert alert-dismissible fade show" role="alert">
-            <i class="fa-solid fa-triangle-exclamation me-2"></i> {{ session('error') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <div class="alert erp-alert-success">
+            <div class="erp-alert-content">
+                <i class="fa-solid fa-circle-check erp-alert-icon-success"></i>
+                <span>{{ session('success') }}</span>
+            </div>
+            <button type="button" class="erp-alert-close-btn" onclick="this.parentElement.remove()">&times;</button>
         </div>
     @endif
 
-    <!-- Main Card & Data Table -->
+    @if(session('error'))
+        <div class="alert erp-alert-danger">
+            <div class="erp-alert-content">
+                <i class="fa-solid fa-circle-exclamation erp-alert-icon-danger"></i>
+                <span>{{ session('error') }}</span>
+            </div>
+            <button type="button" class="erp-alert-close-btn" onclick="this.parentElement.remove()">&times;</button>
+        </div>
+    @endif
+
+    <!-- Main Table Container -->
     <div class="card erp-main-card">
-        <!-- Filter Header -->
+        <!-- Filter and Search Header -->
         <div class="erp-table-filter-header">
-            <form method="GET" action="{{ route('admin.transactions.wb-purchase-entry') }}" class="erp-filter-form">
+            <form action="{{ route('admin.transactions.wb-purchase-entry') }}" method="GET" class="erp-filter-form">
                 <div class="erp-search-wrap">
                     <i class="fa-solid fa-magnifying-glass erp-search-icon"></i>
-                    <input type="text" name="search" class="form-control erp-search-input" placeholder="Search by slip no, vehicle, driver, farmer/vendor..." value="{{ request('search') }}">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by slip no, vehicle, driver, supplier..." class="form-control erp-search-input">
                 </div>
 
-                <div class="erp-select-wrap">
-                    <select name="vendor_id" class="form-select erp-filter-select" onchange="this.form.submit()">
-                        <option value="">All Suppliers</option>
-                        @foreach($vendors as $vnd)
-                            <option value="{{ $vnd->id }}" {{ request('vendor_id') == $vnd->id ? 'selected' : '' }}>{{ $vnd->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
+                <select name="vendor_id" class="form-control erp-filter-select" onchange="this.form.submit()">
+                    <option value="">All Suppliers / Farmers</option>
+                    @foreach($vendors as $vnd)
+                        <option value="{{ $vnd->id }}" {{ request('vendor_id') == $vnd->id ? 'selected' : '' }}>{{ $vnd->name }}</option>
+                    @endforeach
+                </select>
 
-                <div class="erp-select-wrap">
-                    <select name="status" class="form-select erp-filter-select" onchange="this.form.submit()">
-                        <option value="">All Statuses</option>
-                        <option value="received" {{ request('status') == 'received' ? 'selected' : '' }}>Received</option>
-                        <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Completed</option>
-                        <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
-                    </select>
-                </div>
+                <select name="status" class="form-control erp-filter-select" onchange="this.form.submit()">
+                    <option value="">All Statuses</option>
+                    <option value="received" {{ request('status') == 'received' ? 'selected' : '' }}>Received</option>
+                    <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Completed</option>
+                    <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                </select>
+
+                <button type="submit" class="btn btn-outline erp-btn-filter" title="Apply Filters">
+                    <i class="fa-solid fa-filter"></i> Filter
+                </button>
 
                 @if(request('search') || request('vendor_id') || request('status'))
-                    <a href="{{ route('admin.transactions.wb-purchase-entry') }}" class="erp-btn-reset" title="Clear Filters">
-                        <i class="fa-solid fa-rotate-left"></i> Reset
+                    <a href="{{ route('admin.transactions.wb-purchase-entry') }}" class="btn btn-outline erp-btn-filter-clear" title="Clear Filters">
+                        <i class="fa-solid fa-xmark"></i> Clear
                     </a>
                 @endif
             </form>
 
             <div class="erp-table-summary-count">
-                Showing <strong>{{ $wbPurchases->firstItem() ?? 0 }}-{{ $wbPurchases->lastItem() ?? 0 }}</strong> of <strong>{{ $wbPurchases->total() }}</strong> WB slips
+                Showing <strong>{{ $wbPurchases->count() }}</strong> of <strong>{{ $wbPurchases->total() }}</strong> WB slips
             </div>
         </div>
 
-        <!-- Table Container -->
-        <div class="table-responsive">
-            <table class="table erp-data-table mb-0">
+        <!-- Edge-to-Edge Table -->
+        <div class="table-responsive" style="margin: 0; border: none; overflow-x: auto;">
+            <table class="custom-table" style="width: 100%; border-collapse: separate; border-spacing: 0;">
                 <thead>
                     <tr>
-                        <th style="width: 140px;">WB Slip No</th>
-                        <th style="width: 110px;">Date</th>
-                        <th style="min-width: 220px;">Vendor / Supplier</th>
-                        <th style="width: 130px;">Vehicle & Driver</th>
-                        <th style="width: 110px; text-align: right;">Gross (KG)</th>
-                        <th style="width: 110px; text-align: right;">Tare (KG)</th>
-                        <th style="width: 130px; text-align: right;">Net Weight</th>
-                        <th style="width: 140px; text-align: right;">WB Amount</th>
-                        <th style="width: 110px; text-align: center;">Status</th>
-                        <th style="width: 110px; text-align: center;">Action</th>
+                        <th style="padding-left: 1.5rem;">WB Slip Identity</th>
+                        <th>Date</th>
+                        <th>Farmer / Supplier</th>
+                        <th>Vehicle &amp; Driver</th>
+                        <th style="text-align: right;">Gross (KG)</th>
+                        <th style="text-align: right;">Tare (KG)</th>
+                        <th style="text-align: right;">Net Weight</th>
+                        <th style="text-align: right;">Mandi Amount</th>
+                        <th style="text-align: center;">Status</th>
+                        <th style="text-align: right; padding-right: 1.5rem;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse($wbPurchases as $wb)
                         <tr>
-                            <!-- Slip No -->
-                            <td>
-                                <a href="{{ route('admin.transactions.wb-purchase-entry.show', $wb) }}" class="erp-table-code-link font-monospace font-weight-bold">
-                                    {{ $wb->slip_no }}
-                                </a>
-                                <div class="erp-table-subtext font-monospace">{{ $wb->payment_mode }}</div>
+                            <!-- WB Slip Identity -->
+                            <td style="padding-left: 1.5rem;">
+                                <div style="display: flex; align-items: center; gap: 0.85rem;">
+                                    <div class="avatar" style="background: linear-gradient(135deg, #5B841E, #3D5A12); color: #FFFFFF; font-weight: 700; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.88rem; flex-shrink: 0; box-shadow: 0 2px 6px rgba(91, 132, 30, 0.25);">
+                                        {{ strtoupper(substr($wb->vendor->name ?? 'F', 0, 2)) }}
+                                    </div>
+                                    <div>
+                                        <a href="{{ route('admin.transactions.wb-purchase-entry.show', $wb) }}" style="font-weight: 600; color: #1E293B; text-decoration: none; display: block;" class="erp-table-title-link font-monospace">
+                                            {{ $wb->slip_no }}
+                                        </a>
+                                        <div style="display: flex; align-items: center; gap: 0.4rem; margin-top: 0.15rem;">
+                                            <span class="badge font-monospace" style="background: #F1F5F9; color: #475569; font-size: 0.72rem; padding: 2px 6px; border-radius: 4px; border: 1px solid #E2E8F0;">
+                                                {{ $wb->payment_mode }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
                             </td>
 
                             <!-- Date -->
                             <td>
-                                <span class="text-dark font-weight-500">{{ $wb->entry_date->format('d M Y') }}</span>
-                                <div class="erp-table-subtext">{{ $wb->entry_date->diffForHumans() }}</div>
+                                <div style="font-weight: 500; color: #334155;">
+                                    {{ $wb->entry_date->format('d M Y') }}
+                                </div>
+                                <div style="font-size: 0.74rem; color: #64748B;">
+                                    {{ $wb->entry_date->diffForHumans() }}
+                                </div>
                             </td>
 
-                            <!-- Vendor / Farmer -->
+                            <!-- Farmer / Supplier -->
                             <td>
-                                <div class="d-flex align-items-center">
-                                    <div class="erp-avatar-initials me-2" style="background: linear-gradient(135deg, #5B841E, #3D5A12); width: 36px; height: 36px; border-radius: 50%; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.82rem; font-weight: 700; flex-shrink: 0;">
-                                        {{ strtoupper(substr($wb->vendor->name ?? 'V', 0, 2)) }}
-                                    </div>
-                                    <div>
-                                        <div class="erp-table-title font-weight-600 text-dark">{{ $wb->vendor->name ?? 'Direct Farmer' }}</div>
-                                        @if($wb->broker)
-                                            <div class="erp-table-subtext text-muted">
-                                                <i class="fa-solid fa-handshake me-1" style="color: #64748B;"></i> {{ $wb->broker->name }}
-                                            </div>
-                                        @endif
-                                    </div>
+                                <div style="font-weight: 600; color: #1E293B;">
+                                    {{ $wb->vendor->name ?? 'Direct Farmer' }}
                                 </div>
+                                @if($wb->broker)
+                                    <div style="font-size: 0.75rem; color: #64748B; margin-top: 0.1rem;">
+                                        <i class="fa-solid fa-handshake" style="color: #5B841E;"></i> {{ $wb->broker->name }}
+                                    </div>
+                                @endif
                             </td>
 
                             <!-- Vehicle & Driver -->
                             <td>
-                                <div class="font-monospace text-dark font-weight-600 font-size-sm">
-                                    {{ $wb->vehicle_no ? $wb->vehicle_no : 'Trolley / Direct' }}
+                                <div class="font-monospace" style="font-weight: 600; color: #334155;">
+                                    {{ $wb->vehicle_no ?: 'Trolley / Direct' }}
                                 </div>
                                 @if($wb->driver_name)
-                                    <div class="erp-table-subtext text-muted">
-                                        <i class="fa-solid fa-user me-1"></i> {{ $wb->driver_name }}
+                                    <div style="font-size: 0.74rem; color: #64748B;">
+                                        <i class="fa-solid fa-user" style="font-size: 0.65rem;"></i> {{ $wb->driver_name }}
                                     </div>
                                 @endif
                             </td>
 
                             <!-- Gross Weight -->
                             <td style="text-align: right;">
-                                <span class="font-monospace text-muted">{{ number_format($wb->gross_weight, 2) }}</span>
+                                <div class="font-monospace" style="font-size: 0.85rem; color: #64748B;">
+                                    {{ number_format($wb->gross_weight, 2) }}
+                                </div>
                             </td>
 
                             <!-- Tare Weight -->
                             <td style="text-align: right;">
-                                <span class="font-monospace text-muted">{{ number_format($wb->tare_weight, 2) }}</span>
+                                <div class="font-monospace" style="font-size: 0.85rem; color: #64748B;">
+                                    {{ number_format($wb->tare_weight, 2) }}
+                                </div>
                             </td>
 
                             <!-- Net Weight -->
                             <td style="text-align: right;">
-                                <strong class="font-monospace text-dark font-size-base">
-                                    {{ number_format($wb->net_weight, 2) }} <span class="text-muted font-size-xs">KG</span>
-                                </strong>
+                                <div class="font-monospace" style="font-weight: 700; color: #1E293B; font-size: 0.95rem;">
+                                    {{ number_format($wb->net_weight, 2) }} <span style="font-size: 0.75rem; color: #64748B; font-weight: normal;">KG</span>
+                                </div>
                             </td>
 
-                            <!-- Total Amount -->
+                            <!-- Mandi Amount -->
                             <td style="text-align: right;">
-                                <strong class="font-monospace font-size-base" style="color: #D97706;">
+                                <div class="font-monospace" style="font-weight: 700; color: #D97706; font-size: 0.95rem;">
                                     ₹{{ number_format($wb->total_amount, 2) }}
-                                </strong>
+                                </div>
                             </td>
 
                             <!-- Status Button -->
                             <td style="text-align: center;">
-                                <form method="POST" action="{{ route('admin.transactions.wb-purchase-entry.toggle-status', $wb) }}" style="display:inline;">
+                                <form method="POST" action="{{ route('admin.transactions.wb-purchase-entry.toggle-status', $wb) }}" style="display:inline-block;">
                                     @csrf
                                     @method('PATCH')
-                                    <button type="submit" class="erp-status-toggle-btn {{ $wb->status === 'completed' ? 'erp-status-btn-active' : 'erp-status-btn-inactive' }}" title="Click to toggle status">
-                                        <i class="fa-solid {{ $wb->status === 'completed' ? 'fa-circle-check' : 'fa-clock' }}"></i>
-                                        <span>{{ ucfirst($wb->status) }}</span>
-                                    </button>
+                                    @if(in_array($wb->status, ['received', 'completed']))
+                                        <button type="submit" class="erp-status-btn erp-status-btn-active" title="Click to Change Status (Current: {{ ucfirst($wb->status) }})">
+                                            <span class="erp-status-dot-green"></span> {{ ucfirst($wb->status) }}
+                                        </button>
+                                    @else
+                                        <button type="submit" class="erp-status-btn erp-status-btn-inactive" title="Click to Change Status (Current: {{ ucfirst($wb->status) }})">
+                                            <span class="erp-status-dot-red"></span> {{ ucfirst($wb->status) }}
+                                        </button>
+                                    @endif
                                 </form>
                             </td>
 
                             <!-- Actions -->
-                            <td style="text-align: center;">
-                                <div class="erp-action-group">
-                                    <a href="{{ route('admin.transactions.wb-purchase-entry.show', $wb) }}" class="erp-action-btn erp-action-view" title="View WB Slip 360">
-                                        <i class="fa-solid fa-eye"></i>
+                            <td style="text-align: right; padding-right: 1.5rem;">
+                                <div class="erp-actions-cell" style="justify-content: flex-end;">
+                                    <a href="{{ route('admin.transactions.wb-purchase-entry.show', $wb) }}" class="erp-table-action-icon" title="View WB Slip 360">
+                                        <i class="fa-regular fa-eye"></i>
                                     </a>
-                                    <a href="{{ route('admin.transactions.wb-purchase-entry.edit', $wb) }}" class="erp-action-btn erp-action-edit" title="Edit WB Slip">
+                                    <a href="{{ route('admin.transactions.wb-purchase-entry.edit', $wb) }}" class="erp-table-action-icon" title="Edit WB Slip">
                                         <i class="fa-solid fa-pen-to-square"></i>
                                     </a>
-                                    <form method="POST" action="{{ route('admin.transactions.wb-purchase-entry.destroy', $wb) }}" onsubmit="return confirm('Are you sure you want to delete WB slip #{{ $wb->slip_no }}? Reverting stock will take effect.')" style="display:inline;">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="erp-action-btn erp-action-delete" title="Delete WB Slip">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </button>
-                                    </form>
+                                    <button type="button" class="erp-table-action-icon erp-table-action-icon-danger" onclick="confirmDeleteWBPurchase({{ $wb->id }}, '{{ $wb->slip_no }}')" title="Delete WB Slip">
+                                        <i class="fa-regular fa-trash-can"></i>
+                                    </button>
                                 </div>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="10" class="text-center py-5">
-                                <div class="erp-empty-state">
-                                    <div class="erp-empty-icon mb-3" style="font-size: 2.5rem; color: #94A3B8;">
+                            <td colspan="10" style="text-align: center; padding: 3.5rem 1.5rem;">
+                                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                                    <div style="width: 64px; height: 64px; border-radius: 50%; background: #F1F5F9; display: flex; align-items: center; justify-content: center; color: #94A3B8; font-size: 1.6rem; margin-bottom: 1rem;">
                                         <i class="fa-solid fa-scale-unbalanced"></i>
                                     </div>
-                                    <h5 class="text-dark font-weight-600">No WB Purchase Slips Found</h5>
-                                    <p class="text-muted mb-3">Record your first weighbridge Mandi receipt to track gross/tare stock weight</p>
-                                    <a href="{{ route('admin.transactions.wb-purchase-entry.create') }}" class="erp-btn-primary">
-                                        <i class="fa-solid fa-plus me-1"></i> New WB Purchase Entry
-                                    </a>
+                                    <h4 style="font-weight: 600; color: #334155; margin-bottom: 0.35rem;">No WB Purchase Slips Found</h4>
+                                    <p style="color: #64748B; font-size: 0.88rem; max-width: 420px; margin-bottom: 1.25rem;">
+                                        Record your first weighbridge Mandi cash purchase or direct farmer arrival without bill.
+                                    </p>
+                                    @if(request('search') || request('vendor_id') || request('status'))
+                                        <a href="{{ route('admin.transactions.wb-purchase-entry') }}" class="btn btn-outline" style="border-radius: 8px;">
+                                            <i class="fa-solid fa-rotate-left"></i> Reset All Filters
+                                        </a>
+                                    @else
+                                        <a href="{{ route('admin.transactions.wb-purchase-entry.create') }}" class="btn btn-primary" style="border-radius: 8px;">
+                                            <i class="fa-solid fa-plus"></i> Record First WB Slip
+                                        </a>
+                                    @endif
                                 </div>
                             </td>
                         </tr>
@@ -266,9 +302,9 @@
 
         <!-- Pagination Footer -->
         @if($wbPurchases->hasPages())
-            <div class="erp-table-pagination-footer p-3 border-top d-flex justify-content-between align-items-center">
-                <div class="text-muted font-size-sm">
-                    Showing {{ $wbPurchases->firstItem() }} to {{ $wbPurchases->lastItem() }} of {{ $wbPurchases->total() }} entries
+            <div style="padding: 1rem 1.5rem; border-top: 1px solid #E2E8F0; display: flex; align-items: center; justify-content: space-between; background: #FAFBFD;">
+                <div style="font-size: 0.82rem; color: #64748B;">
+                    Showing <strong>{{ $wbPurchases->firstItem() }}</strong> to <strong>{{ $wbPurchases->lastItem() }}</strong> of <strong>{{ $wbPurchases->total() }}</strong> entries
                 </div>
                 <div>
                     {{ $wbPurchases->links() }}
@@ -276,5 +312,44 @@
             </div>
         @endif
     </div>
-</div>
+</section>
+
+<!-- Delete WB Slip Hidden Form -->
+<form id="delete-wb-form" method="POST" style="display: none;">
+    @csrf
+    @method('DELETE')
+</form>
+
+@push('scripts')
+<script>
+    function confirmDeleteWBPurchase(slipId, slipNo) {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: 'Delete WB Slip?',
+                html: `Are you sure you want to delete weighbridge slip <strong>#${slipNo}</strong>?<br><span style="font-size: 0.85rem; color: #64748B;">Reverting inward stock and adjusting supplier balance will take effect.</span>`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#EF4444',
+                cancelButtonColor: '#64748B',
+                confirmButtonText: '<i class="fa-solid fa-trash-can"></i> Yes, Delete',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true,
+                focusCancel: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const form = document.getElementById('delete-wb-form');
+                    form.action = `{{ url('admin/transactions/wb-purchase-entry') }}/${slipId}`;
+                    form.submit();
+                }
+            });
+        } else {
+            if (confirm(`Are you sure you want to delete WB slip #${slipNo}? Inward stock will be reverted.`)) {
+                const form = document.getElementById('delete-wb-form');
+                form.action = `{{ url('admin/transactions/wb-purchase-entry') }}/${slipId}`;
+                form.submit();
+            }
+        }
+    }
+</script>
+@endpush
 @endsection

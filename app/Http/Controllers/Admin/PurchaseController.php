@@ -8,6 +8,7 @@ use App\Models\Company;
 use App\Models\Item;
 use App\Models\Purchase;
 use App\Models\PurchaseItem;
+use App\Models\Unit;
 use App\Models\Vendor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -88,12 +89,14 @@ class PurchaseController extends Controller
         $vendors = Vendor::where('status', 'active')->orderBy('name')->get();
         $brokers = Broker::where('status', 'active')->orderBy('name')->get();
         $items = Item::where('status', 'active')->orderBy('name')->get();
+        $units = Unit::active()->orderBy('name')->get();
 
         return view('admin.transactions.purchase.create', compact(
             'nextPurchaseNo',
             'vendors',
             'brokers',
-            'items'
+            'items',
+            'units'
         ));
     }
 
@@ -120,7 +123,7 @@ class PurchaseController extends Controller
             'items.*.hsn_code' => 'nullable|string|max:20',
             'items.*.unit' => 'required|string|max:20',
             'items.*.quantity' => 'required|numeric|min:0.001',
-            'items.*.actual_rate' => 'required|numeric|min:0',
+            'items.*.actual_rate' => 'nullable|numeric|min:0',
             'items.*.bill_rate' => 'required|numeric|min:0',
             'items.*.ub_rate' => 'nullable|numeric|min:0',
             'items.*.gst_percent' => 'nullable|numeric|min:0',
@@ -138,9 +141,9 @@ class PurchaseController extends Controller
             foreach ($validated['items'] as $itemRow) {
                 $qty = (float) $itemRow['quantity'];
                 $billRate = (float) $itemRow['bill_rate'];
-                $actualRate = (float) $itemRow['actual_rate'];
-                $ubRate = isset($itemRow['ub_rate']) ? (float) $itemRow['ub_rate'] : max(0, $actualRate - $billRate);
-                $gstPercent = isset($itemRow['gst_percent']) ? (float) $itemRow['gst_percent'] : 5.0;
+                $ubRate = isset($itemRow['ub_rate']) && $itemRow['ub_rate'] !== null && $itemRow['ub_rate'] !== '' ? (float) $itemRow['ub_rate'] : 0.0;
+                $actualRate = isset($itemRow['actual_rate']) && $itemRow['actual_rate'] !== null && $itemRow['actual_rate'] !== '' ? (float) $itemRow['actual_rate'] : ($billRate + $ubRate);
+                $gstPercent = isset($itemRow['gst_percent']) && $itemRow['gst_percent'] !== null && $itemRow['gst_percent'] !== '' ? (float) $itemRow['gst_percent'] : 5.0;
 
                 $lineSub = $qty * $billRate;
                 $lineTax = $lineSub * ($gstPercent / 100);
@@ -239,12 +242,14 @@ class PurchaseController extends Controller
         $vendors = Vendor::where('status', 'active')->orderBy('name')->get();
         $brokers = Broker::where('status', 'active')->orderBy('name')->get();
         $items = Item::where('status', 'active')->orderBy('name')->get();
+        $units = Unit::active()->orderBy('name')->get();
 
         return view('admin.transactions.purchase.edit', compact(
             'purchase',
             'vendors',
             'brokers',
-            'items'
+            'items',
+            'units'
         ));
     }
 
@@ -270,7 +275,7 @@ class PurchaseController extends Controller
             'items.*.hsn_code' => 'nullable|string|max:20',
             'items.*.unit' => 'required|string|max:20',
             'items.*.quantity' => 'required|numeric|min:0.001',
-            'items.*.actual_rate' => 'required|numeric|min:0',
+            'items.*.actual_rate' => 'nullable|numeric|min:0',
             'items.*.bill_rate' => 'required|numeric|min:0',
             'items.*.ub_rate' => 'nullable|numeric|min:0',
             'items.*.gst_percent' => 'nullable|numeric|min:0',
@@ -297,9 +302,9 @@ class PurchaseController extends Controller
             foreach ($validated['items'] as $itemRow) {
                 $qty = (float) $itemRow['quantity'];
                 $billRate = (float) $itemRow['bill_rate'];
-                $actualRate = (float) $itemRow['actual_rate'];
-                $ubRate = isset($itemRow['ub_rate']) ? (float) $itemRow['ub_rate'] : max(0, $actualRate - $billRate);
-                $gstPercent = isset($itemRow['gst_percent']) ? (float) $itemRow['gst_percent'] : 5.0;
+                $ubRate = isset($itemRow['ub_rate']) && $itemRow['ub_rate'] !== null && $itemRow['ub_rate'] !== '' ? (float) $itemRow['ub_rate'] : 0.0;
+                $actualRate = isset($itemRow['actual_rate']) && $itemRow['actual_rate'] !== null && $itemRow['actual_rate'] !== '' ? (float) $itemRow['actual_rate'] : ($billRate + $ubRate);
+                $gstPercent = isset($itemRow['gst_percent']) && $itemRow['gst_percent'] !== null && $itemRow['gst_percent'] !== '' ? (float) $itemRow['gst_percent'] : 5.0;
 
                 $lineSub = $qty * $billRate;
                 $lineTax = $lineSub * ($gstPercent / 100);

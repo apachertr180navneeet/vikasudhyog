@@ -1,464 +1,677 @@
 @extends('admin.layouts.app')
 
-@section('title', 'Edit Purchase Entry - VIKAS UDHYOG ERP')
+@section('title', 'Edit Purchase Entry ' . $purchase->purchase_no . ' - VIKAS UDHYOG ERP')
 @section('page_code', 'txn-purchase')
 
 @section('content')
-<div class="erp-module-wrapper">
-    <!-- Top Bar & Breadcrumb -->
-    <div class="erp-header-toolbar mb-4">
-        <div class="erp-breadcrumb-wrap">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb mb-1">
-                    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="{{ route('admin.transactions.purchase-entry') }}">Purchase Entry</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Edit #{{ $purchase->purchase_no }}</li>
-                </ol>
-            </nav>
-            <h1 class="erp-page-title">Edit Purchase Entry #{{ $purchase->purchase_no }}</h1>
-            <p class="erp-page-desc">Modify vendor invoice details, rates, and stock inward items</p>
+<section class="view-section active" id="view-purchase-edit">
+    <!-- Breadcrumb & Top Bar -->
+    <div class="erp-page-top-bar">
+        <div>
+            <div class="erp-breadcrumb-trail">
+                <a href="{{ route('admin.dashboard') }}">Dashboard</a>
+                <i class="fa-solid fa-chevron-right erp-breadcrumb-sep"></i>
+                <a href="{{ route('admin.transactions.purchase-entry') }}">Transactions</a>
+                <i class="fa-solid fa-chevron-right erp-breadcrumb-sep"></i>
+                <a href="{{ route('admin.transactions.purchase-entry') }}">Purchase Entry</a>
+                <i class="fa-solid fa-chevron-right erp-breadcrumb-sep"></i>
+                <span class="erp-breadcrumb-active">Edit #{{ $purchase->purchase_no }}</span>
+            </div>
+            <h1 class="erp-page-title">
+                <i class="fa-solid fa-pen-to-square text-primary"></i> Edit Purchase Voucher #{{ $purchase->purchase_no }}
+            </h1>
+            <p class="erp-page-subtitle">
+                Modify vendor billing coordinates, rates, and stock inward items with live audit reconciliation.
+            </p>
         </div>
+
         <div class="erp-header-actions">
-            <a href="{{ route('admin.transactions.purchase-entry.show', $purchase) }}" class="erp-btn-outline me-2">
-                <i class="fa-solid fa-eye"></i> View 360
+            <a href="{{ route('admin.transactions.purchase-entry.show', $purchase) }}" class="btn btn-outline">
+                <i class="fa-solid fa-eye"></i> View Voucher Dossier
             </a>
-            <a href="{{ route('admin.transactions.purchase-entry') }}" class="erp-btn-outline">
+            <a href="{{ route('admin.transactions.purchase-entry') }}" class="btn btn-outline">
                 <i class="fa-solid fa-arrow-left"></i> Back to Purchases
             </a>
         </div>
     </div>
 
-    <!-- Alert Messages -->
-    @if($errors->any())
-        <div class="alert alert-danger erp-alert alert-dismissible fade show mb-4" role="alert">
-            <i class="fa-solid fa-triangle-exclamation me-2"></i>
-            <strong>Please correct the following errors:</strong>
-            <ul class="mb-0 mt-2 ps-3">
-                @foreach($errors->all() as $err)
-                    <li>{{ $err }}</li>
-                @endforeach
-            </ul>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <!-- Alert Notifications -->
+    @if(isset($errors) && $errors->any())
+        <div class="alert erp-alert-danger">
+            <div class="erp-alert-content">
+                <i class="fa-solid fa-circle-exclamation erp-alert-icon-danger"></i>
+                <div>
+                    <strong>Please correct the following errors:</strong>
+                    <ul class="mb-0 mt-1 ps-3" style="font-size: 0.85rem;">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
+            <button type="button" class="erp-alert-close-btn" onclick="this.parentElement.remove()">&times;</button>
         </div>
     @endif
 
-    <form method="POST" action="{{ route('admin.transactions.purchase-entry.update', $purchase) }}" id="purchase-edit-form">
+    <!-- Form Container -->
+    <form action="{{ route('admin.transactions.purchase-entry.update', $purchase) }}" method="POST" id="purchase-form">
         @csrf
         @method('PUT')
 
-        <div class="row g-4">
-            <!-- Left Column: Form Sections -->
-            <div class="col-lg-8">
-                <!-- Section 1: Voucher & Supplier Details -->
-                <div class="card erp-form-section-card mb-4">
-                    <div class="erp-section-header">
-                        <div class="erp-section-icon" style="background: rgba(91, 132, 30, 0.1); color: #5B841E;">
-                            <i class="fa-solid fa-receipt"></i>
-                        </div>
-                        <div>
-                            <h3 class="erp-section-title">Purchase Voucher Details</h3>
-                            <p class="erp-section-desc">Supplier invoice coordinates, transport vehicle, and vendor profile</p>
+        <div class="erp-form-layout-2col">
+            <!-- Left Main Column -->
+            <div class="erp-form-main-col">
+
+                <!-- 1. Purchase Voucher & Supplier Identity -->
+                <div class="card erp-form-section-card">
+                    <div class="erp-form-section-header">
+                        <div class="erp-form-section-header-left">
+                            <div class="erp-form-section-icon-box erp-form-icon-primary">
+                                <i class="fa-solid fa-receipt"></i>
+                            </div>
+                            <div>
+                                <h3 class="erp-form-section-title">1. Purchase Voucher &amp; Supplier Identity</h3>
+                                <p class="erp-form-section-desc">Supplier invoice coordinates, transport vehicle &amp; vendor profile</p>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="erp-section-body">
-                        <div class="row g-3">
-                            <!-- Purchase Voucher No (Readonly) -->
-                            <div class="col-md-4">
-                                <label class="erp-field-label">Voucher No</label>
-                                <div class="erp-input-group-icon">
-                                    <i class="fa-solid fa-hashtag erp-field-icon"></i>
-                                    <input type="text" class="form-control erp-field-input font-monospace font-weight-bold" value="{{ $purchase->purchase_no }}" readonly>
-                                </div>
+                    <div class="erp-form-section-body">
+                        <!-- Voucher No (Readonly) -->
+                        <div class="form-group">
+                            <label class="erp-field-label">
+                                Voucher No <span class="erp-req-star">*</span>
+                            </label>
+                            <div class="erp-field-icon-wrap">
+                                <i class="fa-solid fa-hashtag erp-field-icon"></i>
+                                <input type="text" class="form-control erp-field-input-iconified erp-field-input-mono font-weight-bold" value="{{ $purchase->purchase_no }}" readonly>
                             </div>
+                            <span class="erp-field-hint">Fixed inward purchase voucher reference</span>
+                        </div>
 
-                            <!-- Invoice Date -->
-                            <div class="col-md-4">
-                                <label class="erp-field-label">Invoice Date <span class="text-danger">*</span></label>
-                                <div class="erp-input-group-icon">
-                                    <i class="fa-solid fa-calendar-day erp-field-icon"></i>
-                                    <input type="date" name="invoice_date" id="field-invoice-date" class="form-control erp-field-input" value="{{ old('invoice_date', $purchase->invoice_date->format('Y-m-d')) }}" required onchange="updateLiveSummary()">
-                                </div>
+                        <!-- Invoice Date -->
+                        <div class="form-group">
+                            <label class="erp-field-label">
+                                Invoice Date <span class="erp-req-star">*</span>
+                            </label>
+                            <div class="erp-field-icon-wrap">
+                                <i class="fa-solid fa-calendar-day erp-field-icon"></i>
+                                <input type="date" name="invoice_date" id="field-invoice-date" class="form-control erp-field-input-iconified" value="{{ old('invoice_date', $purchase->invoice_date->format('Y-m-d')) }}" required onchange="updateLiveSummary()">
                             </div>
+                            <span class="erp-field-hint">Billing or arrival consignment date</span>
+                        </div>
 
-                            <!-- Supplier Bill / Inv No -->
-                            <div class="col-md-4">
-                                <label class="erp-field-label">Supplier Invoice No</label>
-                                <div class="erp-input-group-icon">
-                                    <i class="fa-solid fa-file-invoice erp-field-icon"></i>
-                                    <input type="text" name="invoice_no" id="field-invoice-no" class="form-control erp-field-input font-monospace" placeholder="Enter Invoice No" value="{{ old('invoice_no', $purchase->invoice_no) }}" oninput="updateLiveSummary()">
-                                </div>
+                        <!-- Supplier Invoice No -->
+                        <div class="form-group">
+                            <label class="erp-field-label">
+                                Supplier Bill / Invoice No
+                            </label>
+                            <div class="erp-field-icon-wrap">
+                                <i class="fa-solid fa-file-invoice erp-field-icon"></i>
+                                <input type="text" name="invoice_no" id="field-invoice-no" class="form-control erp-field-input-iconified erp-field-input-mono" placeholder="Enter invoice number" value="{{ old('invoice_no', $purchase->invoice_no) }}" oninput="updateLiveSummary()">
                             </div>
+                            <span class="erp-field-hint">Vendor's original printed bill number</span>
+                        </div>
 
-                            <!-- Vendor / Supplier Select -->
-                            <div class="col-md-6">
-                                <label class="erp-field-label">Vendor / Supplier <span class="text-danger">*</span></label>
-                                <div class="erp-input-group-icon">
-                                    <i class="fa-solid fa-truck-field erp-field-icon"></i>
-                                    <select name="vendor_id" id="field-vendor-id" class="form-select erp-field-input" required onchange="onVendorChange(this)">
-                                        @foreach($vendors as $vnd)
-                                            <option value="{{ $vnd->id }}" data-name="{{ $vnd->name }}" {{ old('vendor_id', $purchase->vendor_id) == $vnd->id ? 'selected' : '' }}>
-                                                {{ $vnd->name }} ({{ $vnd->city ?? 'Rajasthan' }})
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-
-                            <!-- Broker / Agent Select -->
-                            <div class="col-md-6">
-                                <label class="erp-field-label">Broker / Agent <span class="text-muted">(Optional)</span></label>
-                                <div class="erp-input-group-icon">
-                                    <i class="fa-solid fa-handshake erp-field-icon"></i>
-                                    <select name="broker_id" id="field-broker-id" class="form-select erp-field-input" onchange="updateLiveSummary()">
-                                        <option value="">None / Direct</option>
-                                        @foreach($brokers as $brk)
-                                            <option value="{{ $brk->id }}" data-name="{{ $brk->name }}" {{ old('broker_id', $purchase->broker_id) == $brk->id ? 'selected' : '' }}>
-                                                {{ $brk->name }} ({{ $brk->city ?? 'Sojat' }} - {{ $brk->commission_rate }}%)
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-
-                            <!-- Order Type -->
-                            <div class="col-md-4">
-                                <label class="erp-field-label">Order Urgency / Type <span class="text-danger">*</span></label>
-                                <select name="order_type" id="field-order-type" class="form-select erp-field-input" required onchange="updateLiveSummary()">
-                                    <option value="Medium" {{ old('order_type', $purchase->order_type) == 'Medium' ? 'selected' : '' }}>Medium (Standard)</option>
-                                    <option value="Urgent" {{ old('order_type', $purchase->order_type) == 'Urgent' ? 'selected' : '' }}>Urgent</option>
-                                    <option value="Fast" {{ old('order_type', $purchase->order_type) == 'Fast' ? 'selected' : '' }}>Fast</option>
-                                    <option value="Ready Delivery" {{ old('order_type', $purchase->order_type) == 'Ready Delivery' ? 'selected' : '' }}>Ready Delivery</option>
+                        <!-- Vendor / Supplier Select -->
+                        <div class="form-group erp-form-col-full">
+                            <label class="erp-field-label">
+                                Vendor / Supplier Firm <span class="erp-req-star">*</span>
+                            </label>
+                            <div class="erp-field-icon-wrap">
+                                <i class="fa-solid fa-truck-field erp-field-icon"></i>
+                                <select name="vendor_id" id="field-vendor-id" class="form-control erp-field-input-iconified" required onchange="onVendorChange(this)">
+                                    @foreach($vendors as $vnd)
+                                        <option value="{{ $vnd->id }}" data-name="{{ $vnd->name }}" data-city="{{ $vnd->city }}" data-gstin="{{ $vnd->gstin }}" {{ old('vendor_id', $purchase->vendor_id) == $vnd->id ? 'selected' : '' }}>
+                                            {{ $vnd->name }} ({{ $vnd->code }}{{ $vnd->city ? ' - ' . $vnd->city : '' }})
+                                        </option>
+                                    @endforeach
                                 </select>
                             </div>
+                            <span class="erp-field-hint">Creditor account whose ledger balance will be adjusted</span>
+                        </div>
 
-                            <!-- Vehicle No -->
-                            <div class="col-md-4">
-                                <label class="erp-field-label">Vehicle / Transport No</label>
-                                <div class="erp-input-group-icon">
-                                    <i class="fa-solid fa-truck-moving erp-field-icon"></i>
-                                    <input type="text" name="vehicle_no" id="field-vehicle-no" class="form-control erp-field-input font-monospace" placeholder="Enter Vehicle No" value="{{ old('vehicle_no', $purchase->vehicle_no) }}">
-                                </div>
-                            </div>
-
-                            <!-- Payment Terms -->
-                            <div class="col-md-4">
-                                <label class="erp-field-label">Payment Terms</label>
-                                <select name="payment_terms" class="form-select erp-field-input">
-                                    <option value="Cash" {{ old('payment_terms', $purchase->payment_terms) == 'Cash' ? 'selected' : '' }}>Cash</option>
-                                    <option value="15 Days" {{ old('payment_terms', $purchase->payment_terms) == '15 Days' ? 'selected' : '' }}>Credit 15 Days</option>
-                                    <option value="30 Days" {{ old('payment_terms', $purchase->payment_terms) == '30 Days' ? 'selected' : '' }}>Credit 30 Days</option>
-                                    <option value="45 Days" {{ old('payment_terms', $purchase->payment_terms) == '45 Days' ? 'selected' : '' }}>Credit 45 Days</option>
-                                    <option value="Bank Transfer" {{ old('payment_terms', $purchase->payment_terms) == 'Bank Transfer' ? 'selected' : '' }}>Bank Transfer / RTGS</option>
+                        <!-- Broker / Agent Select -->
+                        <div class="form-group">
+                            <label class="erp-field-label">
+                                Broker / Mandi Commission Agent <span class="text-muted">(Optional)</span>
+                            </label>
+                            <div class="erp-field-icon-wrap">
+                                <i class="fa-solid fa-handshake erp-field-icon"></i>
+                                <select name="broker_id" id="field-broker-id" class="form-control erp-field-input-iconified" onchange="updateLiveSummary()">
+                                    <option value="">Direct Purchase (No Broker)...</option>
+                                    @foreach($brokers as $brk)
+                                        <option value="{{ $brk->id }}" data-name="{{ $brk->name }}" data-comm="{{ $brk->commission_rate }}" {{ old('broker_id', $purchase->broker_id) == $brk->id ? 'selected' : '' }}>
+                                            {{ $brk->name }} ({{ $brk->city ?? 'Sojat' }} - {{ $brk->commission_rate }}%)
+                                        </option>
+                                    @endforeach
                                 </select>
                             </div>
+                            <span class="erp-field-hint">Commission tracking agent</span>
+                        </div>
+
+                        <!-- Order Urgency / Type -->
+                        <div class="form-group">
+                            <label class="erp-field-label">
+                                Order Classification / Urgency <span class="erp-req-star">*</span>
+                            </label>
+                            <div class="erp-field-icon-wrap">
+                                <i class="fa-solid fa-tag erp-field-icon"></i>
+                                <select name="order_type" id="field-order-type" class="form-control erp-field-input-iconified" required onchange="updateLiveSummary()">
+                                    <option value="Medium" {{ old('order_type', $purchase->order_type) === 'Medium' ? 'selected' : '' }}>Medium (Standard Processing)</option>
+                                    <option value="Urgent" {{ old('order_type', $purchase->order_type) === 'Urgent' ? 'selected' : '' }}>Urgent Consignment</option>
+                                    <option value="Fast" {{ old('order_type', $purchase->order_type) === 'Fast' ? 'selected' : '' }}>Fast Track</option>
+                                    <option value="Ready Delivery" {{ old('order_type', $purchase->order_type) === 'Ready Delivery' ? 'selected' : '' }}>Ready Delivery</option>
+                                </select>
+                            </div>
+                            <span class="erp-field-hint">Operational delivery tag</span>
+                        </div>
+
+                        <!-- Vehicle No -->
+                        <div class="form-group">
+                            <label class="erp-field-label">
+                                Vehicle / Transport No
+                            </label>
+                            <div class="erp-field-icon-wrap">
+                                <i class="fa-solid fa-truck-moving erp-field-icon"></i>
+                                <input type="text" name="vehicle_no" id="field-vehicle-no" class="form-control erp-field-input-iconified erp-field-input-mono" placeholder="Enter vehicle registration number" value="{{ old('vehicle_no', $purchase->vehicle_no) }}" oninput="this.value = this.value.toUpperCase(); updateLiveSummary();">
+                            </div>
+                            <span class="erp-field-hint">Truck or transport registration number</span>
+                        </div>
+
+                        <!-- Payment Terms -->
+                        <div class="form-group">
+                            <label class="erp-field-label">
+                                Payment Terms
+                            </label>
+                            <div class="erp-field-icon-wrap">
+                                <i class="fa-solid fa-clock erp-field-icon"></i>
+                                <select name="payment_terms" class="form-control erp-field-input-iconified">
+                                    <option value="Cash" {{ old('payment_terms', $purchase->payment_terms) === 'Cash' ? 'selected' : '' }}>Cash on Delivery (Immediate)</option>
+                                    <option value="15 Days" {{ old('payment_terms', $purchase->payment_terms) === '15 Days' ? 'selected' : '' }}>Credit 15 Days</option>
+                                    <option value="30 Days" {{ old('payment_terms', $purchase->payment_terms) === '30 Days' ? 'selected' : '' }}>Credit 30 Days</option>
+                                    <option value="45 Days" {{ old('payment_terms', $purchase->payment_terms) === '45 Days' ? 'selected' : '' }}>Credit 45 Days</option>
+                                    <option value="Bank Transfer" {{ old('payment_terms', $purchase->payment_terms) === 'Bank Transfer' ? 'selected' : '' }}>Bank RTGS / NEFT</option>
+                                </select>
+                            </div>
+                            <span class="erp-field-hint">Agreed credit repayment cycle</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Section 2: Line Items Dynamic Table -->
-                <div class="card erp-form-section-card mb-4">
-                    <div class="erp-section-header d-flex justify-content-between align-items-center">
-                        <div class="d-flex align-items-center">
-                            <div class="erp-section-icon" style="background: rgba(16, 185, 129, 0.1); color: #10B981;">
+                <!-- 2. Inward Product Line Items (Matching Ledger Layout) -->
+                <div class="card erp-form-section-card">
+                    <div class="erp-form-section-header">
+                        <div class="erp-form-section-header-left">
+                            <div class="erp-form-section-icon-box erp-form-icon-success">
                                 <i class="fa-solid fa-boxes-stacked"></i>
                             </div>
                             <div>
-                                <h3 class="erp-section-title">Purchase Line Items</h3>
-                                <p class="erp-section-desc">Raw materials, herbal powders, packaging items with dual rates</p>
+                                <h3 class="erp-form-section-title">2. Inward Product Line Items</h3>
+                                <p class="erp-form-section-desc">Raw materials, herbs, packaging with dual-rate official &amp; under-billing calculation</p>
                             </div>
                         </div>
-                        <button type="button" class="erp-btn-outline erp-btn-sm" onclick="addPurchaseRow()">
+                        <button type="button" class="btn btn-outline" style="font-size: 0.8rem; padding: 0.4rem 0.85rem;" onclick="addPurchaseRow()">
                             <i class="fa-solid fa-plus me-1"></i> Add Line Item
                         </button>
                     </div>
 
-                    <div class="erp-section-body p-0">
-                        <div class="table-responsive">
-                            <table class="table erp-line-items-table mb-0" id="items-table">
-                                <thead style="background: #F8FAFC;">
+                    <div class="erp-form-section-body p-0" style="padding: 0 !important;">
+                        <div class="erp-items-table-wrapper" style="border: none; border-radius: 0;">
+                            <table class="erp-items-table" id="items-table">
+                                <thead>
                                     <tr>
-                                        <th style="width: 40px; text-align: center;">#</th>
-                                        <th style="min-width: 220px;">Product Item <span class="text-danger">*</span></th>
-                                        <th style="width: 110px;">Batch No</th>
+                                        <th style="width: 45px; text-align: center;">S.NO</th>
+                                        <th style="min-width: 220px;">ITEM <span class="text-danger">*</span></th>
                                         <th style="width: 90px;">HSN</th>
-                                        <th style="width: 85px;">Unit</th>
-                                        <th style="width: 105px;">Quantity <span class="text-danger">*</span></th>
-                                        <th style="width: 110px;">Actual Rate (₹)</th>
-                                        <th style="width: 110px;">Bill Rate (₹) <span class="text-danger">*</span></th>
-                                        <th style="width: 105px;">UB Rate (₹)</th>
-                                        <th style="width: 80px;">GST %</th>
-                                        <th style="width: 115px; text-align: right;">Bill Amt</th>
-                                        <th style="width: 115px; text-align: right;">UB Amt</th>
+                                        <th style="width: 80px; text-align: center;">GST</th>
+                                        <th style="width: 110px;">UNIT TYPE <span class="text-danger">*</span></th>
+                                        <th style="width: 110px; text-align: right;">NET WT <span class="text-danger">*</span></th>
+                                        <th style="width: 110px; text-align: right;">BILL RATE (₹) <span class="text-danger">*</span></th>
+                                        <th style="width: 110px; text-align: right;">U-B RATE (₹)</th>
+                                        <th style="width: 120px; text-align: right;">BILL ARNT (₹)</th>
+                                        <th style="width: 120px; text-align: right;">U-B ARNT (₹)</th>
                                         <th style="width: 45px; text-align: center;"></th>
                                     </tr>
                                 </thead>
                                 <tbody id="purchase-items-body">
-                                    @foreach($purchase->items as $idx => $item)
-                                        <tr class="item-row">
-                                            <td class="text-center row-sno font-weight-600 font-monospace text-muted">{{ $idx + 1 }}</td>
-                                            <td>
-                                                <select name="items[{{ $idx }}][item_id]" class="form-select erp-item-select" required onchange="onItemSelect(this)">
-                                                    @foreach($items as $itm)
-                                                        <option value="{{ $itm->id }}"
-                                                                data-code="{{ $itm->code }}"
-                                                                data-hsn="{{ $itm->hsn_code }}"
-                                                                data-unit="{{ $itm->unit }}"
-                                                                data-gst="{{ $itm->gst_rate }}"
-                                                                data-purchase-rate="{{ $itm->purchase_rate }}"
-                                                                data-batch="{{ $itm->batch_no }}"
-                                                                {{ $item->item_id == $itm->id ? 'selected' : '' }}>
-                                                            {{ $itm->name }} ({{ $itm->code }})
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </td>
-                                            <td>
-                                                <input type="text" name="items[{{ $idx }}][batch_no]" class="form-control erp-field-input-sm row-batch font-monospace" placeholder="Enter Batch" value="{{ $item->batch_no }}">
-                                            </td>
-                                            <td>
-                                                <input type="text" name="items[{{ $idx }}][hsn_code]" class="form-control erp-field-input-sm row-hsn font-monospace" placeholder="Enter HSN" value="{{ $item->hsn_code }}">
-                                            </td>
-                                            <td>
-                                                <input type="text" name="items[{{ $idx }}][unit]" class="form-control erp-field-input-sm row-unit" value="{{ $item->unit }}" required>
-                                            </td>
-                                            <td>
-                                                <input type="number" step="any" min="0.001" name="items[{{ $idx }}][quantity]" class="form-control erp-field-input-sm row-qty font-monospace" value="{{ (float)$item->quantity }}" required oninput="calcRow(this)">
-                                            </td>
-                                            <td>
-                                                <input type="number" step="0.01" min="0" name="items[{{ $idx }}][actual_rate]" class="form-control erp-field-input-sm row-actual font-monospace" value="{{ (float)$item->actual_rate }}" required oninput="calcRow(this, 'actual')">
-                                            </td>
-                                            <td>
-                                                <input type="number" step="0.01" min="0" name="items[{{ $idx }}][bill_rate]" class="form-control erp-field-input-sm row-bill-rate font-monospace" value="{{ (float)$item->bill_rate }}" required oninput="calcRow(this, 'bill')">
-                                            </td>
-                                            <td>
-                                                <input type="number" step="0.01" min="0" name="items[{{ $idx }}][ub_rate]" class="form-control erp-field-input-sm row-ub-rate font-monospace" value="{{ (float)$item->ub_rate }}" oninput="calcRow(this, 'ub')">
-                                            </td>
-                                            <td>
-                                                <input type="number" step="0.01" min="0" name="items[{{ $idx }}][gst_percent]" class="form-control erp-field-input-sm row-gst font-monospace" value="{{ (float)$item->gst_percent }}" oninput="calcRow(this)">
-                                            </td>
-                                            <td style="text-align: right;">
-                                                <span class="font-monospace text-dark font-weight-600 row-bill-amt">₹{{ number_format($item->bill_amount, 2) }}</span>
-                                            </td>
-                                            <td style="text-align: right;">
-                                                <span class="font-monospace font-weight-600 row-ub-amt" style="color: #D97706;">₹{{ number_format($item->under_amount, 2) }}</span>
-                                            </td>
-                                            <td class="text-center">
-                                                <button type="button" class="btn btn-sm text-danger p-0 delete-row-btn" onclick="removeRow(this)" title="Remove item">
-                                                    <i class="fa-solid fa-xmark"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    @endforeach
+                                    @php
+                                        $editItems = old('items');
+                                    @endphp
+                                    @if($editItems && is_array($editItems))
+                                        @foreach($editItems as $idx => $row)
+                                            <tr class="item-row">
+                                                <td class="text-center row-sno font-weight-600 font-monospace text-muted">{{ $idx + 1 }}</td>
+                                                <td>
+                                                    <select name="items[{{ $idx }}][item_id]" class="form-select erp-item-select" required onchange="onItemSelect(this)">
+                                                        <option value="">Select Item...</option>
+                                                        @foreach($items as $itm)
+                                                            <option value="{{ $itm->id }}"
+                                                                    data-code="{{ $itm->code }}"
+                                                                    data-hsn="{{ $itm->hsn_code }}"
+                                                                    data-unit="{{ $itm->unit }}"
+                                                                    data-gst="{{ $itm->gst_rate }}"
+                                                                    data-purchase-rate="{{ $itm->purchase_rate }}"
+                                                                    data-batch="{{ $itm->batch_no }}"
+                                                                    {{ ($row['item_id'] ?? '') == $itm->id ? 'selected' : '' }}>
+                                                                {{ $itm->name }} ({{ $itm->code }})
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                    <input type="hidden" name="items[{{ $idx }}][batch_no]" class="row-batch" value="{{ $row['batch_no'] ?? '' }}">
+                                                    <input type="hidden" name="items[{{ $idx }}][actual_rate]" class="row-actual" value="{{ $row['actual_rate'] ?? '0.00' }}">
+                                                </td>
+                                                <td>
+                                                    <input type="text" name="items[{{ $idx }}][hsn_code]" class="form-control row-hsn font-monospace" placeholder="HSN" value="{{ $row['hsn_code'] ?? '' }}">
+                                                </td>
+                                                <td>
+                                                    <input type="number" step="0.01" min="0" name="items[{{ $idx }}][gst_percent]" class="form-control row-gst font-monospace" value="{{ number_format((float)($row['gst_percent'] ?? 5), 2, '.', '') }}" oninput="calcRow(this)">
+                                                </td>
+                                                <td>
+                                                    <select name="items[{{ $idx }}][unit]" class="form-select row-unit" required>
+                                                        @php $rowUnit = strtoupper($row['unit'] ?? 'KG'); @endphp
+                                                        <option value="KG" {{ $rowUnit === 'KG' ? 'selected' : '' }}>KG</option>
+                                                        <option value="BOX" {{ $rowUnit === 'BOX' ? 'selected' : '' }}>BOX</option>
+                                                        <option value="BAG" {{ $rowUnit === 'BAG' ? 'selected' : '' }}>BAG</option>
+                                                        <option value="QUINTAL" {{ $rowUnit === 'QUINTAL' ? 'selected' : '' }}>QUINTAL</option>
+                                                        <option value="TON" {{ $rowUnit === 'TON' ? 'selected' : '' }}>TON</option>
+                                                        <option value="PCS" {{ $rowUnit === 'PCS' ? 'selected' : '' }}>PCS</option>
+                                                        @foreach($units as $u)
+                                                            @if(!in_array(strtoupper($u->name), ['KG', 'BOX', 'BAG', 'QUINTAL', 'TON', 'PCS']))
+                                                                <option value="{{ $u->name }}" {{ $rowUnit === strtoupper($u->name) ? 'selected' : '' }}>{{ $u->name }}</option>
+                                                            @endif
+                                                        @endforeach
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <input type="number" step="any" min="0.001" name="items[{{ $idx }}][quantity]" class="form-control row-qty font-monospace" style="text-align: right;" value="{{ $row['quantity'] ?? '1' }}" required oninput="calcRow(this)">
+                                                </td>
+                                                <td>
+                                                    <input type="number" step="0.01" min="0" name="items[{{ $idx }}][bill_rate]" class="form-control row-bill-rate font-monospace" style="text-align: right;" value="{{ number_format((float)($row['bill_rate'] ?? 0), 2, '.', '') }}" required oninput="calcRow(this)">
+                                                </td>
+                                                <td>
+                                                    <input type="number" step="0.01" min="0" name="items[{{ $idx }}][ub_rate]" class="form-control row-ub-rate font-monospace" style="text-align: right;" value="{{ number_format((float)($row['ub_rate'] ?? 0), 2, '.', '') }}" oninput="calcRow(this)">
+                                                </td>
+                                                <td style="text-align: right;">
+                                                    @php
+                                                        $rQty = (float)($row['quantity'] ?? 0);
+                                                        $rBill = (float)($row['bill_rate'] ?? 0);
+                                                        $rUb = (float)($row['ub_rate'] ?? 0);
+                                                    @endphp
+                                                    <span class="font-monospace text-dark font-weight-600 row-bill-amt">₹{{ number_format($rQty * $rBill, 2) }}</span>
+                                                </td>
+                                                <td style="text-align: right;">
+                                                    <span class="font-monospace font-weight-600 row-ub-amt" style="color: #D97706;">₹{{ number_format($rQty * $rUb, 2) }}</span>
+                                                </td>
+                                                <td class="text-center">
+                                                    <button type="button" class="delete-row-btn" onclick="removeRow(this)" title="Remove line item">
+                                                        <i class="fa-solid fa-xmark"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    @else
+                                        @foreach($purchase->items as $idx => $lineItem)
+                                            <tr class="item-row">
+                                                <td class="text-center row-sno font-weight-600 font-monospace text-muted">{{ $idx + 1 }}</td>
+                                                <td>
+                                                    <select name="items[{{ $idx }}][item_id]" class="form-select erp-item-select" required onchange="onItemSelect(this)">
+                                                        <option value="">Select Item...</option>
+                                                        @foreach($items as $itm)
+                                                            <option value="{{ $itm->id }}"
+                                                                    data-code="{{ $itm->code }}"
+                                                                    data-hsn="{{ $itm->hsn_code }}"
+                                                                    data-unit="{{ $itm->unit }}"
+                                                                    data-gst="{{ $itm->gst_rate }}"
+                                                                    data-purchase-rate="{{ $itm->purchase_rate }}"
+                                                                    data-batch="{{ $itm->batch_no }}"
+                                                                    {{ $lineItem->item_id == $itm->id ? 'selected' : '' }}>
+                                                                {{ $itm->name }} ({{ $itm->code }})
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                    <input type="hidden" name="items[{{ $idx }}][batch_no]" class="row-batch" value="{{ $lineItem->batch_no }}">
+                                                    <input type="hidden" name="items[{{ $idx }}][actual_rate]" class="row-actual" value="{{ $lineItem->actual_rate }}">
+                                                </td>
+                                                <td>
+                                                    <input type="text" name="items[{{ $idx }}][hsn_code]" class="form-control row-hsn font-monospace" placeholder="HSN" value="{{ $lineItem->hsn_code }}">
+                                                </td>
+                                                <td>
+                                                    <input type="number" step="0.01" min="0" name="items[{{ $idx }}][gst_percent]" class="form-control row-gst font-monospace" value="{{ number_format($lineItem->gst_percent, 2, '.', '') }}" oninput="calcRow(this)">
+                                                </td>
+                                                <td>
+                                                    <select name="items[{{ $idx }}][unit]" class="form-select row-unit" required>
+                                                        <option value="KG" {{ strtoupper($lineItem->unit) === 'KG' ? 'selected' : '' }}>KG</option>
+                                                        <option value="BOX" {{ strtoupper($lineItem->unit) === 'BOX' ? 'selected' : '' }}>BOX</option>
+                                                        <option value="BAG" {{ strtoupper($lineItem->unit) === 'BAG' ? 'selected' : '' }}>BAG</option>
+                                                        <option value="QUINTAL" {{ strtoupper($lineItem->unit) === 'QUINTAL' ? 'selected' : '' }}>QUINTAL</option>
+                                                        <option value="TON" {{ strtoupper($lineItem->unit) === 'TON' ? 'selected' : '' }}>TON</option>
+                                                        <option value="PCS" {{ strtoupper($lineItem->unit) === 'PCS' ? 'selected' : '' }}>PCS</option>
+                                                        @foreach($units as $u)
+                                                            @if(!in_array(strtoupper($u->name), ['KG', 'BOX', 'BAG', 'QUINTAL', 'TON', 'PCS']))
+                                                                <option value="{{ $u->name }}" {{ strtoupper($lineItem->unit) === strtoupper($u->name) ? 'selected' : '' }}>{{ $u->name }}</option>
+                                                            @endif
+                                                        @endforeach
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <input type="number" step="any" min="0.001" name="items[{{ $idx }}][quantity]" class="form-control row-qty font-monospace" style="text-align: right;" value="{{ $lineItem->quantity }}" required oninput="calcRow(this)">
+                                                </td>
+                                                <td>
+                                                    <input type="number" step="0.01" min="0" name="items[{{ $idx }}][bill_rate]" class="form-control row-bill-rate font-monospace" style="text-align: right;" value="{{ number_format($lineItem->bill_rate, 2, '.', '') }}" required oninput="calcRow(this)">
+                                                </td>
+                                                <td>
+                                                    <input type="number" step="0.01" min="0" name="items[{{ $idx }}][ub_rate]" class="form-control row-ub-rate font-monospace" style="text-align: right;" value="{{ number_format($lineItem->ub_rate, 2, '.', '') }}" oninput="calcRow(this)">
+                                                </td>
+                                                <td style="text-align: right;">
+                                                    <span class="font-monospace text-dark font-weight-600 row-bill-amt">₹{{ number_format($lineItem->quantity * $lineItem->bill_rate, 2) }}</span>
+                                                </td>
+                                                <td style="text-align: right;">
+                                                    <span class="font-monospace font-weight-600 row-ub-amt" style="color: #D97706;">₹{{ number_format($lineItem->under_amount, 2) }}</span>
+                                                </td>
+                                                <td class="text-center">
+                                                    <button type="button" class="delete-row-btn" onclick="removeRow(this)" title="Remove line item">
+                                                        <i class="fa-solid fa-xmark"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    @endif
                                 </tbody>
                             </table>
                         </div>
-                    </div>
-                </div>
 
-                <!-- Section 3: Notes & Logistics -->
-                <div class="card erp-form-section-card">
-                    <div class="erp-section-header">
-                        <div class="erp-section-icon" style="background: rgba(100, 116, 139, 0.1); color: #475569;">
-                            <i class="fa-solid fa-clipboard-list"></i>
-                        </div>
-                        <div>
-                            <h3 class="erp-section-title">Consignment Notes & Payment Remarks</h3>
-                            <p class="erp-section-desc">Warehouse location, quality grade notes, or Mandi transport terms</p>
-                        </div>
-                    </div>
-
-                    <div class="erp-section-body">
-                        <textarea name="notes" class="form-control erp-field-input" rows="3" placeholder="Enter consignment notes, mandi moisture deduction or unloading remarks...">{{ old('notes', $purchase->notes) }}</textarea>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Right Column: Live Preview & Actions -->
-            <div class="col-lg-4">
-                <div class="erp-sticky-sidebar">
-                    <!-- Live Real-Time Preview Card -->
-                    <div class="card erp-preview-card mb-4">
-                        <div class="erp-preview-header">
-                            <div class="d-flex align-items-center">
-                                <div class="erp-preview-avatar me-2" id="preview-avatar">
-                                    {{ strtoupper(substr($purchase->vendor->name ?? 'V', 0, 2)) }}
-                                </div>
-                                <div>
-                                    <h4 class="erp-preview-title" id="preview-vendor-name">{{ $purchase->vendor->name ?? 'Direct Vendor' }}</h4>
-                                    <span class="erp-preview-code font-monospace" id="preview-voucher-no">{{ $purchase->purchase_no }}</span>
-                                </div>
-                            </div>
-                            <span class="badge {{ $purchase->status === 'completed' ? 'bg-success' : 'bg-warning text-dark' }} px-2 py-1" style="font-size: 0.72rem; font-weight: 700;">
-                                {{ ucfirst($purchase->status) }}
+                        <!-- Action Bar to Add Rows -->
+                        <div style="padding: 0.75rem 1.25rem; background: #FFFFFF; border-top: 1px dashed #CBD5E1; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
+                            <button type="button" class="btn btn-outline" style="border-radius: 8px; font-size: 0.84rem; font-weight: 600; padding: 0.45rem 1.15rem; border-color: #5B841E; color: #5B841E;" onclick="addPurchaseRow()">
+                                <i class="fa-solid fa-plus me-1"></i> Add Another Item Row
+                            </button>
+                            <span style="font-size: 0.78rem; color: #64748B;">
+                                <i class="fa-solid fa-circle-check text-success me-1"></i> Live compute: Bill Arnt = Net Wt &times; Bill Rate &bull; U-B Arnt = Net Wt &times; U-B Rate
                             </span>
                         </div>
 
-                        <div class="erp-preview-body">
-                            <!-- Invoice Meta Tags -->
-                            <div class="erp-preview-meta-grid mb-3">
-                                <div>
-                                    <span class="erp-meta-label">Bill / Inv No:</span>
-                                    <strong class="erp-meta-value font-monospace" id="preview-inv-no">{{ $purchase->invoice_no ?? 'INV-PENDING' }}</strong>
-                                </div>
-                                <div>
-                                    <span class="erp-meta-label">Invoice Date:</span>
-                                    <strong class="erp-meta-value" id="preview-date">{{ $purchase->invoice_date->format('d M Y') }}</strong>
-                                </div>
-                                <div>
-                                    <span class="erp-meta-label">Order Type:</span>
-                                    <strong class="erp-meta-value" id="preview-order-type">{{ $purchase->order_type }}</strong>
-                                </div>
-                                <div>
-                                    <span class="erp-meta-label">Items Count:</span>
-                                    <strong class="erp-meta-value font-monospace" id="preview-items-count">{{ count($purchase->items) }} Item(s)</strong>
-                                </div>
+                        <!-- Real-Time Totals Bar Beneath Table -->
+                        <div class="erp-table-totals-bar">
+                            <div class="erp-table-total-item">
+                                <span class="erp-table-total-label">Total Net Wt</span>
+                                <span class="erp-table-total-val font-monospace" id="footer-total-qty">0.000</span>
                             </div>
-
-                            <hr style="border-color: #E2E8F0; margin: 0.75rem 0;">
-
-                            <!-- Financial Breakdown -->
-                            <div class="erp-calc-summary">
-                                <div class="d-flex justify-content-between mb-2">
-                                    <span class="text-muted">Bill Subtotal:</span>
-                                    <strong class="font-monospace text-dark" id="preview-subtotal">₹{{ number_format($purchase->subtotal, 2) }}</strong>
-                                </div>
-                                <div class="d-flex justify-content-between mb-2">
-                                    <span class="text-muted">GST Tax:</span>
-                                    <strong class="font-monospace text-muted" id="preview-tax">₹{{ number_format($purchase->tax_amount, 2) }}</strong>
-                                </div>
-                                <div class="d-flex justify-content-between mb-2 pb-2 border-bottom">
-                                    <span style="color: #2563EB; font-weight: 600;">Official Billing Total:</span>
-                                    <strong class="font-monospace" style="color: #2563EB;" id="preview-bill-total">₹{{ number_format($purchase->bill_total, 2) }}</strong>
-                                </div>
-                                <div class="d-flex justify-content-between mb-3">
-                                    <span style="color: #D97706; font-weight: 600;">Under-Billing (U_B):</span>
-                                    <strong class="font-monospace" style="color: #D97706;" id="preview-ub-total">₹{{ number_format($purchase->under_billing_total, 2) }}</strong>
-                                </div>
-
-                                <div class="erp-grand-total-box p-3 rounded" style="background: #F8FAFC; border: 1px solid #E2E8F0;">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <span class="text-dark font-weight-700" style="font-size: 0.95rem;">Grand Total:</span>
-                                        <h3 class="font-monospace font-weight-bold mb-0" style="color: #059669;" id="preview-grand-total">₹{{ number_format($purchase->grand_total, 2) }}</h3>
-                                    </div>
-                                    <div class="text-muted mt-1" style="font-size: 0.75rem;">
-                                        Total payable to vendor ledger
-                                    </div>
-                                </div>
+                            <div class="erp-table-total-item">
+                                <span class="erp-table-total-label">Bill Subtotal</span>
+                                <span class="erp-table-total-val font-monospace" id="footer-bill-subtotal">₹0.00</span>
+                            </div>
+                            <div class="erp-table-total-item">
+                                <span class="erp-table-total-label">GST Tax</span>
+                                <span class="erp-table-total-val font-monospace text-muted" id="footer-tax-total">₹0.00</span>
+                            </div>
+                            <div class="erp-table-total-item">
+                                <span class="erp-table-total-label" style="color: #D97706;">Total U-B Amount</span>
+                                <span class="erp-table-total-val font-monospace" style="color: #D97706;" id="footer-ub-total">₹0.00</span>
+                            </div>
+                            <div class="erp-table-total-item">
+                                <span class="erp-table-total-label" style="color: #059669;">Total Grand Value</span>
+                                <span class="erp-table-total-val font-monospace" style="color: #059669; font-size: 1.15rem;" id="footer-grand-total">₹0.00</span>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- Audit Trail Card -->
-                    <div class="card erp-form-section-card mb-4">
-                        <div class="erp-section-header p-3">
-                            <h4 class="font-weight-600 mb-0 font-size-sm"><i class="fa-solid fa-clock-rotate-left me-2 text-muted"></i> Voucher Audit Trail</h4>
-                        </div>
-                        <div class="erp-section-body p-3 font-size-sm">
-                            <div class="d-flex justify-content-between mb-2">
-                                <span class="text-muted">Created:</span>
-                                <span class="font-monospace text-dark">{{ $purchase->created_at->format('d M Y, h:i A') }}</span>
-                            </div>
-                            <div class="d-flex justify-content-between mb-2">
-                                <span class="text-muted">Last Modified:</span>
-                                <span class="font-monospace text-dark">{{ $purchase->updated_at->format('d M Y, h:i A') }}</span>
-                            </div>
-                            <div class="d-flex justify-content-between">
-                                <span class="text-muted">Stock Status:</span>
-                                <span class="text-success font-weight-600"><i class="fa-solid fa-check-double me-1"></i> Stock Reconciled</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Sidebar Actions Card -->
-                    <div class="card erp-sidebar-actions-card mb-4">
-                        <div class="card-body">
-                            <button type="submit" class="erp-btn-primary w-100 mb-2 py-2">
-                                <i class="fa-solid fa-floppy-disk me-1"></i> Update Purchase Entry
-                            </button>
-                            <a href="{{ route('admin.transactions.purchase-entry') }}" class="erp-btn-outline w-100 text-center py-2">
-                                <i class="fa-solid fa-xmark me-1"></i> Cancel & Return
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Danger Zone Card -->
-                    <div class="card border-danger-subtle bg-danger-subtle p-3 rounded">
-                        <h6 class="text-danger font-weight-bold mb-1"><i class="fa-solid fa-triangle-exclamation me-1"></i> Danger Zone</h6>
-                        <p class="text-muted font-size-sm mb-3">Deleting this voucher will reverse all line item stock inward quantities and deduct the balance from vendor ledger.</p>
-                        <button type="button" class="btn btn-outline-danger btn-sm w-100" onclick="if(confirm('Are you sure you want to delete purchase voucher #{{ $purchase->purchase_no }}?')) document.getElementById('delete-purchase-form').submit();">
-                            <i class="fa-solid fa-trash me-1"></i> Delete Voucher
-                        </button>
                     </div>
                 </div>
+
+                <!-- 3. Settlement & Operational Notes -->
+                <div class="card erp-form-section-card">
+                    <div class="erp-form-section-header">
+                        <div class="erp-form-section-header-left">
+                            <div class="erp-form-section-icon-box erp-form-icon-purple">
+                                <i class="fa-solid fa-clipboard-list"></i>
+                            </div>
+                            <div>
+                                <h3 class="erp-form-section-title">3. Settlement &amp; Consignment Notes</h3>
+                                <p class="erp-form-section-desc">Immediate settlement, payment recording &amp; factory inward observations</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="erp-form-section-body">
+                        <!-- Paid Amount -->
+                        <div class="form-group">
+                            <label class="erp-field-label">
+                                Paid Amount (₹)
+                            </label>
+                            <div class="erp-field-icon-wrap">
+                                <i class="fa-solid fa-indian-rupee-sign erp-field-icon"></i>
+                                <input type="number" step="0.01" min="0" name="paid_amount" id="field-paid-amount" class="form-control erp-field-input-iconified erp-field-input-mono" placeholder="Enter amount paid" value="{{ old('paid_amount', $purchase->paid_amount) }}" oninput="updateLiveSummary()">
+                            </div>
+                            <span class="erp-field-hint">Initial advance or immediate cash settlement</span>
+                        </div>
+
+                        <!-- Payment Status -->
+                        <div class="form-group">
+                            <label class="erp-field-label">
+                                Settlement Status
+                            </label>
+                            <div class="erp-field-icon-wrap">
+                                <i class="fa-solid fa-wallet erp-field-icon"></i>
+                                <select name="payment_status" id="field-payment-status" class="form-control erp-field-input-iconified" onchange="updateLiveSummary()">
+                                    <option value="unpaid" {{ old('payment_status', $purchase->payment_status) === 'unpaid' ? 'selected' : '' }}>Unpaid / On Credit</option>
+                                    <option value="partial" {{ old('payment_status', $purchase->payment_status) === 'partial' ? 'selected' : '' }}>Partially Paid</option>
+                                    <option value="paid" {{ old('payment_status', $purchase->payment_status) === 'paid' ? 'selected' : '' }}>Fully Settled</option>
+                                </select>
+                            </div>
+                            <span class="erp-field-hint">Accounts payable status</span>
+                        </div>
+
+                        <!-- Consignment Notes -->
+                        <div class="form-group erp-form-col-full">
+                            <label class="erp-field-label">
+                                Consignment Remarks / Inward Notes
+                            </label>
+                            <textarea name="notes" rows="3" class="form-control" style="border-radius: 8px; font-size: 0.88rem;" placeholder="Enter any gate pass observations, moisture check, lot condition, or mandi remarks...">{{ old('notes', $purchase->notes) }}</textarea>
+                            <span class="erp-field-hint">Internal warehouse &amp; procurement observations</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Sidebar Column -->
+            <div class="erp-form-sidebar-col">
+
+                <!-- 1. Real-Time Live Preview Card -->
+                <div class="card erp-preview-card">
+                    <div class="erp-preview-header">
+                        <div class="erp-preview-avatar" id="prev-avatar">
+                            {{ strtoupper(substr($purchase->vendor->name ?? 'PE', 0, 2)) }}
+                        </div>
+                        <div>
+                            <div class="erp-preview-title" id="prev-title">{{ $purchase->vendor->name ?? 'Purchase Voucher' }}</div>
+                            <div class="erp-preview-subtitle font-monospace" id="prev-code">{{ $purchase->purchase_no }}</div>
+                        </div>
+                    </div>
+
+                    <div class="erp-preview-badge-row">
+                        <span class="badge" style="background: rgba(91, 132, 30, 0.1); color: #5B841E; font-size: 0.75rem; font-weight: 600; padding: 4px 10px; border-radius: 9999px;" id="prev-order-type">
+                            {{ $purchase->order_type }}
+                        </span>
+                        <span class="badge font-monospace" style="background: #F1F5F9; color: #475569; font-size: 0.72rem; padding: 4px 8px; border-radius: 6px;" id="prev-item-count">
+                            {{ count($purchase->items) }} Item(s)
+                        </span>
+                    </div>
+
+                    <div style="margin: 1.25rem 0 1rem; padding: 1rem; background: #F8FAFC; border-radius: 10px; border: 1px solid #E2E8F0; text-align: center;">
+                        <div style="font-size: 0.73rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.04em; color: #64748B; margin-bottom: 0.25rem;">
+                            Grand Total Inward Value
+                        </div>
+                        <div class="font-monospace" style="font-size: 1.6rem; font-weight: 800; color: #059669;" id="prev-grand-total">
+                            ₹{{ number_format($purchase->grand_total, 2) }}
+                        </div>
+                        <div style="font-size: 0.74rem; color: #64748B; margin-top: 0.2rem;" id="prev-balance-text">
+                            Vendor balance will be updated to this amount
+                        </div>
+                    </div>
+
+                    <div class="erp-preview-meta-list">
+                        <div class="erp-preview-meta-item">
+                            <span class="erp-preview-meta-key">Supplier Firm</span>
+                            <span class="erp-preview-meta-val" id="prev-vendor">{{ $purchase->vendor->name ?? '—' }}</span>
+                        </div>
+                        <div class="erp-preview-meta-item">
+                            <span class="erp-preview-meta-key">Invoice Ref</span>
+                            <span class="erp-preview-meta-val font-monospace" id="prev-inv-ref">{{ $purchase->invoice_no ?: '—' }}</span>
+                        </div>
+                        <div class="erp-preview-meta-item">
+                            <span class="erp-preview-meta-key">Total Net Weight</span>
+                            <span class="erp-preview-meta-val font-monospace" id="prev-net-wt">{{ number_format($purchase->items->sum('quantity'), 3) }}</span>
+                        </div>
+                        <div class="erp-preview-meta-item">
+                            <span class="erp-preview-meta-key">Bill Subtotal</span>
+                            <span class="erp-preview-meta-val font-monospace" id="prev-bill-sub">₹{{ number_format($purchase->subtotal, 2) }}</span>
+                        </div>
+                        <div class="erp-preview-meta-item">
+                            <span class="erp-preview-meta-key">GST Tax Amount</span>
+                            <span class="erp-preview-meta-val font-monospace" id="prev-tax-amt">₹{{ number_format($purchase->tax_amount, 2) }}</span>
+                        </div>
+                        <div class="erp-preview-meta-item">
+                            <span class="erp-preview-meta-key">Official Bill Total</span>
+                            <span class="erp-preview-meta-val font-monospace" style="font-weight: 700; color: #2563EB;" id="prev-bill-total">₹{{ number_format($purchase->bill_total, 2) }}</span>
+                        </div>
+                        <div class="erp-preview-meta-item" style="border-top: 1px dashed #CBD5E1; padding-top: 0.6rem;">
+                            <span class="erp-preview-meta-key" style="color: #D97706;">Under-Billing (U-B)</span>
+                            <span class="erp-preview-meta-val font-monospace" style="color: #D97706; font-weight: 700;" id="prev-ub-total">₹{{ number_format($purchase->under_billing_total, 2) }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Audit Trail Timestamps Card -->
+                <div class="card" style="padding: 1.25rem; border-radius: 14px; border: 1px solid #E2E8F0; background: #FFFFFF; font-size: 0.82rem; color: #64748B;">
+                    <div style="font-weight: 700; color: #334155; margin-bottom: 0.85rem; display: flex; align-items: center; gap: 0.45rem;">
+                        <i class="fa-solid fa-clock-rotate-left" style="color: #3B82F6;"></i> Voucher Audit Trail
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span>Voucher ID:</span>
+                        <strong class="font-monospace text-dark">#{{ $purchase->id }}</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span>Registered On:</span>
+                        <strong class="text-dark">{{ $purchase->created_at->format('d M Y, h:i A') }}</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>Last Modified:</span>
+                        <strong class="text-dark">{{ $purchase->updated_at->format('d M Y, h:i A') }}</strong>
+                    </div>
+                </div>
+
+                <!-- 3. Sidebar Action Buttons -->
+                <div class="card erp-sidebar-actions-card">
+                    <button type="submit" class="btn btn-primary erp-btn-action-submit" id="btn-save-purchase">
+                        <i class="fa-solid fa-floppy-disk me-1"></i> Update Purchase Voucher
+                    </button>
+                    <a href="{{ route('admin.transactions.purchase-entry') }}" class="btn btn-outline erp-btn-action-cancel">
+                        <i class="fa-solid fa-xmark me-1"></i> Cancel Changes
+                    </a>
+                </div>
+
+                <!-- 4. Danger Zone Card -->
+                <div class="card" style="padding: 1.25rem; border-radius: 14px; border: 1px solid #FECACA; background: #FFF5F5;">
+                    <div style="font-weight: 700; color: #B91C1C; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.4rem;">
+                        <i class="fa-solid fa-triangle-exclamation"></i> Danger Zone
+                    </div>
+                    <p style="font-size: 0.78rem; color: #7F1D1D; margin-bottom: 0.85rem;">
+                        Deleting this voucher will revert inventory stock additions and reverse supplier ledger credit.
+                    </p>
+                    <button type="button" class="btn btn-outline" style="border-color: #F87171; color: #DC2626; width: 100%; font-size: 0.82rem; font-weight: 600;" onclick="confirmDeleteVoucher()">
+                        <i class="fa-regular fa-trash-can me-1"></i> Delete Purchase Voucher
+                    </button>
+                </div>
+
             </div>
         </div>
     </form>
+</section>
 
-    <form method="POST" action="{{ route('admin.transactions.purchase-entry.destroy', $purchase) }}" id="delete-purchase-form" style="display:none;">
-        @csrf
-        @method('DELETE')
-    </form>
-</div>
+<!-- Delete Purchase Hidden Form -->
+<form id="delete-voucher-form" action="{{ route('admin.transactions.purchase-entry.destroy', $purchase) }}" method="POST" style="display: none;">
+    @csrf
+    @method('DELETE')
+</form>
 
-<!-- Item Row Template Script -->
+<!-- Item Dropdown Options Template (Hidden) -->
+<template id="item-options-template">
+    <option value="">Select Item...</option>
+    @foreach($items as $itm)
+        <option value="{{ $itm->id }}"
+                data-code="{{ $itm->code }}"
+                data-hsn="{{ $itm->hsn_code }}"
+                data-unit="{{ $itm->unit }}"
+                data-gst="{{ $itm->gst_rate }}"
+                data-purchase-rate="{{ $itm->purchase_rate }}"
+                data-batch="{{ $itm->batch_no }}">
+            {{ $itm->name }} ({{ $itm->code }})
+        </option>
+    @endforeach
+</template>
+
+<template id="unit-options-template">
+    <option value="KG">KG</option>
+    <option value="BOX">BOX</option>
+    <option value="BAG">BAG</option>
+    <option value="QUINTAL">QUINTAL</option>
+    <option value="TON">TON</option>
+    <option value="PCS">PCS</option>
+    @foreach($units as $u)
+        @if(!in_array(strtoupper($u->name), ['KG', 'BOX', 'BAG', 'QUINTAL', 'TON', 'PCS']))
+            <option value="{{ $u->name }}">{{ $u->name }}</option>
+        @endif
+    @endforeach
+</template>
+
+@push('scripts')
 <script>
-    let rowIndex = {{ count($purchase->items) }};
+    let rowIndex = {{ count($editItems ?? $purchase->items) }};
 
     function addPurchaseRow() {
         const tbody = document.getElementById('purchase-items-body');
+        const itemOptions = document.getElementById('item-options-template').innerHTML;
+        const unitOptions = document.getElementById('unit-options-template').innerHTML;
+
         const tr = document.createElement('tr');
         tr.className = 'item-row';
         tr.innerHTML = `
-            <td class="text-center row-sno font-weight-600 font-monospace text-muted">${rowIndex + 1}</td>
+            <td class="text-center row-sno font-weight-600 font-monospace text-muted">${tbody.children.length + 1}</td>
             <td>
                 <select name="items[${rowIndex}][item_id]" class="form-select erp-item-select" required onchange="onItemSelect(this)">
-                    <option value="">Select Item...</option>
-                    @foreach($items as $itm)
-                        <option value="{{ $itm->id }}"
-                                data-code="{{ $itm->code }}"
-                                data-hsn="{{ $itm->hsn_code }}"
-                                data-unit="{{ $itm->unit }}"
-                                data-gst="{{ $itm->gst_rate }}"
-                                data-purchase-rate="{{ $itm->purchase_rate }}"
-                                data-batch="{{ $itm->batch_no }}">
-                            {{ $itm->name }} ({{ $itm->code }})
-                        </option>
-                    @endforeach
+                    ${itemOptions}
+                </select>
+                <input type="hidden" name="items[${rowIndex}][batch_no]" class="row-batch" value="">
+                <input type="hidden" name="items[${rowIndex}][actual_rate]" class="row-actual" value="0.00">
+            </td>
+            <td>
+                <input type="text" name="items[${rowIndex}][hsn_code]" class="form-control row-hsn font-monospace" placeholder="HSN" value="">
+            </td>
+            <td>
+                <input type="number" step="0.01" min="0" name="items[${rowIndex}][gst_percent]" class="form-control row-gst font-monospace" value="5.00" oninput="calcRow(this)">
+            </td>
+            <td>
+                <select name="items[${rowIndex}][unit]" class="form-select row-unit" required>
+                    ${unitOptions}
                 </select>
             </td>
             <td>
-                <input type="text" name="items[${rowIndex}][batch_no]" class="form-control erp-field-input-sm row-batch font-monospace" placeholder="Enter Batch">
+                <input type="number" step="any" min="0.001" name="items[${rowIndex}][quantity]" class="form-control row-qty font-monospace" style="text-align: right;" value="1" required oninput="calcRow(this)">
             </td>
             <td>
-                <input type="text" name="items[${rowIndex}][hsn_code]" class="form-control erp-field-input-sm row-hsn font-monospace" placeholder="Enter HSN">
+                <input type="number" step="0.01" min="0" name="items[${rowIndex}][bill_rate]" class="form-control row-bill-rate font-monospace" style="text-align: right;" value="0.00" required oninput="calcRow(this)">
             </td>
             <td>
-                <input type="text" name="items[${rowIndex}][unit]" class="form-control erp-field-input-sm row-unit" value="KG" required>
-            </td>
-            <td>
-                <input type="number" step="any" min="0.001" name="items[${rowIndex}][quantity]" class="form-control erp-field-input-sm row-qty font-monospace" value="10" required oninput="calcRow(this)">
-            </td>
-            <td>
-                <input type="number" step="0.01" min="0" name="items[${rowIndex}][actual_rate]" class="form-control erp-field-input-sm row-actual font-monospace" value="100.00" required oninput="calcRow(this, 'actual')">
-            </td>
-            <td>
-                <input type="number" step="0.01" min="0" name="items[${rowIndex}][bill_rate]" class="form-control erp-field-input-sm row-bill-rate font-monospace" value="50.00" required oninput="calcRow(this, 'bill')">
-            </td>
-            <td>
-                <input type="number" step="0.01" min="0" name="items[${rowIndex}][ub_rate]" class="form-control erp-field-input-sm row-ub-rate font-monospace" value="50.00" oninput="calcRow(this, 'ub')">
-            </td>
-            <td>
-                <input type="number" step="0.01" min="0" name="items[${rowIndex}][gst_percent]" class="form-control erp-field-input-sm row-gst font-monospace" value="5.00" oninput="calcRow(this)">
+                <input type="number" step="0.01" min="0" name="items[${rowIndex}][ub_rate]" class="form-control row-ub-rate font-monospace" style="text-align: right;" value="0.00" oninput="calcRow(this)">
             </td>
             <td style="text-align: right;">
-                <span class="font-monospace text-dark font-weight-600 row-bill-amt">₹525.00</span>
+                <span class="font-monospace text-dark font-weight-600 row-bill-amt">₹0.00</span>
             </td>
             <td style="text-align: right;">
-                <span class="font-monospace font-weight-600 row-ub-amt" style="color: #D97706;">₹500.00</span>
+                <span class="font-monospace font-weight-600 row-ub-amt" style="color: #D97706;">₹0.00</span>
             </td>
             <td class="text-center">
-                <button type="button" class="btn btn-sm text-danger p-0 delete-row-btn" onclick="removeRow(this)" title="Remove item">
+                <button type="button" class="delete-row-btn" onclick="removeRow(this)" title="Remove line item">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </td>
@@ -470,9 +683,13 @@
     }
 
     function removeRow(btn) {
-        const rows = document.querySelectorAll('#purchase-items-body .item-row');
-        if (rows.length <= 1) {
-            alert('A purchase entry must contain at least one line item.');
+        const tbody = document.getElementById('purchase-items-body');
+        if (tbody.querySelectorAll('.item-row').length <= 1) {
+            if (typeof toastr !== 'undefined') {
+                toastr.warning('At least one purchase item is required.');
+            } else {
+                alert('At least one purchase item is required.');
+            }
             return;
         }
         btn.closest('tr').remove();
@@ -481,118 +698,168 @@
     }
 
     function updateRowNumbers() {
-        document.querySelectorAll('#purchase-items-body .item-row').forEach((tr, index) => {
-            tr.querySelector('.row-sno').innerText = index + 1;
+        document.querySelectorAll('#purchase-items-body .row-sno').forEach((el, idx) => {
+            el.textContent = idx + 1;
         });
     }
 
     function onItemSelect(selectEl) {
-        const tr = selectEl.closest('tr');
-        const selectedOpt = selectEl.options[selectEl.selectedIndex];
-        if (!selectedOpt || !selectedOpt.value) return;
+        const row = selectEl.closest('tr');
+        const selected = selectEl.selectedOptions[0];
+        if (!selected || !selected.value) return;
 
-        const hsn = selectedOpt.getAttribute('data-hsn') || '1404';
-        const unit = selectedOpt.getAttribute('data-unit') || 'KG';
-        const gst = parseFloat(selectedOpt.getAttribute('data-gst')) || 5.0;
-        const actualRate = parseFloat(selectedOpt.getAttribute('data-purchase-rate')) || 100.0;
-        const batch = selectedOpt.getAttribute('data-batch') || ('BAT-' + new Date().getFullYear() + '-01');
+        const hsn = selected.getAttribute('data-hsn') || '';
+        const unit = selected.getAttribute('data-unit') || 'KG';
+        const gst = parseFloat(selected.getAttribute('data-gst')) || 5.0;
+        const purchaseRate = parseFloat(selected.getAttribute('data-purchase-rate')) || 0.0;
+        const batch = selected.getAttribute('data-batch') || '';
 
-        tr.querySelector('.row-hsn').value = hsn;
-        tr.querySelector('.row-unit').value = unit;
-        tr.querySelector('.row-gst').value = gst;
-        tr.querySelector('.row-batch').value = batch;
+        row.querySelector('.row-hsn').value = hsn;
+        row.querySelector('.row-gst').value = gst.toFixed(2);
+        row.querySelector('.row-batch').value = batch;
 
-        const billRate = Math.round(actualRate * 0.5 * 100) / 100;
-        const ubRate = Math.round((actualRate - billRate) * 100) / 100;
+        const unitSelect = row.querySelector('.row-unit');
+        if (unitSelect) {
+            let found = false;
+            for (let i = 0; i < unitSelect.options.length; i++) {
+                if (unitSelect.options[i].value.toUpperCase() === unit.toUpperCase()) {
+                    unitSelect.selectedIndex = i;
+                    found = true;
+                    break;
+                }
+            }
+            if (!found && unit) {
+                const newOpt = new Option(unit, unit, true, true);
+                unitSelect.add(newOpt);
+            }
+        }
 
-        tr.querySelector('.row-actual').value = actualRate.toFixed(2);
-        tr.querySelector('.row-bill-rate').value = billRate.toFixed(2);
-        tr.querySelector('.row-ub-rate').value = ubRate.toFixed(2);
+        const billRateInput = row.querySelector('.row-bill-rate');
+        if (parseFloat(billRateInput.value) === 0 && purchaseRate > 0) {
+            billRateInput.value = purchaseRate.toFixed(2);
+        }
 
         calcRow(selectEl);
     }
 
-    function calcRow(el, source) {
-        const tr = el.closest('tr');
-        const qty = parseFloat(tr.querySelector('.row-qty').value) || 0;
-        let actual = parseFloat(tr.querySelector('.row-actual').value) || 0;
-        let bill = parseFloat(tr.querySelector('.row-bill-rate').value) || 0;
-        let ub = parseFloat(tr.querySelector('.row-ub-rate').value) || 0;
-        const gst = parseFloat(tr.querySelector('.row-gst').value) || 0;
+    function calcRow(el) {
+        const row = el.closest('tr');
+        const qty = parseFloat(row.querySelector('.row-qty').value) || 0;
+        const billRate = parseFloat(row.querySelector('.row-bill-rate').value) || 0;
+        const ubRate = parseFloat(row.querySelector('.row-ub-rate').value) || 0;
+        const gstPercent = parseFloat(row.querySelector('.row-gst').value) || 0;
 
-        if (source === 'actual' || source === 'bill') {
-            ub = Math.max(0, actual - bill);
-            tr.querySelector('.row-ub-rate').value = ub.toFixed(2);
-        } else if (source === 'ub') {
-            actual = bill + ub;
-            tr.querySelector('.row-actual').value = actual.toFixed(2);
-        }
+        const actualRate = billRate + ubRate;
+        row.querySelector('.row-actual').value = actualRate.toFixed(2);
 
-        const billSub = qty * bill;
-        const billTax = billSub * (gst / 100);
-        const billAmt = billSub + billTax;
-        const ubAmt = qty * ub;
+        const billAmt = qty * billRate;
+        const ubAmt = qty * ubRate;
 
-        tr.querySelector('.row-bill-amt').innerText = '₹' + billAmt.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        tr.querySelector('.row-ub-amt').innerText = '₹' + ubAmt.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        row.querySelector('.row-bill-amt').textContent = '₹' + billAmt.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        row.querySelector('.row-ub-amt').textContent = '₹' + ubAmt.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
         updateLiveSummary();
     }
 
     function onVendorChange(selectEl) {
-        const selectedOpt = selectEl.options[selectEl.selectedIndex];
-        const vName = selectedOpt ? selectedOpt.getAttribute('data-name') : 'Direct Vendor';
-        document.getElementById('preview-vendor-name').innerText = vName || 'Direct Vendor';
-        document.getElementById('preview-avatar').innerText = (vName ? vName.substring(0, 2) : 'V').toUpperCase();
+        const selected = selectEl.selectedOptions[0];
+        const prevTitle = document.getElementById('prev-title');
+        const prevVendor = document.getElementById('prev-vendor');
+        const prevAvatar = document.getElementById('prev-avatar');
+
+        if (selected && selected.value) {
+            const name = selected.getAttribute('data-name');
+            prevTitle.textContent = name;
+            prevVendor.textContent = name;
+            prevAvatar.textContent = name.substring(0, 2).toUpperCase();
+        } else {
+            prevTitle.textContent = 'Purchase Voucher';
+            prevVendor.textContent = 'Select Vendor...';
+            prevAvatar.textContent = 'PE';
+        }
         updateLiveSummary();
     }
 
     function updateLiveSummary() {
-        let subtotal = 0;
+        let totalQty = 0;
+        let totalBillSubtotal = 0;
         let totalTax = 0;
         let totalUB = 0;
-        let totalItems = 0;
+        let itemCount = 0;
 
-        document.querySelectorAll('#purchase-items-body .item-row').forEach(tr => {
-            const qty = parseFloat(tr.querySelector('.row-qty').value) || 0;
-            const bill = parseFloat(tr.querySelector('.row-bill-rate').value) || 0;
-            const ub = parseFloat(tr.querySelector('.row-ub-rate').value) || 0;
-            const gst = parseFloat(tr.querySelector('.row-gst').value) || 0;
+        document.querySelectorAll('#purchase-items-body .item-row').forEach(row => {
+            const qty = parseFloat(row.querySelector('.row-qty').value) || 0;
+            const billRate = parseFloat(row.querySelector('.row-bill-rate').value) || 0;
+            const ubRate = parseFloat(row.querySelector('.row-ub-rate').value) || 0;
+            const gstPercent = parseFloat(row.querySelector('.row-gst').value) || 0;
 
-            const lineSub = qty * bill;
-            const lineTax = lineSub * (gst / 100);
-            const lineUB = qty * ub;
+            const lineBill = qty * billRate;
+            const lineTax = lineBill * (gstPercent / 100);
+            const lineUB = qty * ubRate;
 
-            subtotal += lineSub;
+            totalQty += qty;
+            totalBillSubtotal += lineBill;
             totalTax += lineTax;
             totalUB += lineUB;
-            totalItems++;
+            itemCount++;
         });
 
-        const billTotal = subtotal + totalTax;
-        const grandTotal = billTotal + totalUB;
+        const totalBill = totalBillSubtotal + totalTax;
+        const grandTotal = totalBill + totalUB;
 
-        document.getElementById('preview-subtotal').innerText = '₹' + subtotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        document.getElementById('preview-tax').innerText = '₹' + totalTax.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        document.getElementById('preview-bill-total').innerText = '₹' + billTotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        document.getElementById('preview-ub-total').innerText = '₹' + totalUB.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        document.getElementById('preview-grand-total').innerText = '₹' + grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        // Footer Totals
+        document.getElementById('footer-total-qty').textContent = totalQty.toFixed(3);
+        document.getElementById('footer-bill-subtotal').textContent = '₹' + totalBillSubtotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById('footer-tax-total').textContent = '₹' + totalTax.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById('footer-ub-total').textContent = '₹' + totalUB.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById('footer-grand-total').textContent = '₹' + grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-        const invNo = document.getElementById('field-invoice-no').value;
-        document.getElementById('preview-inv-no').innerText = invNo ? invNo : 'INV-PENDING';
+        // Sidebar Live Preview
+        document.getElementById('prev-grand-total').textContent = '₹' + grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById('prev-net-wt').textContent = totalQty.toFixed(3);
+        document.getElementById('prev-bill-sub').textContent = '₹' + totalBillSubtotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById('prev-tax-amt').textContent = '₹' + totalTax.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById('prev-bill-total').textContent = '₹' + totalBill.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById('prev-ub-total').textContent = '₹' + totalUB.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById('prev-item-count').textContent = `${itemCount} Item(s)`;
 
-        const invDate = document.getElementById('field-invoice-date').value;
-        if (invDate) {
-            const d = new Date(invDate);
-            document.getElementById('preview-date').innerText = d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+        const invNo = document.getElementById('field-invoice-no').value.trim();
+        document.getElementById('prev-inv-ref').textContent = invNo ? invNo : '—';
+
+        const orderTypeEl = document.getElementById('field-order-type');
+        if (orderTypeEl) {
+            document.getElementById('prev-order-type').textContent = orderTypeEl.value;
         }
+    }
 
-        document.getElementById('preview-order-type').innerText = document.getElementById('field-order-type').value;
-        document.getElementById('preview-items-count').innerText = totalItems + ' Item(s)';
+    function confirmDeleteVoucher() {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: 'Delete Purchase Voucher?',
+                html: 'Are you sure you want to permanently delete purchase voucher <strong>#{{ $purchase->purchase_no }}</strong>?<br><span style="font-size: 0.85rem; color: #64748B;">Inward inventory stock will be reverted and supplier balance adjusted.</span>',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#EF4444',
+                cancelButtonColor: '#64748B',
+                confirmButtonText: '<i class="fa-solid fa-trash-can"></i> Yes, Delete Voucher',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true,
+                focusCancel: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('delete-voucher-form').submit();
+                }
+            });
+        } else {
+            if (confirm('Are you sure you want to delete purchase voucher #{{ $purchase->purchase_no }}? Inward stock will be reverted.')) {
+                document.getElementById('delete-voucher-form').submit();
+            }
+        }
     }
 
     document.addEventListener('DOMContentLoaded', () => {
         updateLiveSummary();
     });
 </script>
+@endpush
 @endsection
