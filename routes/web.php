@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\VendorController;
 use App\Http\Controllers\Admin\BrokerController;
+use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\AccessLevelController;
 use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Admin\InventoryController;
@@ -93,7 +94,16 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::delete('/broker/{broker}', [BrokerController::class, 'destroy'])->name('broker.destroy');
             Route::patch('/broker/{broker}/toggle-status', [BrokerController::class, 'toggleStatus'])->name('broker.toggle-status');
 
-            Route::get('/customer', [MasterController::class, 'customer'])->name('customer');
+            // Customer Master CRUD (Dedicated Pages)
+            Route::get('/customer', [CustomerController::class, 'index'])->name('customer');
+            Route::get('/customer/create', [CustomerController::class, 'create'])->name('customer.create');
+            Route::get('/customer/generate-code', [CustomerController::class, 'generateCode'])->name('customer.generate-code');
+            Route::post('/customer', [CustomerController::class, 'store'])->name('customer.store');
+            Route::get('/customer/{customer}', [CustomerController::class, 'show'])->name('customer.show');
+            Route::get('/customer/{customer}/edit', [CustomerController::class, 'edit'])->name('customer.edit');
+            Route::put('/customer/{customer}', [CustomerController::class, 'update'])->name('customer.update');
+            Route::delete('/customer/{customer}', [CustomerController::class, 'destroy'])->name('customer.destroy');
+            Route::patch('/customer/{customer}/toggle-status', [CustomerController::class, 'toggleStatus'])->name('customer.toggle-status');
             Route::get('/item', [MasterController::class, 'item'])->name('item');
             Route::get('/unit', [MasterController::class, 'unit'])->name('unit');
             Route::get('/account', [MasterController::class, 'account'])->name('account');
