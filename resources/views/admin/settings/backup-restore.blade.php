@@ -29,8 +29,8 @@
                     Run pending database migrations, sync Unit Master records/synonyms, and clear compiled application caches directly without requiring terminal SSH access.
                 </p>
                 <div class="d-flex flex-column gap-2 mt-auto">
-                    <a href="{{ route('admin.run-migration') }}" class="btn text-white text-center" style="background: #5B841E; font-weight: 600; font-size: 0.88rem; padding: 0.55rem 1rem; border-radius: 8px;">
-                        <i class="fa-solid fa-rotate me-1"></i> Run Database Migrations Now
+                    <a href="{{ route('admin.run-migration', ['action' => 'migrate-only']) }}" class="btn text-white text-center" style="background: #5B841E; font-weight: 600; font-size: 0.88rem; padding: 0.55rem 1rem; border-radius: 8px;">
+                        <i class="fa-solid fa-play me-1"></i> Run Updated Migrations Only
                     </a>
                     <div class="d-flex gap-2">
                         <a href="{{ route('admin.run-migration', ['action' => 'status']) }}" class="btn btn-outline-secondary w-50" style="font-size: 0.8rem; font-weight: 600;">

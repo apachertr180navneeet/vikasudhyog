@@ -48,6 +48,10 @@ class SettingController extends Controller
                 Artisan::call('migrate:status');
                 $outputs['migrate:status'] = Artisan::output();
                 $message = 'Migration status retrieved.';
+            } elseif ($action === 'migrate-only') {
+                Artisan::call('migrate', ['--force' => true]);
+                $outputs['migrate'] = Artisan::output();
+                $message = 'Pending database migrations executed successfully (migrations only).';
             } elseif ($action === 'seed') {
                 Artisan::call('db:seed', ['--class' => 'UnitSeeder', '--force' => true]);
                 $outputs['db:seed UnitSeeder'] = Artisan::output();

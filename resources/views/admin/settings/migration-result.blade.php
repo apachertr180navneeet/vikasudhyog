@@ -22,18 +22,21 @@
                 Execute database migrations, Unit Master synchronizer, and system cache flushes directly on the server.
             </p>
         </div>
-        <div class="d-flex gap-2">
-            <a href="{{ route('admin.run-migration') }}" class="btn" style="background: #5B841E; color: #FFFFFF; font-weight: 600; font-size: 0.85rem; padding: 0.5rem 1rem; border-radius: 8px;">
-                <i class="fa-solid fa-rotate me-1"></i> Run Migrations Now
+        <div class="d-flex gap-2 flex-wrap">
+            <a href="{{ route('admin.run-migration', ['action' => 'migrate-only']) }}" class="btn" style="background: #5B841E; color: #FFFFFF; font-weight: 600; font-size: 0.85rem; padding: 0.5rem 1rem; border-radius: 8px;">
+                <i class="fa-solid fa-play me-1"></i> Run Migrations Only
+            </a>
+            <a href="{{ route('admin.run-migration') }}" class="btn btn-outline-secondary" style="font-size: 0.85rem; font-weight: 600; padding: 0.5rem 1rem; border-radius: 8px;">
+                <i class="fa-solid fa-rotate me-1"></i> Migrate + Sync All
             </a>
             <a href="{{ route('admin.run-migration', ['action' => 'status']) }}" class="btn btn-outline-secondary" style="font-size: 0.85rem; font-weight: 600; padding: 0.5rem 1rem; border-radius: 8px;">
                 <i class="fa-solid fa-list-check me-1"></i> Migration Status
             </a>
             <a href="{{ route('admin.run-migration', ['action' => 'seed']) }}" class="btn btn-outline-secondary" style="font-size: 0.85rem; font-weight: 600; padding: 0.5rem 1rem; border-radius: 8px;">
-                <i class="fa-solid fa-seedling me-1"></i> Sync Unit Seeder
+                <i class="fa-solid fa-seedling me-1"></i> Sync Units
             </a>
             <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-secondary" style="font-size: 0.85rem; font-weight: 600; padding: 0.5rem 1rem; border-radius: 8px;">
-                <i class="fa-solid fa-arrow-left me-1"></i> Back to Dashboard
+                <i class="fa-solid fa-arrow-left me-1"></i> Dashboard
             </a>
         </div>
     </div>
