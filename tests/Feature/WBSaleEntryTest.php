@@ -247,4 +247,59 @@ class WBSaleEntryTest extends TestCase
         $this->assertEquals('cancelled', $wbSale->fresh()->status);
         $this->assertEquals(70.00, (float)$item->fresh()->current_stock);
     }
+
+    public function test_wb_sales_status_lifecycle_can_be_updated_across_all_statuses(): void
+    {
+        $user = $this->getAdminUser();
+        $customer = $this->createCustomer();
+        $item = $this->createItem(50.00);
+
+        $wbSale = WBSale::create([
+            'slip_no' => 'WBS-2026-9006',
+            'entry_date' => '2026-10-05',
+            'customer_id' => $customer->id,
+            'order_type' => 'Medium',
+            'total_amount' => 1600.00,
+            'status' => 'dispatched',
+        ]);
+
+        WBSaleItem::create([
+            'wb_sale_id' => $wbSale->id,
+            'item_id' => $item->id,
+            'unit' => 'KG',
+            'quantity' => 20.00,
+            'rate' => 80.00,
+            'amount' => 1600.00,
+        ]);
+
+        // 1. Update to 'delivered'
+        $response = $this->actingAs($user)->patch(route('admin.transactions.wb-sales-entry.update-status', $wbSale), [
+            'status' => 'delivered',
+        ]);
+        $response->assertSessionHas('success');
+        $this->assertEquals('delivered', $wbSale->fresh()->status);
+
+        // 2. Update to 'completed'
+        $response = $this->actingAs($user)->patch(route('admin.transactions.wb-sales-entry.update-status', $wbSale), [
+            'status' => 'completed',
+        ]);
+        $response->assertSessionHas('success');
+        $this->assertEquals('completed', $wbSale->fresh()->status);
+
+        // 3. Update to 'cancelled' (stock restored from 50 to 70)
+        $response = $this->actingAs($user)->patch(route('admin.transactions.wb-sales-entry.update-status', $wbSale), [
+            'status' => 'cancelled',
+        ]);
+        $response->assertSessionHas('success');
+        $this->assertEquals('cancelled', $wbSale->fresh()->status);
+        $this->assertEquals(70.00, (float)$item->fresh()->current_stock);
+
+        // 4. Update back from 'cancelled' to 'ordered' (stock re-deducted from 70 to 50)
+        $response = $this->actingAs($user)->patch(route('admin.transactions.wb-sales-entry.update-status', $wbSale), [
+            'status' => 'ordered',
+        ]);
+        $response->assertSessionHas('success');
+        $this->assertEquals('ordered', $wbSale->fresh()->status);
+        $this->assertEquals(50.00, (float)$item->fresh()->current_stock);
+    }
 }

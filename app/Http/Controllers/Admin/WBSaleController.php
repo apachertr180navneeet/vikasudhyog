@@ -173,12 +173,14 @@ class WBSaleController extends Controller
 
             // Calculate Total from line items
             $totalAmount = 0;
+            $calcNetWeight = 0;
             $preparedItems = [];
             foreach ($validated['items'] as $itemRow) {
                 $qty = (float) $itemRow['quantity'];
                 $rate = (float) $itemRow['rate'];
                 $amt = $qty * $rate;
                 $totalAmount += $amt;
+                $calcNetWeight += $qty;
 
                 $preparedItems[] = [
                     'item_id' => $itemRow['item_id'],
@@ -191,6 +193,8 @@ class WBSaleController extends Controller
                     'notes' => $itemRow['notes'] ?? null,
                 ];
             }
+
+            $finalNetWeight = $netWeight > 0 ? $netWeight : $calcNetWeight;
 
             $wbSale = WBSale::create([
                 'slip_no' => $validated['slip_no'],
@@ -207,7 +211,7 @@ class WBSaleController extends Controller
                 'gross_weight' => $gross,
                 'tare_weight' => $tare,
                 'deduction_weight' => $deduction,
-                'net_weight' => $netWeight,
+                'net_weight' => $finalNetWeight,
                 'total_amount' => $totalAmount,
                 'paid_amount' => $validated['paid_amount'] ?? 0.00,
                 'payment_status' => $validated['payment_status'] ?? 'unpaid',
@@ -359,12 +363,14 @@ class WBSaleController extends Controller
 
             // Recalculate Total from items
             $totalAmount = 0;
+            $calcNetWeight = 0;
             $preparedItems = [];
             foreach ($validated['items'] as $itemRow) {
                 $qty = (float) $itemRow['quantity'];
                 $rate = (float) $itemRow['rate'];
                 $amt = $qty * $rate;
                 $totalAmount += $amt;
+                $calcNetWeight += $qty;
 
                 $preparedItems[] = [
                     'item_id' => $itemRow['item_id'],
@@ -377,6 +383,8 @@ class WBSaleController extends Controller
                     'notes' => $itemRow['notes'] ?? null,
                 ];
             }
+
+            $finalNetWeight = $netWeight > 0 ? $netWeight : $calcNetWeight;
 
             $wbSale->update([
                 'bill_type' => $validated['bill_type'] ?? $wbSale->bill_type ?? 'without_bill',
@@ -392,7 +400,7 @@ class WBSaleController extends Controller
                 'gross_weight' => $gross,
                 'tare_weight' => $tare,
                 'deduction_weight' => $deduction,
-                'net_weight' => $netWeight,
+                'net_weight' => $finalNetWeight,
                 'total_amount' => $totalAmount,
                 'paid_amount' => $validated['paid_amount'] ?? $wbSale->paid_amount,
                 'payment_status' => $validated['payment_status'] ?? $wbSale->payment_status,
@@ -463,37 +471,26 @@ class WBSaleController extends Controller
     }
 
     /**
-     * Toggle the status of a WB sales entry.
+     * Update the lifecycle status of a WB sales entry.
+     * Allowed statuses: ordered, dispatched, delivered, completed, cancelled
      */
-    public function toggleStatus(WBSale $wbSale)
+    public function updateStatus(Request $request, WBSale $wbSale)
     {
+        $validated = $request->validate([
+            'status' => 'required|string|in:ordered,dispatched,delivered,completed,cancelled'
+        ]);
+
+        $newStatus = $validated['status'];
+        $oldStatus = $wbSale->status;
+
+        if ($newStatus === $oldStatus) {
+            return back()->with('info', "WB Sales entry #{$wbSale->slip_no} is already {$newStatus}.");
+        }
+
         DB::beginTransaction();
         try {
-            if ($wbSale->status === 'cancelled') {
-                // Redispatching: Verify stock first!
-                foreach ($wbSale->items as $sItem) {
-                    $item = Item::find($sItem->item_id);
-                    if (!$item || (float)$item->current_stock < (float)$sItem->quantity) {
-                        return back()->with(
-                            'error',
-                            "Cannot re-dispatch: Insufficient stock for '{$item->name}'. Available: {$item->current_stock} {$item->unit}, Needed: {$sItem->quantity} {$item->unit}."
-                        );
-                    }
-                }
-
-                foreach ($wbSale->items as $sItem) {
-                    $item = Item::find($sItem->item_id);
-                    if ($item) {
-                        $item->decrement('current_stock', $sItem->quantity);
-                    }
-                }
-                if ($customer = Customer::find($wbSale->customer_id)) {
-                    $customer->increment('current_balance', $wbSale->total_amount);
-                }
-                $wbSale->update(['status' => 'dispatched']);
-                $msg = "WB Sales entry #{$wbSale->slip_no} re-dispatched and outward stock deducted.";
-            } else {
-                // Cancelling: Restore stock
+            // Case 1: Cancelling (revert outward stock & customer balance)
+            if ($newStatus === 'cancelled' && $oldStatus !== 'cancelled') {
                 foreach ($wbSale->items as $sItem) {
                     $item = Item::find($sItem->item_id);
                     if ($item) {
@@ -504,15 +501,68 @@ class WBSaleController extends Controller
                     $customer->decrement('current_balance', $wbSale->total_amount);
                 }
                 $wbSale->update(['status' => 'cancelled']);
-                $msg = "WB Sales entry #{$wbSale->slip_no} marked as cancelled and stock restored to inventory.";
+                $msg = "WB Sales entry #{$wbSale->slip_no} cancelled successfully. Outward stock has been restored to inventory.";
+            }
+            // Case 2: Re-activating from cancelled (verify stock availability & re-deduct)
+            elseif ($oldStatus === 'cancelled' && $newStatus !== 'cancelled') {
+                foreach ($wbSale->items as $sItem) {
+                    $item = Item::find($sItem->item_id);
+                    if (!$item || (float)$item->current_stock < (float)$sItem->quantity) {
+                        return back()->with(
+                            'error',
+                            "Cannot activate slip: Insufficient stock for '{$item->name}'. Available: {$item->current_stock} {$item->unit}, Needed: {$sItem->quantity} {$item->unit}."
+                        );
+                    }
+                }
+                foreach ($wbSale->items as $sItem) {
+                    $item = Item::find($sItem->item_id);
+                    if ($item) {
+                        $item->decrement('current_stock', $sItem->quantity);
+                    }
+                }
+                if ($customer = Customer::find($wbSale->customer_id)) {
+                    $customer->increment('current_balance', $wbSale->total_amount);
+                }
+                $wbSale->update(['status' => $newStatus]);
+                $msg = "WB Sales entry #{$wbSale->slip_no} status changed from Cancelled to " . ucfirst($newStatus) . " and stock re-allocated.";
+            }
+            // Case 3: Transitioning between active statuses (ordered <-> dispatched <-> delivered <-> completed)
+            else {
+                $wbSale->update(['status' => $newStatus]);
+                $msg = "WB Sales entry #{$wbSale->slip_no} status successfully updated to " . ucfirst($newStatus) . ".";
             }
 
             DB::commit();
+
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'status' => $newStatus,
+                    'message' => $msg
+                ]);
+            }
+
             return back()->with('success', $msg);
         } catch (\Throwable $e) {
             DB::rollBack();
-            return back()->with('error', 'Error toggling WB sales entry status: ' . $e->getMessage());
+            return back()->with('error', 'Error updating WB sales status: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Toggle status for quick action or test backwards-compatibility.
+     */
+    public function toggleStatus(Request $request, WBSale $wbSale)
+    {
+        if ($request->filled('status')) {
+            return $this->updateStatus($request, $wbSale);
+        }
+
+        // Toggle: if cancelled, re-activate to dispatched; otherwise cancel
+        $nextStatus = ($wbSale->status === 'cancelled') ? 'dispatched' : 'cancelled';
+
+        $request->merge(['status' => $nextStatus]);
+        return $this->updateStatus($request, $wbSale);
     }
 
     /**

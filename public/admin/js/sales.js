@@ -303,21 +303,78 @@ Object.assign(Transactions, {
 
     // 4. Order Dispatch Modal & Workflow
     renderOrderDispatch() {
+        if (typeof window.renderEnhancedOrderDispatch === 'function') {
+            window.renderEnhancedOrderDispatch();
+            return;
+        }
+
         const dispatches = db.getAll('DISPATCHES');
         const container = document.getElementById('dispatch-table-body');
         if (!container) return;
 
         let html = '';
         dispatches.forEach(d => {
+            const customerName = d.customerName || 'Direct Consignee';
+            const initials = customerName.split(' ').map(p => p[0]).join('').substring(0, 2).toUpperCase() || 'VU';
+            const orderNo = d.orderNo || 'ORD-101';
+            const vehicleNo = d.vehicleNo || 'N/A';
+            const driverName = d.driverName || 'Self / Direct';
+            const transporter = d.transporter || 'Direct Cargo';
+            const status = d.status || 'Dispatched';
+
             html += `
                 <tr>
-                    <td><strong>${d.orderNo}</strong></td>
-                    <td><strong>${d.customerName}</strong></td>
-                    <td>${d.date}</td>
-                    <td>${d.vehicleNo}</td>
-                    <td>${d.driverName}</td>
-                    <td>${d.transporter}</td>
-                    <td><span class="badge badge-success">${d.status}</span></td>
+                    <td style="padding-left: 1.5rem;">
+                        <span class="badge font-monospace" style="background: #F1F5F9; color: #1E293B; font-weight: 700; font-size: 0.82rem; padding: 5px 9px; border-radius: 6px; border: 1px solid #CBD5E1;">
+                            <i class="fa-solid fa-hashtag text-muted me-1"></i>${orderNo}
+                        </span>
+                    </td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <div class="avatar" style="background: linear-gradient(135deg, #5B841E, #3D5A12); color: #FFFFFF; font-weight: 700; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; flex-shrink: 0; box-shadow: 0 2px 6px rgba(91, 132, 30, 0.25);">
+                                ${initials}
+                            </div>
+                            <div>
+                                <div style="font-weight: 600; color: #1E293B;">${customerName}</div>
+                                <div style="font-size: 0.75rem; color: #64748B;">Registered Consignee</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div style="font-weight: 500; color: #334155; font-size: 0.86rem; display: flex; align-items: center; gap: 0.4rem;">
+                            <i class="fa-regular fa-calendar-check text-muted"></i>
+                            <span>${d.date || 'Today'}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="badge font-monospace" style="background: #EFF6FF; color: #1D4ED8; font-weight: 700; font-size: 0.82rem; padding: 5px 10px; border-radius: 6px; border: 1px solid #BFDBFE;">
+                            <i class="fa-solid fa-truck-moving me-1" style="color: #3B82F6;"></i>${vehicleNo}
+                        </span>
+                    </td>
+                    <td>
+                        <div style="font-weight: 600; color: #1E293B; font-size: 0.86rem;">
+                            <i class="fa-solid fa-id-card text-muted me-1"></i>${driverName}
+                        </div>
+                    </td>
+                    <td>
+                        <div style="font-weight: 500; color: #334155; font-size: 0.86rem; display: flex; align-items: center; gap: 0.4rem;">
+                            <i class="fa-solid fa-boxes-packing text-muted"></i>
+                            <span>${transporter}</span>
+                        </div>
+                    </td>
+                    <td style="text-align: center;">
+                        <span class="badge" style="background: #DCFCE7; color: #15803D; font-weight: 700; font-size: 0.76rem; padding: 4px 10px; border-radius: 20px; border: 1px solid #86EFAC; display: inline-flex; align-items: center; gap: 5px;">
+                            <span style="width: 7px; height: 7px; border-radius: 50%; background: #16A34A; display: inline-block;"></span>
+                            ${status}
+                        </span>
+                    </td>
+                    <td style="text-align: right; padding-right: 1.5rem;">
+                        <div class="erp-actions-cell" style="display: flex; align-items: center; justify-content: flex-end; gap: 0.35rem;">
+                            <button type="button" class="btn btn-icon btn-sm" style="width: 32px; height: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center; border-radius: 8px; border: 1px solid #E2E8F0; background: #FFFFFF; color: #475569;" onclick="window.viewDispatchDossier ? window.viewDispatchDossier('${d.id || orderNo}') : null">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
+                    </td>
                 </tr>
             `;
         });

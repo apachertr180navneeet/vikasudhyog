@@ -3,6 +3,44 @@
 @section('title', 'Sales Entry - VIKAS UDHYOG ERP')
 @section('page_code', 'txn-sales-order')
 
+@push('styles')
+<style>
+    .erp-status-dropdown {
+        position: relative;
+        display: inline-block;
+    }
+    .erp-status-dropdown .dropdown-menu {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: 100%;
+        margin-top: 4px;
+        background: #FFFFFF;
+        border-radius: 12px;
+        border: 1px solid #E2E8F0;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+        z-index: 1050;
+        list-style: none;
+        margin-bottom: 0;
+        padding: 0.5rem;
+    }
+    .erp-status-dropdown .dropdown-menu.show {
+        display: block !important;
+    }
+    .erp-status-dropdown .dropdown-item {
+        width: 100%;
+        border: none;
+        background: transparent;
+        text-align: left;
+        cursor: pointer;
+        transition: background-color 0.15s ease;
+    }
+    .erp-status-dropdown .dropdown-item:hover {
+        background-color: #F8FAFC !important;
+    }
+</style>
+@endpush
+
 @section('content')
 <section class="view-section active" id="view-txn-sales">
     <!-- Breadcrumb & Top Bar -->
@@ -122,7 +160,9 @@
 
                 <select name="status" class="form-control erp-filter-select" onchange="this.form.submit()">
                     <option value="">All Statuses</option>
+                    <option value="ordered" {{ request('status') == 'ordered' ? 'selected' : '' }}>Ordered</option>
                     <option value="dispatched" {{ request('status') == 'dispatched' ? 'selected' : '' }}>Dispatched</option>
+                    <option value="delivered" {{ request('status') == 'delivered' ? 'selected' : '' }}>Delivered</option>
                     <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Completed</option>
                     <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
                 </select>
@@ -267,29 +307,125 @@
                                 @endif
                             </td>
 
-                            <!-- Status Button -->
+                            <!-- Status Lifecycle Dropdown Manager -->
                             <td style="text-align: center;">
-                                @if($sal->status === 'completed')
-                                    <span class="erp-status-btn erp-status-btn-active" style="cursor: default; opacity: 0.95; user-select: none;" title="Sales Invoice Completed (Locked)">
-                                        <i class="fa-solid fa-lock me-1" style="font-size: 0.68rem;"></i> Completed
-                                    </span>
-                                @elseif($sal->status === 'cancelled')
-                                    <form method="POST" action="{{ route('admin.transactions.sales-entry.toggle-status', $sal) }}" style="display:inline-block;">
-                                        @csrf
-                                        @method('PATCH')
-                                        <button type="submit" class="erp-status-btn erp-status-btn-inactive" title="Click to Re-dispatch (Current: Cancelled)">
-                                            <span class="erp-status-dot-red"></span> Cancelled
-                                        </button>
-                                    </form>
-                                @else
-                                    <form method="POST" action="{{ route('admin.transactions.sales-entry.toggle-status', $sal) }}" style="display:inline-block;">
-                                        @csrf
-                                        @method('PATCH')
-                                        <button type="submit" class="erp-status-btn erp-status-btn-active" title="Click to Cancel Sales Entry (Current: Dispatched)">
-                                            <span class="erp-status-dot-green"></span> Dispatched
-                                        </button>
-                                    </form>
-                                @endif
+                                <div class="dropdown erp-status-dropdown" style="display: inline-block;">
+                                    @php
+                                        $st = $sal->status ?? 'dispatched';
+                                        $badgeBg = match($st) {
+                                            'ordered' => '#EFF6FF',
+                                            'dispatched' => '#F0FDF4',
+                                            'delivered' => '#F5F3FF',
+                                            'completed' => '#ECFDF5',
+                                            'cancelled' => '#FFF1F2',
+                                            default => '#F1F5F9',
+                                        };
+                                        $badgeColor = match($st) {
+                                            'ordered' => '#1D4ED8',
+                                            'dispatched' => '#15803D',
+                                            'delivered' => '#6D28D9',
+                                            'completed' => '#047857',
+                                            'cancelled' => '#BE123C',
+                                            default => '#475569',
+                                        };
+                                        $badgeBorder = match($st) {
+                                            'ordered' => '#BFDBFE',
+                                            'dispatched' => '#BBF7D0',
+                                            'delivered' => '#DDD6FE',
+                                            'completed' => '#A7F3D0',
+                                            'cancelled' => '#FECDD3',
+                                            default => '#CBD5E1',
+                                        };
+                                        $dotColor = match($st) {
+                                            'ordered' => '#3B82F6',
+                                            'dispatched' => '#16A34A',
+                                            'delivered' => '#8B5CF6',
+                                            'completed' => '#059669',
+                                            'cancelled' => '#E11D48',
+                                            default => '#64748B',
+                                        };
+                                        $statusIcon = match($st) {
+                                            'ordered' => 'fa-clock',
+                                            'dispatched' => 'fa-truck-fast',
+                                            'delivered' => 'fa-truck-ramp-box',
+                                            'completed' => 'fa-circle-check',
+                                            'cancelled' => 'fa-ban',
+                                            default => 'fa-circle-dot',
+                                        };
+                                    @endphp
+
+                                    <button type="button" class="erp-status-btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="background: {{ $badgeBg }}; color: {{ $badgeColor }}; border: 1px solid {{ $badgeBorder }}; cursor: pointer; padding: 4px 10px; border-radius: 20px; font-weight: 700; font-size: 0.76rem; display: inline-flex; align-items: center; gap: 6px;" title="Click to manage status (Ordered, Dispatched, Delivered, Completed, Cancelled)">
+                                        <span style="width: 7px; height: 7px; border-radius: 50%; background: {{ $dotColor }}; display: inline-block;"></span>
+                                        <span><i class="fa-solid {{ $statusIcon }} me-1" style="font-size: 0.7rem;"></i>{{ ucfirst($st) }}</span>
+                                        <i class="fa-solid fa-chevron-down ms-1" style="font-size: 0.62rem; opacity: 0.6;"></i>
+                                    </button>
+
+                                    <ul class="dropdown-menu dropdown-menu-end shadow-lg" style="border-radius: 12px; border: 1px solid #E2E8F0; padding: 0.5rem; min-width: 190px; z-index: 1050;">
+                                        <li style="padding: 0.35rem 0.65rem; font-size: 0.7rem; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.05em;">Change Status</li>
+                                        
+                                        <!-- Ordered -->
+                                        <li>
+                                            <form method="POST" action="{{ route('admin.transactions.sales-entry.update-status', $sal) }}">
+                                                @csrf @method('PATCH')
+                                                <input type="hidden" name="status" value="ordered">
+                                                <button type="submit" class="dropdown-item {{ $st === 'ordered' ? 'active' : '' }}" style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; padding: 0.45rem 0.65rem; border-radius: 6px;">
+                                                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #3B82F6;"></span>
+                                                    <span style="font-weight: 600; color: #1E293B;"><i class="fa-solid fa-clock me-1 text-primary"></i>Ordered</span>
+                                                </button>
+                                            </form>
+                                        </li>
+
+                                        <!-- Dispatched -->
+                                        <li>
+                                            <form method="POST" action="{{ route('admin.transactions.sales-entry.update-status', $sal) }}">
+                                                @csrf @method('PATCH')
+                                                <input type="hidden" name="status" value="dispatched">
+                                                <button type="submit" class="dropdown-item {{ $st === 'dispatched' ? 'active' : '' }}" style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; padding: 0.45rem 0.65rem; border-radius: 6px;">
+                                                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #16A34A;"></span>
+                                                    <span style="font-weight: 600; color: #1E293B;"><i class="fa-solid fa-truck-fast me-1 text-success"></i>Dispatched</span>
+                                                </button>
+                                            </form>
+                                        </li>
+
+                                        <!-- Delivered -->
+                                        <li>
+                                            <form method="POST" action="{{ route('admin.transactions.sales-entry.update-status', $sal) }}">
+                                                @csrf @method('PATCH')
+                                                <input type="hidden" name="status" value="delivered">
+                                                <button type="submit" class="dropdown-item {{ $st === 'delivered' ? 'active' : '' }}" style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; padding: 0.45rem 0.65rem; border-radius: 6px;">
+                                                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #8B5CF6;"></span>
+                                                    <span style="font-weight: 600; color: #1E293B;"><i class="fa-solid fa-truck-ramp-box me-1" style="color: #8B5CF6;"></i>Delivered</span>
+                                                </button>
+                                            </form>
+                                        </li>
+
+                                        <!-- Completed -->
+                                        <li>
+                                            <form method="POST" action="{{ route('admin.transactions.sales-entry.update-status', $sal) }}">
+                                                @csrf @method('PATCH')
+                                                <input type="hidden" name="status" value="completed">
+                                                <button type="submit" class="dropdown-item {{ $st === 'completed' ? 'active' : '' }}" style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; padding: 0.45rem 0.65rem; border-radius: 6px;">
+                                                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #059669;"></span>
+                                                    <span style="font-weight: 600; color: #1E293B;"><i class="fa-solid fa-circle-check me-1" style="color: #059669;"></i>Completed</span>
+                                                </button>
+                                            </form>
+                                        </li>
+
+                                        <li style="border-top: 1px solid #F1F5F9; margin: 0.35rem 0;"></li>
+
+                                        <!-- Cancelled -->
+                                        <li>
+                                            <form method="POST" action="{{ route('admin.transactions.sales-entry.update-status', $sal) }}" onsubmit="return confirm('Cancel sales order #{{ $sal->sale_no }}? Outward stock will be restored to inventory.');">
+                                                @csrf @method('PATCH')
+                                                <input type="hidden" name="status" value="cancelled">
+                                                <button type="submit" class="dropdown-item text-danger {{ $st === 'cancelled' ? 'active' : '' }}" style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; padding: 0.45rem 0.65rem; border-radius: 6px;">
+                                                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #E11D48;"></span>
+                                                    <span style="font-weight: 600;"><i class="fa-solid fa-ban me-1 text-danger"></i>Cancelled</span>
+                                                </button>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </div>
                             </td>
 
                             <!-- Actions -->
@@ -385,6 +521,25 @@
             }
         }
     }
+
+    // Interactive Status Lifecycle Dropdown Trigger
+    document.addEventListener('click', function(e) {
+        const toggle = e.target.closest('.erp-status-dropdown .dropdown-toggle');
+        const allDropdowns = document.querySelectorAll('.erp-status-dropdown .dropdown-menu');
+
+        if (toggle) {
+            e.preventDefault();
+            e.stopPropagation();
+            const menu = toggle.nextElementSibling;
+            const isOpen = menu && menu.classList.contains('show');
+            allDropdowns.forEach(m => m.classList.remove('show'));
+            if (!isOpen && menu) {
+                menu.classList.add('show');
+            }
+        } else {
+            allDropdowns.forEach(m => m.classList.remove('show'));
+        }
+    });
 </script>
 @endpush
 @endsection

@@ -129,7 +129,8 @@ const INITIAL_DATA = {
     ],
 
     dispatches: [
-        { id: 'DSP-501', orderNo: 'SO-1024', customerName: 'Raj Traders', date: '2026-09-08', vehicleNo: 'RJ-19-GA-4521', driverName: 'Mohan Lal', transporter: 'Vikas Logistics', status: 'Dispatched', items: [{ itemName: 'Premium Mehndi Powder', qty: 200 }] }
+        { id: 'DSP-501', billType: 'with_bill', orderNo: 'SO-1024', customerName: 'Raj Traders', date: '2026-09-08', vehicleNo: 'RJ-19-GA-4521', driverName: 'Mohan Lal', driverPhone: '9829012345', transporter: 'Vikas Logistics', status: 'Dispatched', notes: 'Henna powder bulk consignment - Prompt delivery', items: [{ itemName: 'Premium Mehndi Powder', qty: 200 }] },
+        { id: 'DSP-502', billType: 'without_bill', orderNo: 'WB-OUT-901', customerName: 'Sharma Cosmetics', date: '2026-09-08', vehicleNo: 'RJ-22-AA-9988', driverName: 'Ramesh Singh', driverPhone: '9414198765', transporter: 'Marwar Freight Carriers', status: 'In Transit', notes: 'Weighbridge outward consignment - Net Wt: 250 KG', items: [{ itemName: 'Amla Powder', qty: 250 }] }
     ],
 
     salesInvoices: [

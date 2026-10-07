@@ -54,9 +54,8 @@
                 <li><a href="{{ route('admin.transactions.sales-entry') }}" class="submenu-link {{ request()->routeIs('admin.transactions.sales-entry*') ? 'active' : '' }}" data-view="txn-sales-order">Sales Entry</a></li>
                 <li><a href="{{ route('admin.transactions.wb-sales-entry') }}" class="submenu-link {{ request()->routeIs('admin.transactions.wb-sales-entry*') ? 'active' : '' }}" data-view="txn-wb-sales">WB Sales Entry</a></li>
                 <li><a href="{{ route('admin.transactions.order-dispatch') }}" class="submenu-link {{ request()->routeIs('admin.transactions.order-dispatch') ? 'active' : '' }}" data-view="txn-order-dispatch">Order Dispatch</a></li>
-                <li><a href="{{ route('admin.transactions.sales-purchase-order') }}" class="submenu-link {{ request()->routeIs('admin.transactions.sales-purchase-order') ? 'active' : '' }}" data-view="txn-sales-invoice">Sales / Purchase Order</a></li>
-                <li><a href="{{ route('admin.transactions.receipt-voucher') }}" class="submenu-link {{ request()->routeIs('admin.transactions.receipt-voucher') ? 'active' : '' }}" data-view="txn-receipt">Receipt Voucher</a></li>
-                <li><a href="{{ route('admin.transactions.payment-voucher') }}" class="submenu-link {{ request()->routeIs('admin.transactions.payment-voucher') ? 'active' : '' }}" data-view="txn-payment">Payment Voucher</a></li>
+                <li><a href="{{ route('admin.transactions.receipt-voucher') }}" class="submenu-link {{ request()->routeIs('admin.transactions.receipt-voucher*') ? 'active' : '' }}" data-view="txn-receipt">Receipt Voucher</a></li>
+                <li><a href="{{ route('admin.transactions.payment-voucher') }}" class="submenu-link {{ request()->routeIs('admin.transactions.payment-voucher*') ? 'active' : '' }}" data-view="txn-payment">Payment Voucher</a></li>
             </ul>
         </li>
 

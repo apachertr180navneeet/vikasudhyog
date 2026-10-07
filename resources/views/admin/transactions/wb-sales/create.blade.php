@@ -56,7 +56,7 @@
 
         <div class="erp-form-layout-full">
 
-            <!-- 1. WB Slip & Customer Identity -->
+            <!-- 1. Outward Slip & Customer Identity -->
             <div class="card erp-form-section-card">
                 <div class="erp-form-section-header">
                     <div class="erp-form-section-header-left">
@@ -71,7 +71,7 @@
                 </div>
 
                 <div class="erp-form-section-body-4col">
-                    <!-- Slip No -->
+                    <!-- Slip / Voucher No -->
                     <div class="form-group">
                         <label class="erp-field-label">
                             WB Slip No <span class="erp-req-star">*</span>
@@ -83,28 +83,28 @@
                         <span class="erp-field-hint">Auto-generated outward slip reference</span>
                     </div>
 
-                    <!-- Dispatch Date -->
+                    <!-- Sale / Dispatch Date -->
                     <div class="form-group">
                         <label class="erp-field-label">
-                            Dispatch Date <span class="erp-req-star">*</span>
+                            Sale / Dispatch Date <span class="erp-req-star">*</span>
                         </label>
                         <div class="erp-field-icon-wrap">
                             <i class="fa-solid fa-calendar-day erp-field-icon"></i>
                             <input type="date" name="entry_date" id="field-entry-date" class="form-control erp-field-input-iconified" value="{{ old('entry_date', date('Y-m-d')) }}" required onchange="updateLiveSummary()">
                         </div>
-                        <span class="erp-field-hint">Consignment dispatch date</span>
+                        <span class="erp-field-hint">Billing or goods dispatch date</span>
                     </div>
 
-                    <!-- Customer Ref / Challan No -->
+                    <!-- Customer PO / Ref No -->
                     <div class="form-group">
                         <label class="erp-field-label">
-                            Customer PO / Challan No
+                            Customer PO / Ref No
                         </label>
                         <div class="erp-field-icon-wrap">
                             <i class="fa-solid fa-file-invoice erp-field-icon"></i>
-                            <input type="text" name="invoice_no" id="field-invoice-no" class="form-control erp-field-input-iconified erp-field-input-mono" placeholder="Enter PO or delivery challan" value="{{ old('invoice_no') }}" oninput="updateLiveSummary()">
+                            <input type="text" name="invoice_no" id="field-invoice-no" class="form-control erp-field-input-iconified erp-field-input-mono" placeholder="Enter PO or reference number" value="{{ old('invoice_no') }}" oninput="updateLiveSummary()">
                         </div>
-                        <span class="erp-field-hint">Buyer delivery slip or PO reference</span>
+                        <span class="erp-field-hint">Buyer purchase order or challan reference</span>
                     </div>
 
                     <!-- Vehicle / Transport No -->
@@ -116,10 +116,10 @@
                             <i class="fa-solid fa-truck-moving erp-field-icon"></i>
                             <input type="text" name="vehicle_no" id="field-vehicle-no" class="form-control erp-field-input-iconified erp-field-input-mono" placeholder="Enter vehicle registration number" value="{{ old('vehicle_no') }}" oninput="this.value = this.value.toUpperCase(); updateLiveSummary();">
                         </div>
-                        <span class="erp-field-hint">Truck or transport registration number</span>
+                        <span class="erp-field-hint">Dispatch transport or truck registration</span>
                     </div>
 
-                    <!-- Customer Select (Spans 2 Columns) -->
+                    <!-- Customer Firm Select (Spans 2 Columns) -->
                     <div class="form-group erp-col-span-2">
                         <label class="erp-field-label">
                             Customer / Buyer Firm <span class="erp-req-star">*</span>
@@ -129,24 +129,24 @@
                             <select name="customer_id" id="field-customer-id" class="form-control erp-field-input-iconified" required onchange="onCustomerChange(this)">
                                 <option value="">Select Customer / Buyer Firm...</option>
                                 @foreach($customers as $cst)
-                                    <option value="{{ $cst->id }}" data-name="{{ $cst->name }}" data-city="{{ $cst->city }}" {{ old('customer_id') == $cst->id ? 'selected' : '' }}>
+                                    <option value="{{ $cst->id }}" data-name="{{ $cst->name }}" data-city="{{ $cst->city }}" data-gstin="{{ $cst->gstin }}" {{ old('customer_id') == $cst->id ? 'selected' : '' }}>
                                         {{ $cst->name }} ({{ $cst->code }}{{ $cst->city ? ' - ' . $cst->city : '' }})
                                     </option>
                                 @endforeach
                             </select>
                         </div>
-                        <span class="erp-field-hint">Buyer account whose ledger balance will be debited</span>
+                        <span class="erp-field-hint">Debtor account whose ledger balance will be debited</span>
                     </div>
 
                     <!-- Broker / Agent Select -->
                     <div class="form-group">
                         <label class="erp-field-label">
-                            Broker / Mandi Commission Agent <span class="text-muted">(Optional)</span>
+                            Broker / Sales Commission Agent <span class="text-muted">(Optional)</span>
                         </label>
                         <div class="erp-field-icon-wrap">
                             <i class="fa-solid fa-handshake erp-field-icon"></i>
                             <select name="broker_id" id="field-broker-id" class="form-control erp-field-input-iconified" onchange="updateLiveSummary()">
-                                <option value="">Direct Mandi (No Broker)...</option>
+                                <option value="">Direct Sale (No Broker)...</option>
                                 @foreach($brokers as $brk)
                                     <option value="{{ $brk->id }}" data-name="{{ $brk->name }}" data-comm="{{ $brk->commission_rate }}" {{ old('broker_id') == $brk->id ? 'selected' : '' }}>
                                         {{ $brk->name }} ({{ $brk->city ?? 'Sojat' }} - {{ $brk->commission_rate }}%)
@@ -174,76 +174,22 @@
                         <span class="erp-field-hint">Operational dispatch priority</span>
                     </div>
 
-                    <!-- Driver Name -->
-                    <div class="form-group">
+                    <!-- Payment Terms (Spans 2 Columns) -->
+                    <div class="form-group erp-col-span-2">
                         <label class="erp-field-label">
-                            Driver Name
+                            Payment Terms
                         </label>
                         <div class="erp-field-icon-wrap">
-                            <i class="fa-solid fa-id-card erp-field-icon"></i>
-                            <input type="text" name="driver_name" class="form-control erp-field-input-iconified" placeholder="Enter driver name" value="{{ old('driver_name') }}">
+                            <i class="fa-solid fa-clock erp-field-icon"></i>
+                            <select name="payment_terms" class="form-control erp-field-input-iconified">
+                                <option value="Cash" {{ old('payment_terms') === 'Cash' ? 'selected' : '' }}>Cash on Delivery (Immediate)</option>
+                                <option value="15 Days" {{ old('payment_terms') === '15 Days' ? 'selected' : '' }}>Credit 15 Days</option>
+                                <option value="30 Days" {{ old('payment_terms', '30 Days') === '30 Days' ? 'selected' : '' }}>Credit 30 Days</option>
+                                <option value="45 Days" {{ old('payment_terms') === '45 Days' ? 'selected' : '' }}>Credit 45 Days</option>
+                                <option value="Bank Transfer" {{ old('payment_terms') === 'Bank Transfer' ? 'selected' : '' }}>Bank RTGS / NEFT</option>
+                            </select>
                         </div>
-                        <span class="erp-field-hint">Transport driver name</span>
-                    </div>
-
-                    <!-- Driver Phone -->
-                    <div class="form-group">
-                        <label class="erp-field-label">
-                            Driver Mobile No
-                        </label>
-                        <div class="erp-field-icon-wrap">
-                            <i class="fa-solid fa-phone erp-field-icon"></i>
-                            <input type="text" name="driver_phone" class="form-control erp-field-input-iconified erp-field-input-mono" placeholder="Enter 10-digit mobile number" value="{{ old('driver_phone') }}">
-                        </div>
-                        <span class="erp-field-hint">Driver contact phone</span>
-                    </div>
-
-                    <!-- Gross Weight -->
-                    <div class="form-group">
-                        <label class="erp-field-label">
-                            Gross Weight (KG)
-                        </label>
-                        <div class="erp-field-icon-wrap">
-                            <i class="fa-solid fa-weight-hanging erp-field-icon"></i>
-                            <input type="number" step="0.001" min="0" name="gross_weight" id="field-gross-weight" class="form-control erp-field-input-iconified erp-field-input-mono" placeholder="0.000" value="{{ old('gross_weight', '0.000') }}" oninput="calcNetWeight()">
-                        </div>
-                        <span class="erp-field-hint">Total vehicle loaded weight</span>
-                    </div>
-
-                    <!-- Tare Weight -->
-                    <div class="form-group">
-                        <label class="erp-field-label">
-                            Tare Weight (KG)
-                        </label>
-                        <div class="erp-field-icon-wrap">
-                            <i class="fa-solid fa-truck erp-field-icon"></i>
-                            <input type="number" step="0.001" min="0" name="tare_weight" id="field-tare-weight" class="form-control erp-field-input-iconified erp-field-input-mono" placeholder="0.000" value="{{ old('tare_weight', '0.000') }}" oninput="calcNetWeight()">
-                        </div>
-                        <span class="erp-field-hint">Empty vehicle unladen weight</span>
-                    </div>
-
-                    <!-- Deduction Weight -->
-                    <div class="form-group">
-                        <label class="erp-field-label">
-                            Deduction Weight (KG)
-                        </label>
-                        <div class="erp-field-icon-wrap">
-                            <i class="fa-solid fa-minus erp-field-icon"></i>
-                            <input type="number" step="0.001" min="0" name="deduction_weight" id="field-deduction-weight" class="form-control erp-field-input-iconified erp-field-input-mono" placeholder="0.000" value="{{ old('deduction_weight', '0.000') }}" oninput="calcNetWeight()">
-                        </div>
-                        <span class="erp-field-hint">Moisture / bag tare allowance</span>
-                    </div>
-
-                    <!-- Net Outward Weight -->
-                    <div class="form-group">
-                        <label class="erp-field-label">
-                            Net Outward Weight (KG)
-                        </label>
-                        <div class="erp-field-icon-wrap">
-                            <i class="fa-solid fa-scale-balanced erp-field-icon" style="color: #2563EB;"></i>
-                            <input type="text" name="net_weight" id="field-net-weight" class="form-control erp-field-input-iconified erp-field-input-mono font-weight-700" readonly style="background: #EFF6FF; color: #1D4ED8; font-weight: 700; border-color: #BFDBFE;" value="0.000">
-                        </div>
-                        <span class="erp-field-hint">Gross &minus; Tare &minus; Deduction</span>
+                        <span class="erp-field-hint">Agreed credit collection terms</span>
                     </div>
                 </div>
             </div>
@@ -520,11 +466,7 @@
             <div class="erp-voucher-summary-card">
                 <div class="erp-voucher-summary-metrics">
                     <div class="erp-voucher-metric">
-                        <span class="erp-voucher-metric-label">Net Weighbridge Wt</span>
-                        <span class="erp-voucher-metric-val font-monospace" id="prev-wb-net-wt">0.000 KG</span>
-                    </div>
-                    <div class="erp-voucher-metric">
-                        <span class="erp-voucher-metric-label">Item Line Total Wt</span>
+                        <span class="erp-voucher-metric-label">Total Outward Wt</span>
                         <span class="erp-voucher-metric-val font-monospace" style="color: #2563EB;" id="prev-item-wt">0.000 KG</span>
                     </div>
                     <div class="erp-voucher-metric" style="border-left: 2px solid #E2E8F0; padding-left: 1.5rem;">

@@ -262,4 +262,79 @@ class SaleEntryTest extends TestCase
         $this->assertEquals('cancelled', $sale->fresh()->status);
         $this->assertEquals(60.00, (float)$item->fresh()->current_stock);
     }
+
+    public function test_order_dispatch_page_can_be_rendered(): void
+    {
+        $user = $this->getAdminUser();
+
+        $response = $this->actingAs($user)->get(route('admin.transactions.order-dispatch'));
+        $response->assertStatus(200);
+        $response->assertSee('Order Dispatch');
+        $response->assertSee('Total Dispatched Orders');
+        $response->assertSee('With Bill Dispatches');
+        $response->assertSee('Without Bill Dispatches');
+        $response->assertSee('In-Transit Shipments');
+        $response->assertSee('Without Bill');
+        $response->assertSee('With Bill');
+        $response->assertSee('Vehicle No');
+    }
+
+    public function test_sales_status_lifecycle_can_be_updated_across_all_statuses(): void
+    {
+        $user = $this->getAdminUser();
+        $customer = $this->createCustomer();
+        $item = $this->createItem(50.00); // 50 KG in stock
+
+        $sale = Sale::create([
+            'sale_no' => 'SAL-2026-9006',
+            'sale_date' => '2026-10-05',
+            'customer_id' => $customer->id,
+            'order_type' => 'Medium',
+            'subtotal' => 1000.00,
+            'tax_amount' => 50.00,
+            'bill_total' => 1050.00,
+            'grand_total' => 1050.00,
+            'status' => 'dispatched',
+        ]);
+
+        SaleItem::create([
+            'sale_id' => $sale->id,
+            'item_id' => $item->id,
+            'unit' => 'KG',
+            'quantity' => 10.00,
+            'bill_rate' => 100.00,
+            'total_amount' => 1050.00,
+        ]);
+
+        // 1. Update to 'delivered'
+        $response = $this->actingAs($user)->patch(route('admin.transactions.sales-entry.update-status', $sale), [
+            'status' => 'delivered',
+        ]);
+        $response->assertSessionHas('success');
+        $this->assertEquals('delivered', $sale->fresh()->status);
+
+        // 2. Update to 'completed'
+        $response = $this->actingAs($user)->patch(route('admin.transactions.sales-entry.update-status', $sale), [
+            'status' => 'completed',
+        ]);
+        $response->assertSessionHas('success');
+        $this->assertEquals('completed', $sale->fresh()->status);
+
+        // 3. Update to 'cancelled' (stock should be restored from 50 to 60)
+        $response = $this->actingAs($user)->patch(route('admin.transactions.sales-entry.update-status', $sale), [
+            'status' => 'cancelled',
+        ]);
+        $response->assertSessionHas('success');
+        $this->assertEquals('cancelled', $sale->fresh()->status);
+        $this->assertEquals(60.00, (float)$item->fresh()->current_stock);
+
+        // 4. Update back from 'cancelled' to 'ordered' (stock should re-deduct from 60 to 50)
+        $response = $this->actingAs($user)->patch(route('admin.transactions.sales-entry.update-status', $sale), [
+            'status' => 'ordered',
+        ]);
+        $response->assertSessionHas('success');
+        $this->assertEquals('ordered', $sale->fresh()->status);
+        $this->assertEquals(50.00, (float)$item->fresh()->current_stock);
+    }
 }
+

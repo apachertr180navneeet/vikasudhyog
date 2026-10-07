@@ -482,38 +482,26 @@ class SaleController extends Controller
     }
 
     /**
-     * Toggle the status of a sales entry.
+     * Update the lifecycle status of a sales entry.
+     * Allowed statuses: ordered, dispatched, delivered, completed, cancelled
      */
-    public function toggleStatus(Sale $sale)
+    public function updateStatus(Request $request, Sale $sale)
     {
+        $validated = $request->validate([
+            'status' => 'required|string|in:ordered,dispatched,delivered,completed,cancelled'
+        ]);
+
+        $newStatus = $validated['status'];
+        $oldStatus = $sale->status;
+
+        if ($newStatus === $oldStatus) {
+            return back()->with('info', "Sales entry #{$sale->sale_no} is already {$newStatus}.");
+        }
+
         DB::beginTransaction();
         try {
-            if ($sale->status === 'cancelled') {
-                // Uncancelling / Redispatching: Verify stock first!
-                foreach ($sale->items as $sItem) {
-                    $item = Item::find($sItem->item_id);
-                    if (!$item || (float)$item->current_stock < (float)$sItem->quantity) {
-                        return back()->with(
-                            'error',
-                            "Cannot re-dispatch: Insufficient stock for '{$item->name}'. Available: {$item->current_stock} {$item->unit}, Needed: {$sItem->quantity} {$item->unit}."
-                        );
-                    }
-                }
-
-                // Deduct outward stock again
-                foreach ($sale->items as $sItem) {
-                    $item = Item::find($sItem->item_id);
-                    if ($item) {
-                        $item->decrement('current_stock', $sItem->quantity);
-                    }
-                }
-                if ($customer = Customer::find($sale->customer_id)) {
-                    $customer->increment('current_balance', $sale->grand_total);
-                }
-                $sale->update(['status' => 'dispatched']);
-                $msg = "Sales entry #{$sale->sale_no} re-dispatched and outward stock deducted.";
-            } else {
-                // Cancelling: Restore outward stock back to inventory
+            // Case 1: Cancelling (revert outward stock & customer balance)
+            if ($newStatus === 'cancelled' && $oldStatus !== 'cancelled') {
                 foreach ($sale->items as $sItem) {
                     $item = Item::find($sItem->item_id);
                     if ($item) {
@@ -524,15 +512,68 @@ class SaleController extends Controller
                     $customer->decrement('current_balance', $sale->grand_total);
                 }
                 $sale->update(['status' => 'cancelled']);
-                $msg = "Sales entry #{$sale->sale_no} marked as cancelled and stock restored to inventory.";
+                $msg = "Sales entry #{$sale->sale_no} cancelled successfully. Outward stock has been restored to inventory.";
+            }
+            // Case 2: Re-activating from cancelled (verify stock availability & re-deduct)
+            elseif ($oldStatus === 'cancelled' && $newStatus !== 'cancelled') {
+                foreach ($sale->items as $sItem) {
+                    $item = Item::find($sItem->item_id);
+                    if (!$item || (float)$item->current_stock < (float)$sItem->quantity) {
+                        return back()->with(
+                            'error',
+                            "Cannot activate order: Insufficient stock for '{$item->name}'. Available: {$item->current_stock} {$item->unit}, Needed: {$sItem->quantity} {$item->unit}."
+                        );
+                    }
+                }
+                foreach ($sale->items as $sItem) {
+                    $item = Item::find($sItem->item_id);
+                    if ($item) {
+                        $item->decrement('current_stock', $sItem->quantity);
+                    }
+                }
+                if ($customer = Customer::find($sale->customer_id)) {
+                    $customer->increment('current_balance', $sale->grand_total);
+                }
+                $sale->update(['status' => $newStatus]);
+                $msg = "Sales entry #{$sale->sale_no} status changed from Cancelled to " . ucfirst($newStatus) . " and stock re-allocated.";
+            }
+            // Case 3: Transitioning between active statuses (ordered <-> dispatched <-> delivered <-> completed)
+            else {
+                $sale->update(['status' => $newStatus]);
+                $msg = "Sales entry #{$sale->sale_no} status successfully updated to " . ucfirst($newStatus) . ".";
             }
 
             DB::commit();
+
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'status' => $newStatus,
+                    'message' => $msg
+                ]);
+            }
+
             return back()->with('success', $msg);
         } catch (\Throwable $e) {
             DB::rollBack();
-            return back()->with('error', 'Error toggling sales entry status: ' . $e->getMessage());
+            return back()->with('error', 'Error updating sales status: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Toggle status for quick action or test backwards-compatibility.
+     */
+    public function toggleStatus(Request $request, Sale $sale)
+    {
+        if ($request->filled('status')) {
+            return $this->updateStatus($request, $sale);
+        }
+
+        // Toggle: if cancelled, re-activate to dispatched; otherwise cancel
+        $nextStatus = ($sale->status === 'cancelled') ? 'dispatched' : 'cancelled';
+
+        $request->merge(['status' => $nextStatus]);
+        return $this->updateStatus($request, $sale);
     }
 
     /**

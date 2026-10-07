@@ -18,6 +18,8 @@ use App\Http\Controllers\Admin\PurchaseController;
 use App\Http\Controllers\Admin\WBPurchaseController;
 use App\Http\Controllers\Admin\SaleController;
 use App\Http\Controllers\Admin\WBSaleController;
+use App\Http\Controllers\Admin\ReceiptVoucherController;
+use App\Http\Controllers\Admin\PaymentVoucherController;
 use App\Http\Controllers\Admin\InventoryController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\SettingController;
@@ -178,6 +180,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::put('/sales-entry/{sale}', [SaleController::class, 'update'])->name('sales-entry.update');
             Route::delete('/sales-entry/{sale}', [SaleController::class, 'destroy'])->name('sales-entry.destroy');
             Route::patch('/sales-entry/{sale}/toggle-status', [SaleController::class, 'toggleStatus'])->name('sales-entry.toggle-status');
+            Route::patch('/sales-entry/{sale}/update-status', [SaleController::class, 'updateStatus'])->name('sales-entry.update-status');
 
             // WB Sales Entry (Without Bill) CRUD
             Route::get('/wb-sales-entry', [WBSaleController::class, 'index'])->name('wb-sales-entry');
@@ -189,10 +192,30 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::put('/wb-sales-entry/{wbSale}', [WBSaleController::class, 'update'])->name('wb-sales-entry.update');
             Route::delete('/wb-sales-entry/{wbSale}', [WBSaleController::class, 'destroy'])->name('wb-sales-entry.destroy');
             Route::patch('/wb-sales-entry/{wbSale}/toggle-status', [WBSaleController::class, 'toggleStatus'])->name('wb-sales-entry.toggle-status');
+            Route::patch('/wb-sales-entry/{wbSale}/update-status', [WBSaleController::class, 'updateStatus'])->name('wb-sales-entry.update-status');
             Route::get('/order-dispatch', [TransactionController::class, 'orderDispatch'])->name('order-dispatch');
             Route::get('/sales-purchase-order', [TransactionController::class, 'salesPurchaseOrder'])->name('sales-purchase-order');
-            Route::get('/receipt-voucher', [TransactionController::class, 'receiptVoucher'])->name('receipt-voucher');
-            Route::get('/payment-voucher', [TransactionController::class, 'paymentVoucher'])->name('payment-voucher');
+            // Receipt Voucher CRUD (Dedicated Pages)
+            Route::get('/receipt-voucher', [ReceiptVoucherController::class, 'index'])->name('receipt-voucher');
+            Route::get('/receipt-voucher/create', [ReceiptVoucherController::class, 'create'])->name('receipt-voucher.create');
+            Route::get('/receipt-voucher/generate-code', [ReceiptVoucherController::class, 'generateCode'])->name('receipt-voucher.generate-code');
+            Route::post('/receipt-voucher', [ReceiptVoucherController::class, 'store'])->name('receipt-voucher.store');
+            Route::get('/receipt-voucher/{receiptVoucher}', [ReceiptVoucherController::class, 'show'])->name('receipt-voucher.show');
+            Route::get('/receipt-voucher/{receiptVoucher}/edit', [ReceiptVoucherController::class, 'edit'])->name('receipt-voucher.edit');
+            Route::put('/receipt-voucher/{receiptVoucher}', [ReceiptVoucherController::class, 'update'])->name('receipt-voucher.update');
+            Route::delete('/receipt-voucher/{receiptVoucher}', [ReceiptVoucherController::class, 'destroy'])->name('receipt-voucher.destroy');
+            Route::patch('/receipt-voucher/{receiptVoucher}/toggle-status', [ReceiptVoucherController::class, 'toggleStatus'])->name('receipt-voucher.toggle-status');
+
+            // Payment Voucher CRUD (Dedicated Pages)
+            Route::get('/payment-voucher', [PaymentVoucherController::class, 'index'])->name('payment-voucher');
+            Route::get('/payment-voucher/create', [PaymentVoucherController::class, 'create'])->name('payment-voucher.create');
+            Route::get('/payment-voucher/generate-code', [PaymentVoucherController::class, 'generateCode'])->name('payment-voucher.generate-code');
+            Route::post('/payment-voucher', [PaymentVoucherController::class, 'store'])->name('payment-voucher.store');
+            Route::get('/payment-voucher/{paymentVoucher}', [PaymentVoucherController::class, 'show'])->name('payment-voucher.show');
+            Route::get('/payment-voucher/{paymentVoucher}/edit', [PaymentVoucherController::class, 'edit'])->name('payment-voucher.edit');
+            Route::put('/payment-voucher/{paymentVoucher}', [PaymentVoucherController::class, 'update'])->name('payment-voucher.update');
+            Route::delete('/payment-voucher/{paymentVoucher}', [PaymentVoucherController::class, 'destroy'])->name('payment-voucher.destroy');
+            Route::patch('/payment-voucher/{paymentVoucher}/toggle-status', [PaymentVoucherController::class, 'toggleStatus'])->name('payment-voucher.toggle-status');
         });
 
         // Inventory Routes

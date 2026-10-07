@@ -5,6 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
+use App\Models\Sale;
+use App\Models\WBSale;
+use App\Models\Customer;
+
 class TransactionController extends Controller
 {
     public function purchaseEntry()
@@ -41,9 +45,16 @@ class TransactionController extends Controller
 
     public function orderDispatch()
     {
+        $sales = Sale::with('customer', 'broker')->latest()->get();
+        $wbSales = WBSale::with('customer', 'broker')->latest()->get();
+        $customers = Customer::where('status', 'active')->orderBy('name')->get();
+
         return view('admin.transactions.order-dispatch', [
             'pageTitle' => 'Order Dispatch - VIKAS UDHYOG ERP',
-            'pageCode'  => 'txn-order-dispatch'
+            'pageCode'  => 'txn-order-dispatch',
+            'sales'     => $sales,
+            'wbSales'   => $wbSales,
+            'customers' => $customers,
         ]);
     }
 
@@ -57,17 +68,11 @@ class TransactionController extends Controller
 
     public function receiptVoucher()
     {
-        return view('admin.transactions.receipt-voucher', [
-            'pageTitle' => 'Receipt Voucher - VIKAS UDHYOG ERP',
-            'pageCode'  => 'txn-receipt'
-        ]);
+        return redirect()->route('admin.transactions.receipt-voucher');
     }
 
     public function paymentVoucher()
     {
-        return view('admin.transactions.payment-voucher', [
-            'pageTitle' => 'Payment Voucher - VIKAS UDHYOG ERP',
-            'pageCode'  => 'txn-payment'
-        ]);
+        return redirect()->route('admin.transactions.payment-voucher');
     }
 }
