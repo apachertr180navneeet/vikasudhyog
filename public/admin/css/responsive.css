@@ -134,11 +134,21 @@
         gap: 1.25rem !important;
     }
 
-    /* --- Dashboard Lower Grid --- */
+    /* --- Dashboard Charts & Lower Grid --- */
+    .dashboard-charts-grid,
     .dashboard-lower-grid,
-    div[style*="grid-template-columns: 2fr 1fr"] {
+    div[style*="grid-template-columns: 2fr 1fr"],
+    div[style*="grid-template-columns: 1.8fr 1.2fr"],
+    div[style*="grid-template-columns: 1fr 380px"],
+    div[style*="grid-template-columns: 1fr 360px"] {
         grid-template-columns: 1fr !important;
         gap: 1.25rem !important;
+    }
+
+    /* --- Dashboard KPI Grid for Tablets --- */
+    .dashboard-kpi-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 1rem !important;
     }
 
     /* --- KPI Grid for Tablets --- */
@@ -146,6 +156,42 @@
     .kpi-grid {
         grid-template-columns: repeat(2, 1fr) !important;
         gap: 1rem !important;
+    }
+
+    /* --- Form Grid 4-col -> 2-col on tablet --- */
+    .form-grid-4 {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    /* --- Settings inline grids (WhatsApp, Company) --- */
+    div[style*="grid-template-columns: 1fr 1fr 1fr"] {
+        grid-template-columns: 1fr 1fr !important;
+    }
+
+    /* --- Transaction items table --- */
+    .erp-items-table-wrapper {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+
+    .erp-items-table {
+        min-width: 750px !important;
+    }
+
+    /* --- Voucher Summary Card --- */
+    .erp-voucher-summary-card {
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+
+    .erp-voucher-summary-metrics {
+        flex-wrap: wrap !important;
+        gap: 1rem !important;
+    }
+
+    .erp-voucher-actions {
+        width: 100% !important;
+        justify-content: flex-end !important;
     }
 }
 
@@ -248,9 +294,20 @@
         height: 40px !important;
     }
 
+    /* Ensure inline-block forms in header wrap properly */
+    .erp-header-actions form {
+        flex: 1 1 auto !important;
+        display: flex !important;
+    }
+
+    .erp-header-actions form .btn {
+        width: 100% !important;
+    }
+
     /* --- KPI Grid System --- */
     .erp-kpi-grid,
-    .kpi-grid {
+    .kpi-grid,
+    .dashboard-kpi-grid {
         grid-template-columns: repeat(2, 1fr) !important;
         gap: 0.75rem !important;
         margin-bottom: 1.25rem !important;
@@ -280,6 +337,30 @@
         font-size: 1.1rem !important;
     }
 
+    /* --- Dashboard Inline Style Grid Overrides --- */
+    .dashboard-charts-grid,
+    .dashboard-lower-grid,
+    div[style*="grid-template-columns: 2fr 1fr"],
+    div[style*="grid-template-columns: 1.8fr 1.2fr"],
+    div[style*="grid-template-columns: 1fr 380px"],
+    div[style*="grid-template-columns: 1fr 360px"],
+    div[style*="grid-template-columns: repeat(auto-fit"] {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+    }
+
+    /* Settings grids: 1fr 1fr -> 1fr  */
+    div[style*="grid-template-columns: 1fr 1fr"],
+    div[style*="grid-template-columns: 1fr 1fr 1fr"] {
+        grid-template-columns: 1fr !important;
+        gap: 0.85rem !important;
+    }
+
+    /* Settings 4-col grid -> 2 col */
+    div[style*="grid-template-columns: repeat(4, 1fr)"] {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
     /* --- Charts Grid --- */
     .charts-grid {
         grid-template-columns: 1fr !important;
@@ -288,6 +369,15 @@
 
     .chart-container {
         height: 260px !important;
+    }
+
+    /* Charts in inline-styled cards */
+    div[style*="height: 300px"] {
+        height: 240px !important;
+    }
+
+    div[style*="height: 250px"] {
+        height: 220px !important;
     }
 
     /* --- Form Sections & Grids --- */
@@ -307,6 +397,7 @@
     .form-grid,
     .form-grid-2,
     .form-grid-3,
+    .form-grid-4,
     .form-row-2,
     .form-row-3 {
         grid-template-columns: 1fr !important;
@@ -319,7 +410,8 @@
 
     /* --- Sticky Mobile Form Action Bar --- */
     .form-actions-card,
-    .form-actions-bar {
+    .form-actions-bar,
+    .erp-form-actions-card {
         position: sticky !important;
         bottom: 0.5rem !important;
         z-index: 50 !important;
@@ -333,7 +425,9 @@
     .form-actions-card .btn,
     .form-actions-bar .btn,
     .form-actions-bar div,
-    .form-actions-bar button {
+    .form-actions-bar button,
+    .erp-form-actions-card .btn,
+    .erp-form-actions-card button {
         width: 100% !important;
         justify-content: center !important;
         text-align: center !important;
@@ -438,6 +532,50 @@
         width: 36px !important;
         height: 36px !important;
         font-size: 0.88rem !important;
+    }
+
+    /* --- Transaction Line Items Table --- */
+    .erp-items-table-wrapper {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        border-radius: 10px !important;
+    }
+
+    .erp-items-table {
+        min-width: 800px !important;
+    }
+
+    .erp-table-action-bar {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 0.65rem !important;
+    }
+
+    .erp-table-totals-grid {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 0.5rem !important;
+    }
+
+    .erp-table-total-item {
+        flex-direction: row !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+    }
+
+    /* --- Dashboard table (inline styled) --- */
+    .erp-table,
+    table[style*="width: 100%; margin: 0; border-collapse: collapse"] {
+        min-width: 550px !important;
+    }
+
+    /* Ensure wrapping div provides horizontal scroll */
+    .table-responsive,
+    div.table-responsive {
+        display: block !important;
+        width: 100% !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
     }
 
     /* --- Access Level & Role Matrix Module --- */
@@ -594,6 +732,19 @@
         gap: 1rem !important;
     }
 
+    .erp-profile-hero-left {
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center !important;
+        gap: 0.75rem !important;
+    }
+
+    .erp-profile-hero-meta-row {
+        justify-content: center !important;
+        flex-wrap: wrap !important;
+        gap: 0.5rem !important;
+    }
+
     .erp-profile-hero-meta {
         justify-content: center !important;
         flex-wrap: wrap !important;
@@ -602,6 +753,152 @@
 
     .erp-profile-hero-details {
         text-align: center !important;
+    }
+
+    .erp-profile-hero-name {
+        font-size: 1.3rem !important;
+        flex-wrap: wrap !important;
+        justify-content: center !important;
+    }
+
+    /* --- Sidebar Actions Card (Form Side Panel) --- */
+    .erp-sidebar-actions-card {
+        border-radius: 12px !important;
+        padding: 1rem !important;
+    }
+
+    /* --- Pagination responsive --- */
+    .erp-pagination-wrap {
+        padding: 0.75rem 1rem !important;
+        display: flex !important;
+        flex-wrap: wrap !important;
+        justify-content: center !important;
+        gap: 0.35rem !important;
+    }
+
+    .erp-pagination-wrap nav {
+        width: 100% !important;
+        display: flex !important;
+        justify-content: center !important;
+    }
+
+    /* --- WhatsApp Settings: hide phone preview on small screens --- */
+    .wa-phone-preview-container {
+        display: none !important;
+    }
+
+    /* --- Backup/Restore KPI inline styles --- */
+    .erp-form-section-body-4col {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* --- Report Filter Inline Forms --- */
+    .report-filter-bar,
+    .cash-filter-row {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 0.65rem !important;
+    }
+
+    .report-filter-bar .form-control,
+    .cash-filter-row .form-control,
+    .report-filter-bar select,
+    .cash-filter-row select,
+    .report-filter-bar input,
+    .cash-filter-row input {
+        width: 100% !important;
+        min-width: 100% !important;
+    }
+
+    /* --- Inventory stock-overview / ledger page --- */
+    .stock-overview-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* --- Login Page Responsive --- */
+    .login-container {
+        flex-direction: column !important;
+        min-height: 100vh !important;
+    }
+
+    .login-left-panel {
+        display: none !important;
+    }
+
+    .login-right-panel,
+    .login-form-panel {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 2rem 1.25rem !important;
+    }
+
+    .login-card {
+        max-width: 100% !important;
+        width: 100% !important;
+        border-radius: 12px !important;
+    }
+
+    /* --- SweetAlert2 Popup --- */
+    .vu-swal-popup {
+        width: 94vw !important;
+        padding: 1rem !important;
+        border-radius: 14px !important;
+    }
+
+    /* --- Voucher Summary Metrics --- */
+    .erp-voucher-summary-card {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 0.85rem !important;
+        padding: 1rem !important;
+    }
+
+    .erp-voucher-summary-metrics {
+        gap: 1rem !important;
+    }
+
+    .erp-voucher-actions {
+        width: 100% !important;
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 0.5rem !important;
+    }
+
+    .erp-voucher-actions .btn {
+        flex: 1 1 auto !important;
+    }
+
+    /* --- Order Dispatch - inline style grids --- */
+    div[style*="grid-template-columns: 2fr 1fr"],
+    div[style*="grid-template-columns: 1.8fr 1.2fr"],
+    div[style*="grid-template-columns: 2fr 1.2fr"],
+    div[style*="grid-template-columns: 1.5fr 1fr"] {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+    }
+
+    /* Scope/stat grid (profile show, inventory show) */
+    .erp-scope-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    /* --- Toastr overrides for mobile --- */
+    #toast-container {
+        right: 0.5rem !important;
+        left: 0.5rem !important;
+        width: auto !important;
+    }
+
+    #toast-container > .toast {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    /* --- User Avatar Badge (topbar) --- */
+    .user-avatar-badge {
+        width: 34px !important;
+        height: 34px !important;
+        font-size: 0.85rem !important;
     }
 }
 
@@ -647,6 +944,17 @@
     .kpi-grid {
         grid-template-columns: 1fr !important;
         gap: 0.65rem !important;
+    }
+
+    /* Dashboard auto-fit grids: Single column on mobile */
+    div[style*="grid-template-columns: repeat(auto-fit"] {
+        grid-template-columns: 1fr !important;
+        gap: 0.75rem !important;
+    }
+
+    /* Settings 4-col -> 1-col on mobile */
+    div[style*="grid-template-columns: repeat(4, 1fr)"] {
+        grid-template-columns: 1fr !important;
     }
 
     .erp-kpi-card,
@@ -706,6 +1014,95 @@
         justify-content: center !important;
     }
 
+    /* Inline forms in header actions */
+    .erp-header-actions form {
+        width: 100% !important;
+    }
+
+    /* --- KPI Val smaller on tiny screens --- */
+    .erp-kpi-val {
+        font-size: 1.25rem !important;
+    }
+
+    /* --- Profile Hero Mobile --- */
+    .erp-profile-hero-avatar {
+        width: 60px !important;
+        height: 60px !important;
+        font-size: 1.5rem !important;
+        border-radius: 16px !important;
+    }
+
+    .erp-profile-hero-name {
+        font-size: 1.15rem !important;
+    }
+
+    .erp-profile-detail-body {
+        padding: 1rem !important;
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+    }
+
+    /* --- Scope Grid - 1 col on phone --- */
+    .erp-scope-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* --- Dashboard chart containers smaller --- */
+    div[style*="height: 300px"] {
+        height: 200px !important;
+    }
+
+    div[style*="height: 250px"] {
+        height: 200px !important;
+    }
+
+    /* --- Card padding adjustments --- */
+    .card {
+        padding: 1rem !important;
+        border-radius: 12px !important;
+    }
+
+    .erp-main-card,
+    .erp-table-container-card {
+        border-radius: 12px !important;
+    }
+
+    /* --- Table on mobile: allow scroll + smaller font --- */
+    .erp-main-table,
+    .custom-table {
+        min-width: 520px !important;
+        font-size: 0.8rem !important;
+    }
+
+    .erp-main-table th,
+    .custom-table th {
+        padding: 0.65rem 0.5rem !important;
+        font-size: 0.7rem !important;
+    }
+
+    .erp-main-table td,
+    .custom-table td {
+        padding: 0.65rem 0.5rem !important;
+        font-size: 0.78rem !important;
+    }
+
+    /* --- Sidebar Form Actions on mobile --- */
+    .erp-sidebar-actions-card {
+        padding: 1rem !important;
+        gap: 0.5rem !important;
+    }
+
+    .erp-btn-action-submit {
+        height: 42px !important;
+        font-size: 0.88rem !important;
+    }
+
+    .erp-btn-action-cancel,
+    .erp-btn-action-danger {
+        height: 38px !important;
+        font-size: 0.85rem !important;
+    }
+
     /* --- Toast Container Bottom Bar --- */
     .toast-container {
         left: 0.75rem !important;
@@ -718,6 +1115,28 @@
         width: 92vw !important;
         padding: 1.25rem !important;
         border-radius: 14px !important;
+    }
+
+    /* --- Backup/Restore cards: stack any 2-col children --- */
+    .erp-form-section-body-4col {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* --- Fix col-span not breaking on single column --- */
+    .erp-col-span-2,
+    .erp-col-span-3,
+    .erp-col-span-4 {
+        grid-column: 1 / -1 !important;
+    }
+
+    /* --- Login page mobile tight --- */
+    .login-right-panel,
+    .login-form-panel {
+        padding: 1.5rem 1rem !important;
+    }
+
+    .login-card {
+        padding: 1.5rem 1.15rem !important;
     }
 }
 
@@ -750,6 +1169,30 @@
         width: 30px !important;
         height: 30px !important;
         font-size: 0.85rem !important;
+    }
+
+    .erp-kpi-val {
+        font-size: 1.1rem !important;
+    }
+
+    .erp-kpi-icon-box {
+        width: 32px !important;
+        height: 32px !important;
+        font-size: 0.9rem !important;
+    }
+
+    /* Sidebar narrower on ultra small */
+    .sidebar {
+        width: 250px !important;
+    }
+
+    .sidebar-brand-title {
+        font-size: 0.95rem !important;
+    }
+
+    /* Ultra small card padding */
+    .card {
+        padding: 0.75rem !important;
     }
 }
 
@@ -801,13 +1244,79 @@
     .table-responsive,
     .content-body,
     .roles-list-scroll,
-    .notification-list {
+    .notification-list,
+    .erp-items-table-wrapper {
         -webkit-overflow-scrolling: touch !important;
+    }
+
+    /* Larger touch targets for table action icons */
+    .erp-table-action-icon,
+    .btn-action {
+        min-width: 38px !important;
+        min-height: 38px !important;
+    }
+
+    /* Action pills easier to tap */
+    .action-pill {
+        min-height: 38px !important;
+        padding: 0.4rem 0.65rem !important;
+    }
+
+    /* Status toggle buttons easier to tap */
+    .erp-status-btn,
+    .erp-status-toggle-btn {
+        min-height: 36px !important;
+        padding: 0.4rem 0.85rem !important;
     }
 }
 
 /* --------------------------------------------------------------------------
-   7. Print Optimization Styles
+   7. Landscape Orientation on Mobile (<= 768px AND landscape)
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) and (orientation: landscape) {
+    .content-body {
+        padding: 0.75rem 1rem !important;
+    }
+
+    /* Use horizontal space better in landscape */
+    .erp-kpi-grid,
+    .kpi-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 0.65rem !important;
+    }
+
+    div[style*="grid-template-columns: repeat(auto-fit"] {
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+
+    .erp-form-section-body {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    /* 2-col charts in landscape on tablet */
+    .charts-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    div[style*="grid-template-columns: 2fr 1fr"],
+    div[style*="grid-template-columns: 1.8fr 1.2fr"] {
+        grid-template-columns: 1.5fr 1fr !important;
+    }
+
+    /* Modal narrower in landscape */
+    .custom-modal-card,
+    .modal-card {
+        max-height: 85vh !important;
+    }
+
+    .custom-modal-body,
+    .modal-body {
+        max-height: calc(85vh - 130px) !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   8. Print Optimization Styles
    -------------------------------------------------------------------------- */
 @media print {
     .sidebar,
@@ -819,7 +1328,10 @@
     .erp-actions-cell,
     .form-actions-card,
     .form-actions-bar,
-    .toast-container {
+    .toast-container,
+    .erp-sidebar-actions-card,
+    .erp-table-action-bar,
+    #toast-container {
         display: none !important;
     }
 
@@ -834,8 +1346,40 @@
     }
 
     .card,
-    .erp-table-container-card {
+    .erp-table-container-card,
+    .erp-main-card {
         box-shadow: none !important;
         border: 1px solid #CCCCCC !important;
+        page-break-inside: avoid;
+    }
+
+    .erp-main-table,
+    .custom-table {
+        min-width: unset !important;
+    }
+
+    /* Reset all inline grids back to auto for print */
+    div[style*="grid-template-columns"] {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   9. High DPI (Retina) Display Refinements
+   -------------------------------------------------------------------------- */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    /* Sharper borders on retina */
+    .erp-main-card,
+    .erp-table-container-card,
+    .card,
+    .erp-form-section-card {
+        border-width: 0.5px;
+    }
+
+    /* Better avatar rendering */
+    .erp-avatar-box,
+    .erp-user-avatar-circle,
+    .erp-profile-hero-avatar {
+        image-rendering: -webkit-optimize-contrast;
     }
 }

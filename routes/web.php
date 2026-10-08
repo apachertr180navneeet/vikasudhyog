@@ -223,6 +223,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('/stock-overview', [InventoryController::class, 'stockOverview'])->name('stock-overview');
             Route::get('/item-ledger', [InventoryController::class, 'itemLedger'])->name('item-ledger');
             Route::get('/stock-adjustment', [InventoryController::class, 'stockAdjustment'])->name('stock-adjustment');
+            Route::get('/stock-adjustment/create', [InventoryController::class, 'createStockAdjustment'])->name('stock-adjustment.create');
+            Route::post('/stock-adjustment', [InventoryController::class, 'storeStockAdjustment'])->name('stock-adjustment.store');
+            Route::get('/stock-adjustment/{stockAdjustment}', [InventoryController::class, 'showStockAdjustment'])->name('stock-adjustment.show');
+            Route::get('/stock-adjustment/{stockAdjustment}/edit', [InventoryController::class, 'editStockAdjustment'])->name('stock-adjustment.edit');
+            Route::put('/stock-adjustment/{stockAdjustment}', [InventoryController::class, 'updateStockAdjustment'])->name('stock-adjustment.update');
+            Route::delete('/stock-adjustment/{stockAdjustment}', [InventoryController::class, 'destroyStockAdjustment'])->name('stock-adjustment.destroy');
             Route::get('/low-stock-alert', [InventoryController::class, 'lowStockAlert'])->name('low-stock-alert');
         });
 
@@ -237,8 +243,18 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Setting Routes
         Route::prefix('settings')->name('settings.')->group(function () {
             Route::get('/company', [SettingController::class, 'company'])->name('company');
+            Route::put('/company', [SettingController::class, 'updateCompany'])->name('company.update');
             Route::get('/whatsapp', [SettingController::class, 'whatsapp'])->name('whatsapp');
+            Route::put('/whatsapp', [SettingController::class, 'updateWhatsapp'])->name('whatsapp.update');
+            Route::post('/whatsapp/test', [SettingController::class, 'sendTestWhatsapp'])->name('whatsapp.test');
+            Route::post('/whatsapp/ping', [SettingController::class, 'pingWhatsapp'])->name('whatsapp.ping');
+            Route::post('/whatsapp/clear-logs', [SettingController::class, 'clearWhatsappLogs'])->name('whatsapp.clear-logs');
+            Route::match(['get', 'post'], '/whatsapp/webhook', [SettingController::class, 'webhook'])->name('whatsapp.webhook');
             Route::get('/backup-restore', [SettingController::class, 'backupRestore'])->name('backup-restore');
+            Route::post('/backup-restore/create', [SettingController::class, 'createBackup'])->name('backup-restore.create');
+            Route::get('/backup-restore/download/{filename}', [SettingController::class, 'downloadBackup'])->name('backup-restore.download');
+            Route::post('/backup-restore/restore', [SettingController::class, 'restoreBackup'])->name('backup-restore.restore');
+            Route::delete('/backup-restore/delete/{filename}', [SettingController::class, 'deleteBackup'])->name('backup-restore.delete');
             Route::get('/run-migration', [SettingController::class, 'runMigration'])->name('run-migration');
         });
         Route::get('/run-migration', [SettingController::class, 'runMigration'])->name('run-migration');

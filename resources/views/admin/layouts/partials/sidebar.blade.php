@@ -69,7 +69,7 @@
             <ul class="submenu">
                 <li><a href="{{ route('admin.inventory.stock-overview') }}" class="submenu-link {{ request()->routeIs('admin.inventory.stock-overview') ? 'active' : '' }}" data-view="inv-overview">Stock Overview</a></li>
                 <li><a href="{{ route('admin.inventory.item-ledger') }}" class="submenu-link {{ request()->routeIs('admin.inventory.item-ledger') ? 'active' : '' }}" data-view="inv-ledger">Item Ledger</a></li>
-                <li><a href="{{ route('admin.inventory.stock-adjustment') }}" class="submenu-link {{ request()->routeIs('admin.inventory.stock-adjustment') ? 'active' : '' }}" data-view="inv-adjustment">Stock Adjustment</a></li>
+                <li><a href="{{ route('admin.inventory.stock-adjustment') }}" class="submenu-link {{ request()->routeIs('admin.inventory.stock-adjustment*') ? 'active' : '' }}" data-view="inv-adjustment">Stock Adjustment</a></li>
                 <li><a href="{{ route('admin.inventory.low-stock-alert') }}" class="submenu-link {{ request()->routeIs('admin.inventory.low-stock-alert') ? 'active' : '' }}" data-view="inv-low-stock">Low Stock Alert</a></li>
             </ul>
         </li>
@@ -98,7 +98,7 @@
             </a>
             <ul class="submenu">
                 <li><a href="{{ route('admin.settings.company') }}" class="submenu-link {{ request()->routeIs('admin.settings.company') ? 'active' : '' }}" data-view="set-company">Company Information</a></li>
-                <li><a href="{{ route('admin.settings.whatsapp') }}" class="submenu-link {{ request()->routeIs('admin.settings.whatsapp') ? 'active' : '' }}" data-view="set-whatsapp">WhatsApp Business API</a></li>
+                <li><a href="{{ route('admin.settings.whatsapp') }}" class="submenu-link {{ request()->routeIs('admin.settings.whatsapp*') ? 'active' : '' }}" data-view="set-whatsapp">WhatsApp Business API</a></li>
                 <li><a href="{{ route('admin.settings.backup-restore') }}" class="submenu-link {{ request()->routeIs('admin.settings.backup-restore') ? 'active' : '' }}" data-view="set-backup">Backup / Restore</a></li>
             </ul>
         </li>
