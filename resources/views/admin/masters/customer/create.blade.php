@@ -307,7 +307,7 @@
                                 <i class="fa-solid fa-calendar-days erp-field-icon"></i>
                                 <input type="text" name="payment_terms" id="field-terms" class="form-control erp-field-input-iconified" placeholder="Enter payment terms" value="{{ old('payment_terms', '30 Days') }}" oninput="updateLivePreview()">
                             </div>
-                            <span class="erp-field-hint">e.g. 15 Days, 30 Days, 45 Days, Immediate</span>
+                            <span class="erp-field-hint">e.g. Advance, 15 Days, 30 Days, Immediate</span>
                         </div>
 
                         <!-- Opening Balance -->

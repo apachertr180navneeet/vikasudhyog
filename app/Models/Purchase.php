@@ -18,8 +18,11 @@ class Purchase extends Model
         'vendor_id',
         'broker_id',
         'order_type',
+        'transport_name',
         'vehicle_no',
+        'lr_no',
         'payment_terms',
+        'freight_amount',
         'subtotal',
         'tax_amount',
         'bill_total',
@@ -35,6 +38,7 @@ class Purchase extends Model
 
     protected $casts = [
         'invoice_date' => 'date',
+        'freight_amount' => 'decimal:2',
         'subtotal' => 'decimal:2',
         'tax_amount' => 'decimal:2',
         'bill_total' => 'decimal:2',

@@ -188,9 +188,14 @@
                                                     <i class="fa-solid fa-receipt me-1"></i>{{ $pur->invoice_no }}
                                                 </span>
                                             @endif
-                                            @if($pur->vehicle_no)
-                                                <span style="font-size: 0.72rem; color: #64748B;">
-                                                    <i class="fa-solid fa-truck" style="font-size: 0.65rem;"></i> {{ $pur->vehicle_no }}
+                                            @if($pur->transport_name || $pur->vehicle_no)
+                                                <span style="font-size: 0.72rem; color: #64748B;" title="Transport: {{ $pur->transport_name ?? '—' }} | Vehicle: {{ $pur->vehicle_no ?? '—' }} | LR: {{ $pur->lr_no ?? '—' }}">
+                                                    <i class="fa-solid fa-truck" style="font-size: 0.65rem;"></i> {{ $pur->transport_name ? $pur->transport_name . ($pur->vehicle_no ? ' (' . $pur->vehicle_no . ')' : '') : $pur->vehicle_no }}
+                                                </span>
+                                            @endif
+                                            @if((float)($pur->freight_amount ?? 0) > 0)
+                                                <span class="badge" style="background: #EFF6FF; color: #1D4ED8; font-size: 0.68rem; padding: 1px 5px; border-radius: 4px; border: 1px solid #BFDBFE;" title="Inward Freight Charges">
+                                                    +₹{{ number_format($pur->freight_amount, 0) }} Frt
                                                 </span>
                                             @endif
                                         </div>

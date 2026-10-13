@@ -121,10 +121,24 @@
                             </span>
                         @endif
 
+                        <!-- Transport Name Pill -->
+                        @if($sale->transport_name)
+                            <span class="erp-profile-role-pill" title="Transporter Name">
+                                <i class="fa-solid fa-truck-fast me-1"></i>{{ $sale->transport_name }}
+                            </span>
+                        @endif
+
                         <!-- Vehicle Pill -->
                         @if($sale->vehicle_no)
                             <span class="erp-profile-role-pill font-monospace" title="Transport Vehicle No">
                                 <i class="fa-solid fa-truck me-1"></i>{{ $sale->vehicle_no }}
+                            </span>
+                        @endif
+
+                        <!-- LR / Bilty Pill -->
+                        @if($sale->lr_no)
+                            <span class="erp-profile-role-pill font-monospace" title="LR / Bilty No">
+                                <i class="fa-solid fa-file-invoice me-1"></i>LR #{{ $sale->lr_no }}
                             </span>
                         @endif
                     </div>
@@ -400,8 +414,16 @@
                     </span>
                 </div>
                 <div class="erp-dossier-breakdown-item">
+                    <span class="erp-dossier-breakdown-label">Transporter Name</span>
+                    <span class="erp-dossier-breakdown-val font-weight-600">{{ $sale->transport_name ?? 'Self / Direct Dispatch' }}</span>
+                </div>
+                <div class="erp-dossier-breakdown-item">
                     <span class="erp-dossier-breakdown-label">Transport Vehicle</span>
-                    <span class="erp-dossier-breakdown-val font-monospace">{{ $sale->vehicle_no ?? 'Direct Handover / Self Transport' }}</span>
+                    <span class="erp-dossier-breakdown-val font-monospace">{{ $sale->vehicle_no ?? '--' }}</span>
+                </div>
+                <div class="erp-dossier-breakdown-item">
+                    <span class="erp-dossier-breakdown-label">LR / Bilty Number</span>
+                    <span class="erp-dossier-breakdown-val font-monospace">{{ $sale->lr_no ?? '--' }}</span>
                 </div>
                 <div class="erp-dossier-breakdown-item">
                     <span class="erp-dossier-breakdown-label">Agreed Payment Terms</span>
@@ -441,6 +463,12 @@
                     <span class="erp-dossier-breakdown-label" style="color: #D97706;">Under-Billing (Cash Portion)</span>
                     <span class="erp-dossier-breakdown-val font-monospace font-weight-700" style="color: #D97706;">₹{{ number_format($sale->under_billing_total, 2) }}</span>
                 </div>
+                @if((float)($sale->freight_amount ?? 0) > 0)
+                    <div class="erp-dossier-breakdown-item">
+                        <span class="erp-dossier-breakdown-label" style="color: #64748B;">Freight / Cartage Charges</span>
+                        <span class="erp-dossier-breakdown-val font-monospace font-weight-700" style="color: #64748B;">+₹{{ number_format($sale->freight_amount, 2) }}</span>
+                    </div>
+                @endif
                 <div class="erp-dossier-breakdown-item" style="border-top: 2px solid #E2E8F0; background: #F8FAFC; padding-top: 0.75rem; padding-bottom: 0.75rem;">
                     <span class="erp-dossier-breakdown-label" style="font-weight: 700; color: #0F172A; font-size: 0.95rem;">Total Receivable Grand Value</span>
                     <span class="erp-dossier-breakdown-val font-monospace font-weight-700" style="color: #059669; font-size: 1.25rem;">₹{{ number_format($sale->grand_total, 2) }}</span>

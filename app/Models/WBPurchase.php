@@ -20,8 +20,11 @@ class WBPurchase extends Model
         'vendor_id',
         'broker_id',
         'order_type',
+        'transport_name',
         'vehicle_no',
+        'lr_no',
         'payment_terms',
+        'freight_amount',
         'driver_name',
         'driver_phone',
         'gross_weight',
@@ -39,6 +42,7 @@ class WBPurchase extends Model
 
     protected $casts = [
         'entry_date' => 'date',
+        'freight_amount' => 'decimal:2',
         'gross_weight' => 'decimal:3',
         'tare_weight' => 'decimal:3',
         'deduction_weight' => 'decimal:3',

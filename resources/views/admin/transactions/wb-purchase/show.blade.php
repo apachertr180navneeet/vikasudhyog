@@ -81,10 +81,24 @@
                             <i class="fa-solid fa-calendar-day me-1"></i>{{ $wbPurchase->entry_date->format('d M Y') }}
                         </span>
 
+                        <!-- Transport Name Pill -->
+                        @if($wbPurchase->transport_name)
+                            <span class="erp-profile-role-pill" title="Transporter Name">
+                                <i class="fa-solid fa-truck-fast me-1"></i>{{ $wbPurchase->transport_name }}
+                            </span>
+                        @endif
+
                         <!-- Vehicle Pill -->
                         @if($wbPurchase->vehicle_no)
                             <span class="erp-profile-role-pill font-monospace" title="Truck Registration">
                                 <i class="fa-solid fa-truck me-1"></i>{{ $wbPurchase->vehicle_no }}
+                            </span>
+                        @endif
+
+                        <!-- LR / Bilty Pill -->
+                        @if($wbPurchase->lr_no)
+                            <span class="erp-profile-role-pill font-monospace" title="LR / Bilty No">
+                                <i class="fa-solid fa-file-invoice me-1"></i>LR #{{ $wbPurchase->lr_no }}
                             </span>
                         @endif
 
@@ -306,6 +320,18 @@
                             <span>{{ $wbPurchase->broker->name }}</span>
                         </div>
                     @endif
+                    @if($wbPurchase->transport_name)
+                        <div style="display: flex; justify-content: space-between;">
+                            <span class="text-muted">Transporter:</span>
+                            <strong>{{ $wbPurchase->transport_name }}</strong>
+                        </div>
+                    @endif
+                    @if($wbPurchase->lr_no)
+                        <div style="display: flex; justify-content: space-between;">
+                            <span class="text-muted">LR / Bilty No:</span>
+                            <strong class="font-monospace">{{ $wbPurchase->lr_no }}</strong>
+                        </div>
+                    @endif
                     <div style="display: flex; justify-content: space-between; border-top: 1px solid #F1F5F9; padding-top: 0.6rem;">
                         <span class="text-muted">Current Ledger Balance:</span>
                         <strong class="font-monospace" style="color: #B91C1C;">₹{{ number_format($wbPurchase->vendor->current_balance ?? 0, 2) }}</strong>
@@ -329,6 +355,12 @@
                             {{ ucfirst($wbPurchase->payment_status ?? 'unpaid') }}
                         </span>
                     </div>
+                    @if((float)($wbPurchase->freight_amount ?? 0) > 0)
+                        <div style="display: flex; justify-content: space-between;">
+                            <span class="text-muted">Freight / Cartage:</span>
+                            <strong class="font-monospace" style="color: #64748B;">+₹{{ number_format($wbPurchase->freight_amount, 2) }}</strong>
+                        </div>
+                    @endif
                     <div style="display: flex; justify-content: space-between; border-top: 1px solid #F1F5F9; padding-top: 0.6rem;">
                         <span class="text-muted">Total Grand Value:</span>
                         <strong class="font-monospace" style="color: #059669; font-size: 1.15rem;">₹{{ number_format($totalAmt, 2) }}</strong>

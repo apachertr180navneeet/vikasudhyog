@@ -83,10 +83,24 @@
                             </span>
                         @endif
 
+                        <!-- Transport Name Pill -->
+                        @if($purchase->transport_name)
+                            <span class="erp-profile-role-pill" title="Transport Agency">
+                                <i class="fa-solid fa-truck-fast me-1"></i>{{ $purchase->transport_name }}
+                            </span>
+                        @endif
+
                         <!-- Vehicle Pill -->
                         @if($purchase->vehicle_no)
                             <span class="erp-profile-role-pill font-monospace" title="Transport Vehicle No">
                                 <i class="fa-solid fa-truck me-1"></i>{{ $purchase->vehicle_no }}
+                            </span>
+                        @endif
+
+                        <!-- LR / Bilty Pill -->
+                        @if($purchase->lr_no)
+                            <span class="erp-profile-username-pill font-monospace" title="LR / Bilty Number">
+                                <i class="fa-solid fa-file-lines me-1"></i>LR #{{ $purchase->lr_no }}
                             </span>
                         @endif
                     </div>
@@ -349,6 +363,31 @@
                 </div>
             @endif
 
+            <!-- Transport & Logistics Coordinates -->
+            <div class="card" style="padding: 1.25rem; border-radius: 14px; border: 1px solid #E2E8F0; background: #FFFFFF;">
+                <div style="font-weight: 700; color: #1E293B; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fa-solid fa-truck-moving" style="color: #5B841E;"></i> Transport &amp; Logistics
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 0.65rem; font-size: 0.84rem;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span class="text-muted">Transport Name:</span>
+                        <strong class="text-dark">{{ $purchase->transport_name ?: 'Self / Direct Inward' }}</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span class="text-muted">Vehicle / Truck:</span>
+                        <span class="font-monospace text-dark">{{ $purchase->vehicle_no ?: '—' }}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span class="text-muted">LR / Bilty No:</span>
+                        <span class="font-monospace text-dark">{{ $purchase->lr_no ?: '—' }}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; border-top: 1px solid #F1F5F9; padding-top: 0.5rem;">
+                        <span class="text-muted">Inward Freight Charges:</span>
+                        <strong class="font-monospace" style="color: #2563EB;">₹{{ number_format($purchase->freight_amount ?? 0, 2) }}</strong>
+                    </div>
+                </div>
+            </div>
+
             <!-- Settlement & Financial Breakdown -->
             <div class="card" style="padding: 1.25rem; border-radius: 14px; border: 1px solid #E2E8F0; background: #FFFFFF;">
                 <div style="font-weight: 700; color: #1E293B; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
@@ -362,6 +401,10 @@
                     <div style="display: flex; justify-content: space-between;">
                         <span class="text-muted">GST Tax Amount:</span>
                         <span class="font-monospace text-dark">₹{{ number_format($purchase->tax_amount, 2) }}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span class="text-muted">Inward Freight / Cartage:</span>
+                        <span class="font-monospace text-primary font-weight-600">₹{{ number_format($purchase->freight_amount ?? 0, 2) }}</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; border-top: 1px solid #F1F5F9; padding-top: 0.5rem;">
                         <span class="text-muted font-weight-600">Official Bill Total:</span>

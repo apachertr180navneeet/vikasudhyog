@@ -228,9 +228,19 @@
                                                     <i class="fa-solid fa-receipt me-1"></i>{{ $sal->invoice_no }}
                                                 </span>
                                             @endif
+                                            @if($sal->transport_name)
+                                                <span style="font-size: 0.72rem; color: #475569; font-weight: 500;">
+                                                    <i class="fa-solid fa-truck-fast text-primary" style="font-size: 0.65rem;"></i> {{ $sal->transport_name }}
+                                                </span>
+                                            @endif
                                             @if($sal->vehicle_no)
                                                 <span style="font-size: 0.72rem; color: #64748B;">
                                                     <i class="fa-solid fa-truck" style="font-size: 0.65rem;"></i> {{ $sal->vehicle_no }}
+                                                </span>
+                                            @endif
+                                            @if((float)($sal->freight_amount ?? 0) > 0)
+                                                <span class="badge font-monospace" style="background: #F8FAFC; color: #64748B; font-size: 0.68rem; padding: 2px 5px; border-radius: 4px; border: 1px solid #E2E8F0;" title="Freight Charges">
+                                                    +₹{{ number_format($sal->freight_amount, 0) }} Frt
                                                 </span>
                                             @endif
                                         </div>

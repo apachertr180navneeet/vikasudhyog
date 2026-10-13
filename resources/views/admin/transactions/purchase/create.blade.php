@@ -107,16 +107,21 @@
                         <span class="erp-field-hint">Vendor's original printed bill number</span>
                     </div>
 
-                    <!-- Vehicle No -->
+                    <!-- Order Urgency / Classification -->
                     <div class="form-group">
                         <label class="erp-field-label">
-                            Vehicle / Transport No
+                            Order Classification / Urgency <span class="erp-req-star">*</span>
                         </label>
                         <div class="erp-field-icon-wrap">
-                            <i class="fa-solid fa-truck-moving erp-field-icon"></i>
-                            <input type="text" name="vehicle_no" id="field-vehicle-no" class="form-control erp-field-input-iconified erp-field-input-mono" placeholder="Enter vehicle registration number" value="{{ old('vehicle_no') }}" oninput="this.value = this.value.toUpperCase(); updateLiveSummary();">
+                            <i class="fa-solid fa-tag erp-field-icon"></i>
+                            <select name="order_type" id="field-order-type" class="form-control erp-field-input-iconified" required onchange="updateLiveSummary()">
+                                <option value="Medium" {{ old('order_type', 'Medium') === 'Medium' ? 'selected' : '' }}>Medium (Standard Processing)</option>
+                                <option value="Urgent" {{ old('order_type') === 'Urgent' ? 'selected' : '' }}>Urgent Consignment</option>
+                                <option value="Fast" {{ old('order_type') === 'Fast' ? 'selected' : '' }}>Fast Track</option>
+                                <option value="Ready Delivery" {{ old('order_type') === 'Ready Delivery' ? 'selected' : '' }}>Ready Delivery</option>
+                            </select>
                         </div>
-                        <span class="erp-field-hint">Truck or transport registration number</span>
+                        <span class="erp-field-hint">Operational delivery tag</span>
                     </div>
 
                     <!-- Vendor / Supplier Select (Spans 2 Columns) -->
@@ -157,31 +162,15 @@
                         <span class="erp-field-hint">Commission tracking agent</span>
                     </div>
 
-                    <!-- Order Urgency / Type -->
+                    <!-- Payment Terms -->
                     <div class="form-group">
-                        <label class="erp-field-label">
-                            Order Classification / Urgency <span class="erp-req-star">*</span>
-                        </label>
-                        <div class="erp-field-icon-wrap">
-                            <i class="fa-solid fa-tag erp-field-icon"></i>
-                            <select name="order_type" id="field-order-type" class="form-control erp-field-input-iconified" required onchange="updateLiveSummary()">
-                                <option value="Medium" {{ old('order_type', 'Medium') === 'Medium' ? 'selected' : '' }}>Medium (Standard Processing)</option>
-                                <option value="Urgent" {{ old('order_type') === 'Urgent' ? 'selected' : '' }}>Urgent Consignment</option>
-                                <option value="Fast" {{ old('order_type') === 'Fast' ? 'selected' : '' }}>Fast Track</option>
-                                <option value="Ready Delivery" {{ old('order_type') === 'Ready Delivery' ? 'selected' : '' }}>Ready Delivery</option>
-                            </select>
-                        </div>
-                        <span class="erp-field-hint">Operational delivery tag</span>
-                    </div>
-
-                    <!-- Payment Terms (Spans 2 Columns) -->
-                    <div class="form-group erp-col-span-2">
                         <label class="erp-field-label">
                             Payment Terms
                         </label>
                         <div class="erp-field-icon-wrap">
                             <i class="fa-solid fa-clock erp-field-icon"></i>
                             <select name="payment_terms" class="form-control erp-field-input-iconified">
+                                <option value="Advance" {{ old('payment_terms') === 'Advance' ? 'selected' : '' }}>Advance (Advance Payment)</option>
                                 <option value="Cash" {{ old('payment_terms') === 'Cash' ? 'selected' : '' }}>Cash on Delivery (Immediate)</option>
                                 <option value="15 Days" {{ old('payment_terms') === '15 Days' ? 'selected' : '' }}>Credit 15 Days</option>
                                 <option value="30 Days" {{ old('payment_terms', '30 Days') === '30 Days' ? 'selected' : '' }}>Credit 30 Days</option>
@@ -194,6 +183,71 @@
                 </div>
             </div>
 
+            <!-- 2. Transport & Logistics Details -->
+            <div class="card erp-form-section-card">
+                <div class="erp-form-section-header">
+                    <div class="erp-form-section-header-left">
+                        <div class="erp-form-section-icon-box erp-form-icon-primary">
+                            <i class="fa-solid fa-truck-moving"></i>
+                        </div>
+                        <div>
+                            <h3 class="erp-form-section-title">2. Transport &amp; Logistics Details</h3>
+                            <p class="erp-form-section-desc">Transporter name, vehicle registration number, bilty / LR number &amp; inward freight charges</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="erp-form-section-body-4col">
+                    <!-- Transport / Transporter Name -->
+                    <div class="form-group">
+                        <label class="erp-field-label">
+                            Transport / Transporter Name
+                        </label>
+                        <div class="erp-field-icon-wrap">
+                            <i class="fa-solid fa-truck-fast erp-field-icon"></i>
+                            <input type="text" name="transport_name" id="field-transport-name" class="form-control erp-field-input-iconified" placeholder="Enter transport name" value="{{ old('transport_name') }}" oninput="updateLiveSummary()">
+                        </div>
+                        <span class="erp-field-hint">e.g. VRL Logistics, TCI Freight, Local</span>
+                    </div>
+
+                    <!-- Vehicle / Truck Number -->
+                    <div class="form-group">
+                        <label class="erp-field-label">
+                            Vehicle / Truck Number
+                        </label>
+                        <div class="erp-field-icon-wrap">
+                            <i class="fa-solid fa-truck erp-field-icon"></i>
+                            <input type="text" name="vehicle_no" id="field-vehicle-no" class="form-control erp-field-input-iconified erp-field-input-mono" placeholder="Enter vehicle registration number" value="{{ old('vehicle_no') }}" oninput="this.value = this.value.toUpperCase(); updateLiveSummary();">
+                        </div>
+                        <span class="erp-field-hint">Inward carrier registration number</span>
+                    </div>
+
+                    <!-- LR / Bilty Number -->
+                    <div class="form-group">
+                        <label class="erp-field-label">
+                            LR No. / Bilty Number
+                        </label>
+                        <div class="erp-field-icon-wrap">
+                            <i class="fa-solid fa-file-invoice erp-field-icon"></i>
+                            <input type="text" name="lr_no" id="field-lr-no" class="form-control erp-field-input-iconified erp-field-input-mono" placeholder="Enter LR / Bilty number" value="{{ old('lr_no') }}" oninput="updateLiveSummary()">
+                        </div>
+                        <span class="erp-field-hint">Lorry receipt or consignment bilty reference</span>
+                    </div>
+
+                    <!-- Inward Freight Amount (₹) -->
+                    <div class="form-group">
+                        <label class="erp-field-label">
+                            Freight / Cartage Charges (₹)
+                        </label>
+                        <div class="erp-field-icon-wrap">
+                            <i class="fa-solid fa-indian-rupee-sign erp-field-icon"></i>
+                            <input type="number" step="0.01" min="0" name="freight_amount" id="field-freight-amount" class="form-control erp-field-input-iconified erp-field-input-mono font-weight-700" placeholder="Enter freight amount" value="{{ old('freight_amount', '0.00') }}" oninput="updateLiveSummary()">
+                        </div>
+                        <span class="erp-field-hint">Inward freight charges added to Grand Total</span>
+                    </div>
+                </div>
+            </div>
+
             <!-- 2. Inward Product Line Items (Matching Ledger Layout - 100% Full Width) -->
             <div class="card erp-form-section-card">
                 <div class="erp-form-section-header">
@@ -202,7 +256,7 @@
                             <i class="fa-solid fa-boxes-stacked"></i>
                         </div>
                         <div>
-                            <h3 class="erp-form-section-title">2. Inward Product Line Items</h3>
+                            <h3 class="erp-form-section-title">3. Inward Product Line Items</h3>
                             <p class="erp-form-section-desc">Raw materials, herbs, packaging with dual-rate official &amp; under-billing calculation</p>
                         </div>
                     </div>
@@ -360,6 +414,10 @@
                                 <span class="erp-table-total-val font-monospace text-muted" id="footer-tax-total">₹0.00</span>
                             </div>
                             <div class="erp-table-total-item">
+                                <span class="erp-table-total-label" style="color: #2563EB;">Freight / Cartage</span>
+                                <span class="erp-table-total-val font-monospace" style="color: #2563EB;" id="footer-freight-total">₹0.00</span>
+                            </div>
+                            <div class="erp-table-total-item">
                                 <span class="erp-table-total-label" style="color: #D97706;">U-B Amount</span>
                                 <span class="erp-table-total-val font-monospace" style="color: #D97706;" id="footer-ub-total">₹0.00</span>
                             </div>
@@ -387,7 +445,7 @@
                             <i class="fa-solid fa-clipboard-list"></i>
                         </div>
                         <div>
-                            <h3 class="erp-form-section-title">3. Settlement &amp; Consignment Notes</h3>
+                            <h3 class="erp-form-section-title">4. Settlement &amp; Consignment Notes</h3>
                             <p class="erp-form-section-desc">Immediate settlement, payment recording &amp; factory inward observations</p>
                         </div>
                     </div>
@@ -468,6 +526,10 @@
                     <div class="erp-voucher-metric">
                         <span class="erp-voucher-metric-label">Official Bill Total</span>
                         <span class="erp-voucher-metric-val font-monospace" style="color: #2563EB;" id="prev-bill-total">₹0.00</span>
+                    </div>
+                    <div class="erp-voucher-metric">
+                        <span class="erp-voucher-metric-label" style="color: #2563EB;">Freight Charges</span>
+                        <span class="erp-voucher-metric-val font-monospace" style="color: #2563EB;" id="prev-freight-amt">₹0.00</span>
                     </div>
                     <div class="erp-voucher-metric">
                         <span class="erp-voucher-metric-label">Under-Billing (U-B)</span>
@@ -776,8 +838,9 @@
             itemCount++;
         });
 
+        const freightAmount = parseFloat(document.getElementById('field-freight-amount')?.value) || 0;
         const totalBill = totalBillSubtotal + totalTax;
-        const grandTotal = totalBill + totalUB;
+        const grandTotal = totalBill + totalUB + freightAmount;
         window.currentGrandTotal = grandTotal;
 
         // Auto-set Paid Amount to Total Grand Value
@@ -796,6 +859,10 @@
         document.getElementById('footer-total-qty').textContent = totalQty.toFixed(3);
         document.getElementById('footer-bill-subtotal').textContent = '₹' + totalBillSubtotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         document.getElementById('footer-tax-total').textContent = '₹' + totalTax.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        const footerFreight = document.getElementById('footer-freight-total');
+        if (footerFreight) {
+            footerFreight.textContent = '₹' + freightAmount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
         document.getElementById('footer-ub-total').textContent = '₹' + totalUB.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         document.getElementById('footer-grand-total').textContent = '₹' + grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
@@ -862,6 +929,10 @@
         document.getElementById('prev-net-wt').textContent = totalQty.toFixed(3);
         document.getElementById('prev-bill-sub').textContent = '₹' + totalBillSubtotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         document.getElementById('prev-tax-amt').textContent = '₹' + totalTax.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        const prevFreightEl = document.getElementById('prev-freight-amt');
+        if (prevFreightEl) {
+            prevFreightEl.textContent = '₹' + freightAmount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
         document.getElementById('prev-bill-total').textContent = '₹' + totalBill.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         document.getElementById('prev-ub-total').textContent = '₹' + totalUB.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         document.getElementById('prev-item-count').textContent = `${itemCount} Item(s)`;

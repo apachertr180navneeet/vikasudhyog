@@ -287,6 +287,7 @@
                             <div class="erp-field-icon-wrap">
                                 <i class="fa-solid fa-calendar-check erp-field-icon"></i>
                                 <select name="payment_terms" id="field-terms" class="form-control erp-field-input-iconified" onchange="updateLivePreview()">
+                                    <option value="Advance" {{ old('payment_terms', $vendor->payment_terms) === 'Advance' ? 'selected' : '' }}>Advance (Advance Payment)</option>
                                     <option value="Immediate" {{ old('payment_terms', $vendor->payment_terms) === 'Immediate' ? 'selected' : '' }}>Immediate (Cash / Advance)</option>
                                     <option value="7 Days" {{ old('payment_terms', $vendor->payment_terms) === '7 Days' ? 'selected' : '' }}>7 Days</option>
                                     <option value="15 Days" {{ old('payment_terms', $vendor->payment_terms) === '15 Days' ? 'selected' : '' }}>15 Days</option>

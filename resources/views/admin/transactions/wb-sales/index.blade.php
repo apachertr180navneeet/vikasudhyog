@@ -213,9 +213,19 @@
                                             <span class="badge" style="background: #FEF3C7; color: #92400E; font-size: 0.7rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; border: 1px solid #FDE68A;">
                                                 Without Bill
                                             </span>
+                                            @if($slip->transport_name)
+                                                <span style="font-size: 0.72rem; color: #475569; font-weight: 500;">
+                                                    <i class="fa-solid fa-truck-fast text-primary" style="font-size: 0.65rem;"></i> {{ $slip->transport_name }}
+                                                </span>
+                                            @endif
                                             @if($slip->vehicle_no)
                                                 <span style="font-size: 0.72rem; color: #64748B;">
                                                     <i class="fa-solid fa-truck" style="font-size: 0.65rem;"></i> {{ $slip->vehicle_no }}
+                                                </span>
+                                            @endif
+                                            @if((float)($slip->freight_amount ?? 0) > 0)
+                                                <span class="badge font-monospace" style="background: #F8FAFC; color: #64748B; font-size: 0.68rem; padding: 2px 5px; border-radius: 4px; border: 1px solid #E2E8F0;" title="Freight Charges">
+                                                    +₹{{ number_format($slip->freight_amount, 0) }} Frt
                                                 </span>
                                             @endif
                                             @if($slip->driver_name)

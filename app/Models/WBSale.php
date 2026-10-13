@@ -20,10 +20,13 @@ class WBSale extends Model
         'customer_id',
         'broker_id',
         'order_type',
+        'transport_name',
         'vehicle_no',
+        'lr_no',
+        'payment_terms',
+        'freight_amount',
         'driver_name',
         'driver_phone',
-        'payment_terms',
         'gross_weight',
         'tare_weight',
         'deduction_weight',
@@ -39,6 +42,7 @@ class WBSale extends Model
 
     protected $casts = [
         'entry_date' => 'date',
+        'freight_amount' => 'decimal:2',
         'gross_weight' => 'decimal:3',
         'tare_weight' => 'decimal:3',
         'deduction_weight' => 'decimal:3',

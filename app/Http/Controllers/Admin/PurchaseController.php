@@ -122,8 +122,11 @@ class PurchaseController extends Controller
             'vendor_id' => 'required|exists:vendors,id',
             'broker_id' => 'nullable|exists:brokers,id',
             'order_type' => 'required|string|max:50',
+            'transport_name' => 'nullable|string|max:150',
             'vehicle_no' => 'nullable|string|max:50',
+            'lr_no' => 'nullable|string|max:50',
             'payment_terms' => 'nullable|string|max:50',
+            'freight_amount' => 'nullable|numeric|min:0',
             'payment_status' => 'nullable|string|in:unpaid,partial,paid',
             'paid_amount' => 'nullable|numeric|min:0',
             'notes' => 'nullable|string',
@@ -182,8 +185,9 @@ class PurchaseController extends Controller
                 ];
             }
 
+            $freightAmount = isset($validated['freight_amount']) && $validated['freight_amount'] !== null && $validated['freight_amount'] !== '' ? (float) $validated['freight_amount'] : 0.0;
             $billTotal = $subtotal + $taxAmount;
-            $grandTotal = $billTotal + $underBillingTotal;
+            $grandTotal = $billTotal + $underBillingTotal + $freightAmount;
 
             $purchase = Purchase::create([
                 'purchase_no' => $validated['purchase_no'],
@@ -193,8 +197,11 @@ class PurchaseController extends Controller
                 'vendor_id' => $validated['vendor_id'],
                 'broker_id' => $validated['broker_id'] ?? null,
                 'order_type' => $validated['order_type'] ?? 'Medium',
+                'transport_name' => $validated['transport_name'] ?? null,
                 'vehicle_no' => $validated['vehicle_no'] ?? null,
+                'lr_no' => $validated['lr_no'] ?? null,
                 'payment_terms' => $validated['payment_terms'] ?? '30 Days',
+                'freight_amount' => $freightAmount,
                 'subtotal' => $subtotal,
                 'tax_amount' => $taxAmount,
                 'bill_total' => $billTotal,
@@ -276,8 +283,11 @@ class PurchaseController extends Controller
             'vendor_id' => 'required|exists:vendors,id',
             'broker_id' => 'nullable|exists:brokers,id',
             'order_type' => 'required|string|max:50',
+            'transport_name' => 'nullable|string|max:150',
             'vehicle_no' => 'nullable|string|max:50',
+            'lr_no' => 'nullable|string|max:50',
             'payment_terms' => 'nullable|string|max:50',
+            'freight_amount' => 'nullable|numeric|min:0',
             'payment_status' => 'nullable|string|in:unpaid,partial,paid',
             'paid_amount' => 'nullable|numeric|min:0',
             'notes' => 'nullable|string',
@@ -345,8 +355,9 @@ class PurchaseController extends Controller
                 ];
             }
 
+            $freightAmount = isset($validated['freight_amount']) && $validated['freight_amount'] !== null && $validated['freight_amount'] !== '' ? (float) $validated['freight_amount'] : 0.0;
             $billTotal = $subtotal + $taxAmount;
-            $grandTotal = $billTotal + $underBillingTotal;
+            $grandTotal = $billTotal + $underBillingTotal + $freightAmount;
 
             $purchase->update([
                 'bill_type' => $validated['bill_type'] ?? $purchase->bill_type ?? 'with_bill',
@@ -355,8 +366,11 @@ class PurchaseController extends Controller
                 'vendor_id' => $validated['vendor_id'],
                 'broker_id' => $validated['broker_id'] ?? null,
                 'order_type' => $validated['order_type'] ?? 'Medium',
+                'transport_name' => $validated['transport_name'] ?? null,
                 'vehicle_no' => $validated['vehicle_no'] ?? null,
+                'lr_no' => $validated['lr_no'] ?? null,
                 'payment_terms' => $validated['payment_terms'] ?? '30 Days',
+                'freight_amount' => $freightAmount,
                 'subtotal' => $subtotal,
                 'tax_amount' => $taxAmount,
                 'bill_total' => $billTotal,

@@ -119,10 +119,24 @@
                             <i class="fa-solid fa-calendar-day me-1"></i>{{ $wbSale->entry_date->format('d M Y') }}
                         </span>
 
+                        <!-- Transport Name Pill -->
+                        @if($wbSale->transport_name)
+                            <span class="erp-profile-role-pill" title="Transporter Name">
+                                <i class="fa-solid fa-truck-fast me-1"></i>{{ $wbSale->transport_name }}
+                            </span>
+                        @endif
+
                         <!-- Vehicle Pill -->
                         @if($wbSale->vehicle_no)
                             <span class="erp-profile-role-pill font-monospace" title="Truck Registration">
                                 <i class="fa-solid fa-truck me-1"></i>{{ $wbSale->vehicle_no }}
+                            </span>
+                        @endif
+
+                        <!-- LR / Bilty Pill -->
+                        @if($wbSale->lr_no)
+                            <span class="erp-profile-role-pill font-monospace" title="LR / Bilty No">
+                                <i class="fa-solid fa-file-invoice me-1"></i>LR #{{ $wbSale->lr_no }}
                             </span>
                         @endif
 
@@ -386,8 +400,16 @@
                     </span>
                 </div>
                 <div class="erp-dossier-breakdown-item">
+                    <span class="erp-dossier-breakdown-label">Transporter Name</span>
+                    <span class="erp-dossier-breakdown-val font-weight-600">{{ $wbSale->transport_name ?? 'Self / Direct Mandi' }}</span>
+                </div>
+                <div class="erp-dossier-breakdown-item">
                     <span class="erp-dossier-breakdown-label">Transport Vehicle</span>
                     <span class="erp-dossier-breakdown-val font-monospace">{{ $wbSale->vehicle_no ?? 'Direct Handover' }}</span>
+                </div>
+                <div class="erp-dossier-breakdown-item">
+                    <span class="erp-dossier-breakdown-label">LR / Bilty Number</span>
+                    <span class="erp-dossier-breakdown-val font-monospace">{{ $wbSale->lr_no ?? '--' }}</span>
                 </div>
                 <div class="erp-dossier-breakdown-item">
                     <span class="erp-dossier-breakdown-label">Driver Contact</span>
@@ -411,6 +433,12 @@
             </div>
 
             <div class="erp-dossier-breakdown-list">
+                @if((float)($wbSale->freight_amount ?? 0) > 0)
+                    <div class="erp-dossier-breakdown-item">
+                        <span class="erp-dossier-breakdown-label" style="color: #64748B;">Freight / Cartage Charges</span>
+                        <span class="erp-dossier-breakdown-val font-monospace font-weight-700" style="color: #64748B;">+₹{{ number_format($wbSale->freight_amount, 2) }}</span>
+                    </div>
+                @endif
                 <div class="erp-dossier-breakdown-item" style="border-top: 2px solid #E2E8F0; background: #F8FAFC; padding-top: 0.75rem; padding-bottom: 0.75rem;">
                     <span class="erp-dossier-breakdown-label" style="font-weight: 700; color: #0F172A; font-size: 0.95rem;">Total Outward Value</span>
                     <span class="erp-dossier-breakdown-val font-monospace font-weight-700" style="color: #059669; font-size: 1.25rem;">₹{{ number_format($wbSale->total_amount, 2) }}</span>
