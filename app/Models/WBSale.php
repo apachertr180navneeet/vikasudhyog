@@ -20,11 +20,17 @@ class WBSale extends Model
         'customer_id',
         'broker_id',
         'order_type',
+        'transporter_id',
         'transport_name',
         'vehicle_no',
         'lr_no',
+        'e_way_bill_no',
+        'transport_date',
+        'transport_notes',
         'payment_terms',
         'freight_amount',
+        'is_gst_inclusive',
+        'invoice_attachment',
         'driver_name',
         'driver_phone',
         'gross_weight',
@@ -33,6 +39,7 @@ class WBSale extends Model
         'net_weight',
         'total_amount',
         'paid_amount',
+        'advance_amount',
         'payment_status',
         'payment_mode',
         'company_id',
@@ -42,6 +49,8 @@ class WBSale extends Model
 
     protected $casts = [
         'entry_date' => 'date',
+        'transport_date' => 'date',
+        'is_gst_inclusive' => 'boolean',
         'freight_amount' => 'decimal:2',
         'gross_weight' => 'decimal:3',
         'tare_weight' => 'decimal:3',
@@ -49,11 +58,17 @@ class WBSale extends Model
         'net_weight' => 'decimal:3',
         'total_amount' => 'decimal:2',
         'paid_amount' => 'decimal:2',
+        'advance_amount' => 'decimal:2',
     ];
 
     public function customer()
     {
         return $this->belongsTo(Customer::class);
+    }
+
+    public function transporter()
+    {
+        return $this->belongsTo(Transporter::class);
     }
 
     public function broker()

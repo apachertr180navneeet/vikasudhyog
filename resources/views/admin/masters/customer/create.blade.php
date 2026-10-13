@@ -188,14 +188,18 @@
 
                         <!-- GSTIN -->
                         <div class="form-group">
-                            <label class="erp-field-label">
-                                GSTIN Number
-                            </label>
-                            <div class="erp-field-icon-wrap">
-                                <i class="fa-solid fa-stamp erp-field-icon"></i>
-                                <input type="text" name="gstin" id="field-gstin" class="form-control erp-field-input-iconified erp-field-input-mono" placeholder="Enter GSTIN" value="{{ old('gstin') }}" maxlength="15" oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, ''); handleGstinInput(this.value); updateLivePreview();">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <label class="erp-field-label mb-0">GSTIN Number</label>
+                                <span id="gstin-feedback-badge"></span>
                             </div>
-                            <span class="erp-field-hint">15-character alphanumeric GST registration</span>
+                            <div class="erp-field-icon-wrap position-relative">
+                                <i class="fa-solid fa-stamp erp-field-icon"></i>
+                                <input type="text" name="gstin" id="field-gstin" class="form-control erp-field-input-iconified erp-field-input-mono pe-5" placeholder="Enter GSTIN number" value="{{ old('gstin') }}" maxlength="15" oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, ''); handleGstinInput(this.value); updateLivePreview();">
+                                <span id="gstin-status-icon" class="position-absolute end-0 top-50 translate-middle-y me-3 d-none">
+                                    <i class="fa-solid fa-circle-check text-success fs-5"></i>
+                                </span>
+                            </div>
+                            <div id="gstin-helper-text" class="erp-field-hint">15-digit alphanumeric GST registration code (e.g. 08ABCDE1234F1Z5)</div>
                         </div>
 
                         <!-- PAN -->
@@ -558,13 +562,66 @@
         document.getElementById('preview-gstin').textContent = gstinVal || 'Unregistered';
     }
 
-    // Auto-generate PAN from 15-character GSTIN
+    const GSTIN_REGEX = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/;
+    const GST_STATE_CODES = {
+        '08': 'Rajasthan', '27': 'Maharashtra', '24': 'Gujarat', '07': 'Delhi',
+        '09': 'Uttar Pradesh', '23': 'Madhya Pradesh', '03': 'Punjab', '06': 'Haryana',
+        '19': 'West Bengal', '33': 'Tamil Nadu', '29': 'Karnataka', '36': 'Telangana',
+        '37': 'Andhra Pradesh', '10': 'Bihar'
+    };
+
+    // Auto-generate PAN and live GSTIN validator
     function handleGstinInput(gstin) {
-        if (gstin && gstin.length >= 12) {
+        const icon = document.getElementById('gstin-status-icon');
+        const badge = document.getElementById('gstin-feedback-badge');
+        const helper = document.getElementById('gstin-helper-text');
+
+        if (!gstin) {
+            if (icon) icon.className = 'position-absolute end-0 top-50 translate-middle-y me-3 d-none';
+            if (badge) badge.innerHTML = '';
+            if (helper) helper.innerHTML = '15-digit alphanumeric GST registration code (e.g. 08ABCDE1234F1Z5)';
+            return;
+        }
+
+        if (gstin.length >= 2) {
+            const stateCode = gstin.substring(0, 2);
+            if (GST_STATE_CODES[stateCode]) {
+                const stateField = document.getElementById('field-state');
+                if (stateField) stateField.value = GST_STATE_CODES[stateCode];
+            }
+        }
+
+        if (gstin.length >= 12) {
             const panCandidate = gstin.substring(2, 12);
             const panField = document.getElementById('field-pan');
-            if (panCandidate.match(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/i)) {
+            if (panCandidate.match(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/i) && panField) {
                 panField.value = panCandidate.toUpperCase();
+            }
+        }
+
+        if (gstin.length < 15) {
+            if (icon) icon.className = 'position-absolute end-0 top-50 translate-middle-y me-3 d-none';
+            if (badge) badge.innerHTML = `<span class="badge bg-secondary-subtle text-secondary small">${gstin.length}/15 digits</span>`;
+            if (helper) helper.innerHTML = '<span class="text-muted">Entering GSTIN... Must be exactly 15 characters</span>';
+        } else {
+            const isValid = GSTIN_REGEX.test(gstin);
+            const stateCode = gstin.substring(0, 2);
+            const stateName = GST_STATE_CODES[stateCode] || 'State ' + stateCode;
+
+            if (isValid) {
+                if (icon) {
+                    icon.className = 'position-absolute end-0 top-50 translate-middle-y me-3';
+                    icon.innerHTML = '<i class="fa-solid fa-circle-check text-success fs-5"></i>';
+                }
+                if (badge) badge.innerHTML = `<span class="badge bg-success text-white small"><i class="fa-solid fa-check me-1"></i> Valid GSTIN</span>`;
+                if (helper) helper.innerHTML = `<span class="text-success fw-semibold"><i class="fa-solid fa-circle-check me-1"></i> Valid GSTIN verified for ${stateName}</span>`;
+            } else {
+                if (icon) {
+                    icon.className = 'position-absolute end-0 top-50 translate-middle-y me-3';
+                    icon.innerHTML = '<i class="fa-solid fa-circle-xmark text-danger fs-5"></i>';
+                }
+                if (badge) badge.innerHTML = `<span class="badge bg-danger text-white small"><i class="fa-solid fa-xmark me-1"></i> Invalid GSTIN</span>`;
+                if (helper) helper.innerHTML = `<span class="text-danger small"><i class="fa-solid fa-triangle-exclamation me-1"></i> Invalid GSTIN format. Check structure: 2 state digits + 10 PAN chars + entity code + Z + checksum</span>`;
             }
         }
     }
@@ -594,6 +651,8 @@
     // Initialize on page load
     document.addEventListener('DOMContentLoaded', function() {
         updateLivePreview();
+        const gVal = document.getElementById('field-gstin')?.value;
+        if (gVal) handleGstinInput(gVal);
     });
 </script>
 @endpush

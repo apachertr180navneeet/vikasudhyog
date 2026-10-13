@@ -54,7 +54,7 @@
     @endif
 
     <!-- Form Container -->
-    <form action="{{ route('admin.transactions.purchase-entry.update', $purchase) }}" method="POST" id="purchase-form">
+    <form action="{{ route('admin.transactions.purchase-entry.update', $purchase) }}" method="POST" id="purchase-form" enctype="multipart/form-data">
         @csrf
         @method('PUT')
 
@@ -75,16 +75,16 @@
                 </div>
 
                 <div class="erp-form-section-body-4col">
-                    <!-- Voucher No (Readonly) -->
+                    <!-- Voucher No (Editable) -->
                     <div class="form-group">
                         <label class="erp-field-label">
                             Voucher No <span class="erp-req-star">*</span>
                         </label>
                         <div class="erp-field-icon-wrap">
                             <i class="fa-solid fa-hashtag erp-field-icon"></i>
-                            <input type="text" class="form-control erp-field-input-iconified erp-field-input-mono font-weight-bold" value="{{ $purchase->purchase_no }}" readonly>
+                            <input type="text" name="purchase_no" id="field-purchase-no" class="form-control erp-field-input-iconified erp-field-input-mono font-weight-bold" value="{{ old('purchase_no', $purchase->purchase_no) }}" required>
                         </div>
-                        <span class="erp-field-hint">Fixed inward purchase voucher reference</span>
+                        <span class="erp-field-hint">Inward purchase reference (Editable)</span>
                     </div>
 
                     <!-- Invoice Date -->
@@ -172,7 +172,7 @@
                         </label>
                         <div class="erp-field-icon-wrap">
                             <i class="fa-solid fa-clock erp-field-icon"></i>
-                            <select name="payment_terms" class="form-control erp-field-input-iconified">
+                            <select name="payment_terms" id="field-payment-terms" class="form-control erp-field-input-iconified" onchange="onPaymentTermsChange(this)">
                                 <option value="Advance" {{ old('payment_terms', $purchase->payment_terms) === 'Advance' ? 'selected' : '' }}>Advance (Advance Payment)</option>
                                 <option value="Cash" {{ old('payment_terms', $purchase->payment_terms) === 'Cash' ? 'selected' : '' }}>Cash on Delivery (Immediate)</option>
                                 <option value="15 Days" {{ old('payment_terms', $purchase->payment_terms) === '15 Days' ? 'selected' : '' }}>Credit 15 Days</option>
@@ -182,6 +182,42 @@
                             </select>
                         </div>
                         <span class="erp-field-hint">Agreed credit repayment cycle</span>
+                    </div>
+
+                    <!-- Advance Amount (Shown when Payment Terms == 'Advance') -->
+                    <div class="form-group" id="advance-amount-group" style="{{ old('payment_terms', $purchase->payment_terms) === 'Advance' ? '' : 'display: none;' }}">
+                        <label class="erp-field-label">
+                            Advance Amount (₹) <span class="erp-req-star">*</span>
+                        </label>
+                        <div class="erp-field-icon-wrap">
+                            <i class="fa-solid fa-money-bill-wave erp-field-icon" style="color: #5B841E;"></i>
+                            <input type="number" step="0.01" min="0" name="advance_amount" id="field-advance-amount" class="form-control erp-field-input-iconified erp-field-input-mono font-weight-700" placeholder="Enter advance amount" value="{{ old('advance_amount', $purchase->advance_amount ?? '0.00') }}" oninput="onAdvanceAmountInput()">
+                        </div>
+                        <span class="erp-field-hint">Advance payment amount paid upon order</span>
+                    </div>
+
+                    <!-- Invoice Attachment Upload / Preview -->
+                    <div class="form-group {{ old('payment_terms', $purchase->payment_terms) === 'Advance' ? 'erp-col-span-3' : 'erp-col-span-4' }}">
+                        <label class="erp-field-label">
+                            Vendor Invoice / Bill Attachment <span class="text-muted">(PDF, JPG, JPEG, PNG - Max 10MB)</span>
+                        </label>
+                        @if($purchase->invoice_attachment)
+                            <div class="mb-2 p-2 rounded" style="background: #F8FAFC; border: 1px solid #E2E8F0; display: flex; align-items: center; justify-content: space-between;">
+                                <div style="font-size: 0.82rem; display: flex; align-items: center; gap: 0.5rem; color: #334155;">
+                                    <i class="fa-solid fa-file-lines text-primary"></i>
+                                    <span class="font-weight-600">Current File:</span>
+                                    <span class="text-truncate font-monospace" style="max-width: 260px;">{{ basename($purchase->invoice_attachment) }}</span>
+                                </div>
+                                <a href="{{ asset('storage/' . $purchase->invoice_attachment) }}" target="_blank" class="btn btn-sm btn-outline" style="padding: 2px 10px; font-size: 0.75rem;">
+                                    <i class="fa-solid fa-arrow-up-right-from-square me-1"></i> View / Download
+                                </a>
+                            </div>
+                        @endif
+                        <div class="erp-field-icon-wrap">
+                            <i class="fa-solid fa-paperclip erp-field-icon"></i>
+                            <input type="file" name="invoice_attachment" id="field-invoice-attachment" class="form-control erp-field-input-iconified" accept=".pdf,.jpg,.jpeg,.png">
+                        </div>
+                        <span class="erp-field-hint">{{ $purchase->invoice_attachment ? 'Select new file to replace existing attachment' : 'Upload vendor bill scan / photo copy' }}</span>
                     </div>
                 </div>
             </div>
@@ -195,22 +231,22 @@
                         </div>
                         <div>
                             <h3 class="erp-form-section-title">2. Transport &amp; Logistics Details</h3>
-                            <p class="erp-form-section-desc">Transporter name, vehicle registration number, bilty / LR number &amp; inward freight charges</p>
+                            <p class="erp-form-section-desc">Transporter master, vehicle registration, bilty / LR number &amp; E-Way Bill</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="erp-form-section-body-4col">
-                    <!-- Transport / Transporter Name -->
+                    <!-- Transport Name Input -->
                     <div class="form-group">
                         <label class="erp-field-label">
-                            Transport / Transporter Name
+                            Transport Name / Carrier
                         </label>
                         <div class="erp-field-icon-wrap">
                             <i class="fa-solid fa-truck-fast erp-field-icon"></i>
-                            <input type="text" name="transport_name" id="field-transport-name" class="form-control erp-field-input-iconified" placeholder="Enter transport name" value="{{ old('transport_name', $purchase->transport_name) }}" oninput="updateLiveSummary()">
+                            <input type="text" name="transport_name" id="field-transport-name" class="form-control erp-field-input-iconified" placeholder="Enter Transport Name" value="{{ old('transport_name', $purchase->transport_name ?? $purchase->transporter->name ?? '') }}" oninput="updateLiveSummary()">
                         </div>
-                        <span class="erp-field-hint">e.g. VRL Logistics, TCI Freight, Local</span>
+                        <span class="erp-field-hint">Transporter or logistics carrier name</span>
                     </div>
 
                     <!-- Vehicle / Truck Number -->
@@ -248,270 +284,293 @@
                         </div>
                         <span class="erp-field-hint">Inward freight charges added to Grand Total</span>
                     </div>
+
+                    <!-- E-Way Bill Number -->
+                    <div class="form-group">
+                        <label class="erp-field-label">
+                            E-Way Bill Number
+                        </label>
+                        <div class="erp-field-icon-wrap">
+                            <i class="fa-solid fa-road erp-field-icon"></i>
+                            <input type="text" name="e_way_bill_no" id="field-e-way-bill-no" class="form-control erp-field-input-iconified erp-field-input-mono" placeholder="Enter 12-digit E-Way bill number" value="{{ old('e_way_bill_no', $purchase->e_way_bill_no) }}">
+                        </div>
+                        <span class="erp-field-hint">Govt GST E-Way Bill portal number</span>
+                    </div>
+
+                    <!-- Transport / Dispatch Date -->
+                    <div class="form-group">
+                        <label class="erp-field-label">
+                            Transport / Dispatch Date
+                        </label>
+                        <div class="erp-field-icon-wrap">
+                            <i class="fa-solid fa-calendar-day erp-field-icon"></i>
+                            <input type="date" name="transport_date" id="field-transport-date" class="form-control erp-field-input-iconified" value="{{ old('transport_date', $purchase->transport_date ? \Carbon\Carbon::parse($purchase->transport_date)->format('Y-m-d') : date('Y-m-d')) }}">
+                        </div>
+                        <span class="erp-field-hint">Consignment dispatch / bilty date</span>
+                    </div>
+
+                    <!-- Transport Remarks / Notes (Spans 2 columns) -->
+                    <div class="form-group erp-col-span-2">
+                        <label class="erp-field-label">
+                            Transport Remarks / Logistics Notes
+                        </label>
+                        <div class="erp-field-icon-wrap">
+                            <i class="fa-solid fa-comment-dots erp-field-icon"></i>
+                            <input type="text" name="transport_notes" id="field-transport-notes" class="form-control erp-field-input-iconified" placeholder="Enter driver contact, route, notes" value="{{ old('transport_notes', $purchase->transport_notes) }}">
+                        </div>
+                        <span class="erp-field-hint">Driver contact, route details or consignment observations</span>
+                    </div>
                 </div>
             </div>
 
-                <!-- 3. Inward Product Line Items (Matching Ledger Layout) -->
-                <div class="card erp-form-section-card">
-                    <div class="erp-form-section-header">
-                        <div class="erp-form-section-header-left">
-                            <div class="erp-form-section-icon-box erp-form-icon-success">
-                                <i class="fa-solid fa-boxes-stacked"></i>
-                            </div>
-                            <div>
-                                <h3 class="erp-form-section-title">3. Inward Product Line Items</h3>
-                                <p class="erp-form-section-desc">Raw materials, herbs, packaging with dual-rate official &amp; under-billing calculation</p>
-                            </div>
+            <!-- 3. Inward Product Line Items (Matching Ledger Layout) -->
+            <div class="card erp-form-section-card">
+                <div class="erp-form-section-header">
+                    <div class="erp-form-section-header-left">
+                        <div class="erp-form-section-icon-box erp-form-icon-success">
+                            <i class="fa-solid fa-boxes-stacked"></i>
                         </div>
+                        <div>
+                            <h3 class="erp-form-section-title">3. Inward Product Line Items</h3>
+                            <p class="erp-form-section-desc">Raw materials, herbs, packaging with dual-rate official &amp; under-billing calculation</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <label class="erp-tax-mode-toggle" style="display: inline-flex; align-items: center; gap: 0.45rem; cursor: pointer; font-size: 0.82rem; font-weight: 600; color: #334155; margin-bottom: 0; background: #F8FAFC; border: 1px solid #CBD5E1; padding: 5px 12px; border-radius: 8px;">
+                            <input type="checkbox" name="is_gst_inclusive" id="field-is-gst-inclusive" value="1" {{ old('is_gst_inclusive', $purchase->is_gst_inclusive) ? 'checked' : '' }} onchange="onTaxModeToggle(this)" style="width: 16px; height: 16px; accent-color: #5B841E; cursor: pointer;">
+                            <span>GST-Inclusive Pricing</span>
+                            <span class="badge" id="tax-mode-badge" style="background: {{ old('is_gst_inclusive', $purchase->is_gst_inclusive) ? '#ECFDF5' : '#E2E8F0' }}; color: {{ old('is_gst_inclusive', $purchase->is_gst_inclusive) ? '#059669' : '#475569' }}; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px;">
+                                {{ old('is_gst_inclusive', $purchase->is_gst_inclusive) ? 'GST-Inclusive' : 'Exclusive' }}
+                            </span>
+                        </label>
                         <button type="button" class="btn btn-outline erp-btn-add-row" style="font-size: 0.8rem; padding: 0.4rem 0.85rem;" onclick="addPurchaseRow()">
                             <i class="fa-solid fa-plus me-1"></i> Add Line Item
                         </button>
                     </div>
+                </div>
 
-                    <div class="erp-form-section-body p-0 erp-form-section-body-table" style="display: block !important; padding: 0 !important; width: 100%;">
-                        <div class="erp-items-table-wrapper" style="border: none; border-radius: 0; overflow-x: auto; width: 100%;">
-                            <table class="erp-items-table" id="items-table" style="width: 100%;">
-                                <thead>
-                                    <tr>
-                                        <th style="width: 50px; text-align: center;">S.NO</th>
-                                        <th style="min-width: 260px;">ITEM <span class="text-danger">*</span></th>
-                                        <th style="width: 100px;">HSN</th>
-                                        <th style="width: 80px; text-align: center;">GST</th>
-                                        <th style="width: 110px;">UNIT TYPE <span class="text-danger">*</span></th>
-                                        <th style="width: 100px; text-align: right;">NET WT <span class="text-danger">*</span></th>
-                                        <th style="width: 125px; text-align: right;">BILL RATE (₹) <span class="text-danger">*</span></th>
-                                        <th style="width: 120px; text-align: right;">U-B RATE (₹)</th>
-                                        <th style="width: 125px; text-align: right;">BILL ARNT (₹)</th>
-                                        <th style="width: 125px; text-align: right;">U-B ARNT (₹)</th>
-                                        <th style="width: 48px; text-align: center;"></th>
-                                    </tr>
-                                </thead>
-                                <tbody id="purchase-items-body">
-                                    @php
-                                        $editItems = old('items');
-                                    @endphp
-                                    @if($editItems && is_array($editItems))
-                                        @foreach($editItems as $idx => $row)
-                                            <tr class="item-row">
-                                                <td class="text-center row-sno">
-                                                    <span class="badge" style="background: #F1F5F9; color: #475569; font-weight: 700; font-size: 0.78rem; padding: 4px 8px; border-radius: 6px;">{{ $idx + 1 }}</span>
-                                                </td>
-                                                <td>
-                                                    <select name="items[{{ $idx }}][item_id]" class="form-select erp-item-select" required onchange="onItemSelect(this)">
-                                                        <option value="">Select Item...</option>
-                                                        @foreach($items as $itm)
-                                                            <option value="{{ $itm->id }}"
-                                                                    data-code="{{ $itm->code }}"
-                                                                    data-hsn="{{ $itm->hsn_code }}"
-                                                                    data-unit="{{ $itm->unit }}"
-                                                                    data-gst="{{ $itm->gst_rate }}"
-                                                                    data-purchase-rate="{{ $itm->purchase_rate }}"
-                                                                    data-batch="{{ $itm->batch_no }}"
-                                                                    {{ ($row['item_id'] ?? '') == $itm->id ? 'selected' : '' }}>
-                                                                {{ $itm->name }} ({{ $itm->code }})
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                    <input type="hidden" name="items[{{ $idx }}][batch_no]" class="row-batch" value="{{ $row['batch_no'] ?? '' }}">
-                                                    <input type="hidden" name="items[{{ $idx }}][actual_rate]" class="row-actual" value="{{ $row['actual_rate'] ?? '0.00' }}">
-                                                </td>
-                                                <td>
-                                                    <input type="text" name="items[{{ $idx }}][hsn_code]" class="form-control row-hsn font-monospace" placeholder="Enter HSN" value="{{ $row['hsn_code'] ?? '' }}">
-                                                </td>
-                                                <td>
-                                                    <input type="number" step="0.01" min="0" name="items[{{ $idx }}][gst_percent]" class="form-control row-gst font-monospace text-center" value="{{ number_format((float)($row['gst_percent'] ?? 5), 2, '.', '') }}" oninput="calcRow(this)">
-                                                </td>
-                                                <td>
-                                                    <select name="items[{{ $idx }}][unit]" class="form-select row-unit" required>
-                                                        @php
-                                                            $rU = strtoupper(trim($row['unit'] ?? 'KG'));
-                                                        @endphp
-                                                        @foreach($units as $u)
-                                                            @php
-                                                                $uVal = $u->code ?: $u->name;
-                                                         $isSelected = $u->matchesValue($rU);
-@endphp
-                                                            <option value="{{ $uVal }}"
-                                                            data-code="{{ $u->code }}"
-                                                            data-name="{{ $u->name }}"
-                                                            data-synonyms="{{ $u->synonyms }}"
-                                                            {{ $isSelected ? 'selected' : '' }}>
-                                                                {{ strtoupper($u->code ?: $u->name) }}
-                                                            </option>
-                                                        @endforeach
-                                                        @php
-                                                            $foundInMaster = $units->contains(fn($u) => $u->matchesValue($rU));
-                                                        @endphp
-                                                        @if(!$foundInMaster && !empty($row['unit']))
-                                                            <option value="{{ $row['unit'] }}" data-code="{{ $row['unit'] }}" data-name="{{ $row['unit'] }}" selected>
-                                                                {{ $row['unit'] }}
-                                                            </option>
-                                                        @endif
-                                                    </select>
-                                                </td>
-                                                <td>
-                                                    <input type="number" step="any" min="0.001" name="items[{{ $idx }}][quantity]" class="form-control row-qty font-monospace" style="text-align: right;" value="{{ $row['quantity'] ?? '1' }}" required oninput="calcRow(this)">
-                                                </td>
-                                                <td>
-                                                    <input type="number" step="0.01" min="0" name="items[{{ $idx }}][bill_rate]" class="form-control row-bill-rate font-monospace" style="text-align: right;" value="{{ number_format((float)($row['bill_rate'] ?? 0), 2, '.', '') }}" required oninput="calcRow(this)">
-                                                </td>
-                                                <td>
-                                                    <input type="number" step="0.01" min="0" name="items[{{ $idx }}][ub_rate]" class="form-control row-ub-rate font-monospace" style="text-align: right;" value="{{ number_format((float)($row['ub_rate'] ?? 0), 2, '.', '') }}" oninput="calcRow(this)">
-                                                </td>
-                                                <td style="text-align: right;">
+                <div class="erp-form-section-body p-0 erp-form-section-body-table" style="display: block !important; padding: 0 !important; width: 100%;">
+                    <div class="erp-items-table-wrapper" style="border: none; border-radius: 0; overflow-x: auto; width: 100%;">
+                        <table class="erp-items-table" id="items-table" style="width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50px; text-align: center;">S.NO</th>
+                                    <th style="min-width: 260px;">ITEM <span class="text-danger">*</span></th>
+                                    <th style="width: 100px;">HSN</th>
+                                    <th style="width: 80px; text-align: center;">GST</th>
+                                    <th style="width: 110px;">UNIT TYPE <span class="text-danger">*</span></th>
+                                    <th style="width: 100px; text-align: right;">NET WT <span class="text-danger">*</span></th>
+                                    <th style="width: 125px; text-align: right;" id="th-bill-rate">BILL RATE (₹) <span class="text-danger">*</span></th>
+                                    <th style="width: 120px; text-align: right;">U-B RATE (₹)</th>
+                                    <th style="width: 125px; text-align: right;" id="th-bill-amt">BILL TOTAL (₹)</th>
+                                    <th style="width: 125px; text-align: right;">U-B TOTAL (₹)</th>
+                                    <th style="width: 48px; text-align: center;"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="purchase-items-body">
+                                @php
+                                    $editItems = old('items');
+                                @endphp
+                                @if($editItems && is_array($editItems))
+                                    @foreach($editItems as $idx => $row)
+                                        <tr class="item-row">
+                                            <td class="text-center row-sno">
+                                                <span class="badge" style="background: #F1F5F9; color: #475569; font-weight: 700; font-size: 0.78rem; padding: 4px 8px; border-radius: 6px;">{{ $idx + 1 }}</span>
+                                            </td>
+                                            <td>
+                                                <select name="items[{{ $idx }}][item_id]" class="form-select erp-item-select" required onchange="onItemSelect(this)">
+                                                    <option value="">Select Item...</option>
+                                                    @foreach($items as $itm)
+                                                        <option value="{{ $itm->id }}"
+                                                                data-code="{{ $itm->code }}"
+                                                                data-hsn="{{ $itm->hsn_code }}"
+                                                                data-unit="{{ $itm->unit }}"
+                                                                data-gst="{{ $itm->gst_rate }}"
+                                                                data-purchase-rate="{{ $itm->purchase_rate }}"
+                                                                data-batch="{{ $itm->batch_no }}"
+                                                                {{ ($row['item_id'] ?? '') == $itm->id ? 'selected' : '' }}>
+                                                            {{ $itm->name }} ({{ $itm->code }})
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                <input type="hidden" name="items[{{ $idx }}][batch_no]" class="row-batch" value="{{ $row['batch_no'] ?? '' }}">
+                                                <input type="hidden" name="items[{{ $idx }}][actual_rate]" class="row-actual" value="{{ $row['actual_rate'] ?? '0.00' }}">
+                                            </td>
+                                            <td>
+                                                <input type="text" name="items[{{ $idx }}][hsn_code]" class="form-control row-hsn font-monospace" placeholder="Enter HSN" value="{{ $row['hsn_code'] ?? '' }}">
+                                            </td>
+                                            <td>
+                                                <input type="number" step="0.01" min="0" name="items[{{ $idx }}][gst_percent]" class="form-control row-gst font-monospace text-center" value="{{ $row['gst_percent'] ?? '5.00' }}" oninput="calcRow(this)">
+                                            </td>
+                                            <td>
+                                                <select name="items[{{ $idx }}][unit]" class="form-select row-unit" required>
+                                                    @foreach($units as $u)
+                                                        <option value="{{ $u->code ?: $u->name }}" data-code="{{ $u->code }}" data-name="{{ $u->name }}" data-synonyms="{{ $u->synonyms }}" {{ ($row['unit'] ?? 'KG') == ($u->code ?: $u->name) ? 'selected' : '' }}>
+                                                            {{ strtoupper($u->code ?: $u->name) }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <input type="number" step="any" min="0.001" name="items[{{ $idx }}][quantity]" class="form-control row-qty font-monospace" style="text-align: right;" value="{{ $row['quantity'] ?? '0' }}" required oninput="calcRow(this)">
+                                            </td>
+                                            <td>
+                                                <input type="number" step="0.01" min="0" name="items[{{ $idx }}][bill_rate]" class="form-control row-bill-rate font-monospace" style="text-align: right;" value="{{ $row['bill_rate'] ?? '0.00' }}" required oninput="calcRow(this)">
+                                            </td>
+                                            <td>
+                                                <input type="number" step="0.01" min="0" name="items[{{ $idx }}][ub_rate]" class="form-control row-ub-rate font-monospace" style="text-align: right;" value="{{ $row['ub_rate'] ?? '0.00' }}" oninput="calcRow(this)">
+                                            </td>
+                                            <td style="text-align: right;">
+                                                <span class="font-monospace text-dark font-weight-700 row-bill-amt">₹0.00</span>
+                                            </td>
+                                            <td style="text-align: right;">
+                                                <span class="font-monospace font-weight-700 row-ub-amt" style="color: #D97706;">₹0.00</span>
+                                            </td>
+                                            <td class="text-center">
+                                                <button type="button" class="delete-row-btn" onclick="removeRow(this)" title="Remove line item">
+                                                    <i class="fa-solid fa-xmark"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @else
+                                    @foreach($purchase->items as $idx => $lineItem)
+                                        <tr class="item-row">
+                                            <td class="text-center row-sno">
+                                                <span class="badge" style="background: #F1F5F9; color: #475569; font-weight: 700; font-size: 0.78rem; padding: 4px 8px; border-radius: 6px;">{{ $idx + 1 }}</span>
+                                            </td>
+                                            <td>
+                                                <select name="items[{{ $idx }}][item_id]" class="form-select erp-item-select" required onchange="onItemSelect(this)">
+                                                    <option value="">Select Item...</option>
+                                                    @foreach($items as $itm)
+                                                        <option value="{{ $itm->id }}"
+                                                                data-code="{{ $itm->code }}"
+                                                                data-hsn="{{ $itm->hsn_code }}"
+                                                                data-unit="{{ $itm->unit }}"
+                                                                data-gst="{{ $itm->gst_rate }}"
+                                                                data-purchase-rate="{{ $itm->purchase_rate }}"
+                                                                data-batch="{{ $itm->batch_no }}"
+                                                                {{ $lineItem->item_id == $itm->id ? 'selected' : '' }}>
+                                                            {{ $itm->name }} ({{ $itm->code }})
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                <input type="hidden" name="items[{{ $idx }}][batch_no]" class="row-batch" value="{{ $lineItem->batch_no }}">
+                                                <input type="hidden" name="items[{{ $idx }}][actual_rate]" class="row-actual" value="{{ $lineItem->actual_rate }}">
+                                            </td>
+                                            <td>
+                                                <input type="text" name="items[{{ $idx }}][hsn_code]" class="form-control row-hsn font-monospace" placeholder="Enter HSN" value="{{ $lineItem->hsn_code }}">
+                                            </td>
+                                            <td>
+                                                <input type="number" step="0.01" min="0" name="items[{{ $idx }}][gst_percent]" class="form-control row-gst font-monospace text-center" value="{{ number_format($lineItem->gst_percent, 2, '.', '') }}" oninput="calcRow(this)">
+                                            </td>
+                                            <td>
+                                                <select name="items[{{ $idx }}][unit]" class="form-select row-unit" required>
                                                     @php
-                                                        $rQty = (float)($row['quantity'] ?? 0);
-                                                        $rBill = (float)($row['bill_rate'] ?? 0);
-                                                        $rUb = (float)($row['ub_rate'] ?? 0);
+                                                        $lUnit = strtoupper(trim($lineItem->unit));
                                                     @endphp
-                                                    <span class="font-monospace text-dark font-weight-700 row-bill-amt">₹{{ number_format($rQty * $rBill, 2) }}</span>
-                                                </td>
-                                                <td style="text-align: right;">
-                                                    <span class="font-monospace font-weight-700 row-ub-amt" style="color: #D97706;">₹{{ number_format($rQty * $rUb, 2) }}</span>
-                                                </td>
-                                                <td class="text-center">
-                                                    <button type="button" class="delete-row-btn" onclick="removeRow(this)" title="Remove line item">
-                                                        <i class="fa-solid fa-xmark"></i>
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    @else
-                                        @foreach($purchase->items as $idx => $lineItem)
-                                            <tr class="item-row">
-                                                <td class="text-center row-sno">
-                                                    <span class="badge" style="background: #F1F5F9; color: #475569; font-weight: 700; font-size: 0.78rem; padding: 4px 8px; border-radius: 6px;">{{ $idx + 1 }}</span>
-                                                </td>
-                                                <td>
-                                                    <select name="items[{{ $idx }}][item_id]" class="form-select erp-item-select" required onchange="onItemSelect(this)">
-                                                        <option value="">Select Item...</option>
-                                                        @foreach($items as $itm)
-                                                            <option value="{{ $itm->id }}"
-                                                                    data-code="{{ $itm->code }}"
-                                                                    data-hsn="{{ $itm->hsn_code }}"
-                                                                    data-unit="{{ $itm->unit }}"
-                                                                    data-gst="{{ $itm->gst_rate }}"
-                                                                    data-purchase-rate="{{ $itm->purchase_rate }}"
-                                                                    data-batch="{{ $itm->batch_no }}"
-                                                                    {{ $lineItem->item_id == $itm->id ? 'selected' : '' }}>
-                                                                {{ $itm->name }} ({{ $itm->code }})
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                    <input type="hidden" name="items[{{ $idx }}][batch_no]" class="row-batch" value="{{ $lineItem->batch_no }}">
-                                                    <input type="hidden" name="items[{{ $idx }}][actual_rate]" class="row-actual" value="{{ $lineItem->actual_rate }}">
-                                                </td>
-                                                <td>
-                                                    <input type="text" name="items[{{ $idx }}][hsn_code]" class="form-control row-hsn font-monospace" placeholder="Enter HSN" value="{{ $lineItem->hsn_code }}">
-                                                </td>
-                                                <td>
-                                                    <input type="number" step="0.01" min="0" name="items[{{ $idx }}][gst_percent]" class="form-control row-gst font-monospace text-center" value="{{ number_format($lineItem->gst_percent, 2, '.', '') }}" oninput="calcRow(this)">
-                                                </td>
-                                                <td>
-                                                    <select name="items[{{ $idx }}][unit]" class="form-select row-unit" required>
+                                                    @foreach($units as $u)
                                                         @php
-                                                            $lUnit = strtoupper(trim($lineItem->unit));
+                                                            $uVal = $u->code ?: $u->name;
+                                                            $isSelected = $u->matchesValue($lUnit);
                                                         @endphp
-                                                        @foreach($units as $u)
-                                                            @php
-                                                                $uVal = $u->code ?: $u->name;
-                                                                $isSelected = $u->matchesValue($lUnit);
-                                                            @endphp
-                                                            <option value="{{ $uVal }}"
-                                                                    data-code="{{ $u->code }}"
-                                                                    data-name="{{ $u->name }}"
-                                                                    data-synonyms="{{ $u->synonyms }}"
-                                                                    {{ $isSelected ? 'selected' : '' }}>
-                                                                {{ strtoupper($u->code ?: $u->name) }}
-                                                            </option>
-                                                        @endforeach
-                                                        @php
-                                                            $foundInMaster = $units->contains(fn($u) => $u->matchesValue($lUnit));
-                                                        @endphp
-                                                        @if(!$foundInMaster && !empty($lineItem->unit))
-                                                            <option value="{{ $lineItem->unit }}" data-code="{{ $lineItem->unit }}" data-name="{{ $lineItem->unit }}" selected>
-                                                                {{ $lineItem->unit }}
-                                                            </option>
-                                                        @endif
-                                                    </select>
-                                                </td>
-                                                <td>
-                                                    <input type="number" step="any" min="0.001" name="items[{{ $idx }}][quantity]" class="form-control row-qty font-monospace" style="text-align: right;" value="{{ $lineItem->quantity }}" required oninput="calcRow(this)">
-                                                </td>
-                                                <td>
-                                                    <input type="number" step="0.01" min="0" name="items[{{ $idx }}][bill_rate]" class="form-control row-bill-rate font-monospace" style="text-align: right;" value="{{ number_format($lineItem->bill_rate, 2, '.', '') }}" required oninput="calcRow(this)">
-                                                </td>
-                                                <td>
-                                                    <input type="number" step="0.01" min="0" name="items[{{ $idx }}][ub_rate]" class="form-control row-ub-rate font-monospace" style="text-align: right;" value="{{ number_format($lineItem->ub_rate, 2, '.', '') }}" oninput="calcRow(this)">
-                                                </td>
-                                                <td style="text-align: right;">
-                                                    <span class="font-monospace text-dark font-weight-700 row-bill-amt">₹{{ number_format($lineItem->quantity * $lineItem->bill_rate, 2) }}</span>
-                                                </td>
-                                                <td style="text-align: right;">
-                                                    <span class="font-monospace font-weight-700 row-ub-amt" style="color: #D97706;">₹{{ number_format($lineItem->under_amount, 2) }}</span>
-                                                </td>
-                                                <td class="text-center">
-                                                    <button type="button" class="delete-row-btn" onclick="removeRow(this)" title="Remove line item">
-                                                        <i class="fa-solid fa-xmark"></i>
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    @endif
-                                </tbody>
-                            </table>
+                                                        <option value="{{ $uVal }}"
+                                                                data-code="{{ $u->code }}"
+                                                                data-name="{{ $u->name }}"
+                                                                data-synonyms="{{ $u->synonyms }}"
+                                                                {{ $isSelected ? 'selected' : '' }}>
+                                                            {{ strtoupper($u->code ?: $u->name) }}
+                                                        </option>
+                                                    @endforeach
+                                                    @php
+                                                        $foundInMaster = $units->contains(fn($u) => $u->matchesValue($lUnit));
+                                                    @endphp
+                                                    @if(!$foundInMaster && !empty($lineItem->unit))
+                                                        <option value="{{ $lineItem->unit }}" data-code="{{ $lineItem->unit }}" data-name="{{ $lineItem->unit }}" selected>
+                                                            {{ $lineItem->unit }}
+                                                        </option>
+                                                    @endif
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <input type="number" step="any" min="0.001" name="items[{{ $idx }}][quantity]" class="form-control row-qty font-monospace" style="text-align: right;" value="{{ $lineItem->quantity }}" required oninput="calcRow(this)">
+                                            </td>
+                                            <td>
+                                                <input type="number" step="0.01" min="0" name="items[{{ $idx }}][bill_rate]" class="form-control row-bill-rate font-monospace" style="text-align: right;" value="{{ number_format($lineItem->bill_rate, 2, '.', '') }}" required oninput="calcRow(this)">
+                                            </td>
+                                            <td>
+                                                <input type="number" step="0.01" min="0" name="items[{{ $idx }}][ub_rate]" class="form-control row-ub-rate font-monospace" style="text-align: right;" value="{{ number_format($lineItem->ub_rate, 2, '.', '') }}" oninput="calcRow(this)">
+                                            </td>
+                                            <td style="text-align: right;">
+                                                <span class="font-monospace text-dark font-weight-700 row-bill-amt">₹0.00</span>
+                                            </td>
+                                            <td style="text-align: right;">
+                                                <span class="font-monospace font-weight-700 row-ub-amt" style="color: #D97706;">₹{{ number_format($lineItem->under_amount, 2) }}</span>
+                                            </td>
+                                            <td class="text-center">
+                                                <button type="button" class="delete-row-btn" onclick="removeRow(this)" title="Remove line item">
+                                                    <i class="fa-solid fa-xmark"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @endif
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Unified Action & Totals Toolbar -->
+                    <div class="erp-table-action-bar">
+                        <div style="display: flex; align-items: center; gap: 0.85rem; flex-wrap: wrap;">
+                            <button type="button" class="btn btn-outline erp-btn-add-row" onclick="addPurchaseRow()">
+                                <i class="fa-solid fa-plus me-1"></i> Add Another Item Row
+                            </button>
+                            <span class="erp-table-action-hint">
+                                <i class="fa-solid fa-calculator me-1" style="color: #5B841E;"></i>
+                                <span id="tax-math-hint">
+                                    {{ old('is_gst_inclusive', $purchase->is_gst_inclusive) ? 'GST-Inclusive: Tax extracted from Bill Rate without double counting' : 'Exclusive: Bill Rate × Net Wt + GST' }} &bull; <strong>U-B Total</strong> = Net Wt &times; U-B Rate
+                                </span>
+                            </span>
                         </div>
 
-                        <!-- Unified Compact Action & Totals Toolbar -->
-                        <div class="erp-table-action-bar">
-                            <div style="display: flex; align-items: center; gap: 0.85rem; flex-wrap: wrap;">
-                                <button type="button" class="btn btn-outline erp-btn-add-row" onclick="addPurchaseRow()">
-                                    <i class="fa-solid fa-plus me-1"></i> Add Another Item Row
-                                </button>
-                                <span class="erp-table-action-hint">
-                                    <i class="fa-solid fa-calculator me-1" style="color: #5B841E;"></i>
-                                    <span><strong>Bill Arnt</strong> = Net Wt &times; Bill Rate &bull; <strong>U-B Arnt</strong> = Net Wt &times; U-B Rate</span>
-                                </span>
+                        <div class="erp-table-totals-grid">
+                            <div class="erp-table-total-item">
+                                <span class="erp-table-total-label">Total Net Wt</span>
+                                <span class="erp-table-total-val font-monospace" id="footer-total-qty">0.000</span>
                             </div>
-
-                            <div class="erp-table-totals-grid">
-                                <div class="erp-table-total-item">
-                                    <span class="erp-table-total-label">Total Net Wt</span>
-                                    <span class="erp-table-total-val font-monospace" id="footer-total-qty">0.000</span>
-                                </div>
-                                <div class="erp-table-total-item">
-                                    <span class="erp-table-total-label">Bill Subtotal</span>
-                                    <span class="erp-table-total-val font-monospace" id="footer-bill-subtotal">₹0.00</span>
-                                </div>
-                                <div class="erp-table-total-item">
-                                    <span class="erp-table-total-label">GST Tax</span>
-                                    <span class="erp-table-total-val font-monospace text-muted" id="footer-tax-total">₹0.00</span>
-                                </div>
-                                <div class="erp-table-total-item">
-                                    <span class="erp-table-total-label" style="color: #2563EB;">Freight / Cartage</span>
-                                    <span class="erp-table-total-val font-monospace" style="color: #2563EB;" id="footer-freight-total">₹{{ number_format($purchase->freight_amount ?? 0, 2) }}</span>
-                                </div>
-                                <div class="erp-table-total-item">
-                                    <span class="erp-table-total-label" style="color: #D97706;">U-B Amount</span>
-                                    <span class="erp-table-total-val font-monospace" style="color: #D97706;" id="footer-ub-total">₹0.00</span>
-                                </div>
-                                <div class="erp-table-total-item erp-table-total-grand" onclick="setPaidAmountToGrandTotal()" style="cursor: pointer;" title="Click to set this value in Paid Amount (₹)">
-                                    <span class="erp-table-total-label" style="color: #059669; display: flex; align-items: center; justify-content: space-between; gap: 0.35rem;">
-                                        <span>Total Grand Value</span>
-                                        <i class="fa-solid fa-arrow-down" style="font-size: 0.65rem;" title="Copy to Paid Amount"></i>
-                                    </span>
-                                    <span class="erp-table-total-val font-monospace" style="color: #059669; font-size: 1.1rem;" id="footer-grand-total">₹0.00</span>
-                                </div>
-                                <div class="erp-table-total-item" style="border-left: 1px dashed #CBD5E1; padding-left: 0.85rem;">
-                                    <span class="erp-table-total-label" style="color: #DC2626;" id="footer-pending-label">Pending Collection</span>
-                                    <span class="erp-table-total-val font-monospace" style="color: #DC2626; font-size: 1.05rem;" id="footer-pending-total">₹0.00</span>
-                                </div>
+                            <div class="erp-table-total-item">
+                                <span class="erp-table-total-label">Taxable Subtotal</span>
+                                <span class="erp-table-total-val font-monospace" id="footer-bill-subtotal">₹0.00</span>
+                            </div>
+                            <div class="erp-table-total-item">
+                                <span class="erp-table-total-label">GST Tax</span>
+                                <span class="erp-table-total-val font-monospace text-muted" id="footer-tax-total">₹0.00</span>
+                            </div>
+                            <div class="erp-table-total-item">
+                                <span class="erp-table-total-label" style="color: #2563EB;">Freight / Cartage</span>
+                                <span class="erp-table-total-val font-monospace" style="color: #2563EB;" id="footer-freight-total">₹0.00</span>
+                            </div>
+                            <div class="erp-table-total-item">
+                                <span class="erp-table-total-label" style="color: #D97706;">U-B Amount</span>
+                                <span class="erp-table-total-val font-monospace" style="color: #D97706;" id="footer-ub-total">₹0.00</span>
+                            </div>
+                            <div class="erp-table-total-item erp-table-total-grand" onclick="setPaidAmountToGrandTotal()" style="cursor: pointer;" title="Click to fill into Paid Amount">
+                                <span class="erp-table-total-label" style="color: #059669; display: flex; align-items: center; justify-content: space-between; gap: 0.35rem;">
+                                    <span>Total Grand Value</span>
+                                    <i class="fa-solid fa-arrow-down" style="font-size: 0.65rem;" title="Copy to Paid Amount"></i>
+                                </span>
+                                <span class="erp-table-total-val font-monospace" style="color: #059669; font-size: 1.1rem;" id="footer-grand-total">₹0.00</span>
+                            </div>
+                            <div class="erp-table-total-item" style="border-left: 1px dashed #CBD5E1; padding-left: 0.85rem;">
+                                <span class="erp-table-total-label" style="color: #DC2626;" id="footer-pending-label">Pending Payable</span>
+                                <span class="erp-table-total-val font-monospace" style="color: #DC2626; font-size: 1.05rem;" id="footer-pending-total">₹0.00</span>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
 
-            <!-- 3. Settlement & Operational Notes -->
+            <!-- 4. Settlement & Consignment Notes -->
             <div class="card erp-form-section-card">
                 <div class="erp-form-section-header">
                     <div class="erp-form-section-header-left">
@@ -533,25 +592,22 @@
                                 Paid Amount (₹)
                             </label>
                             <div style="display: flex; align-items: center; gap: 0.4rem;">
-                                <span id="auto-sync-status-badge" class="badge" style="background: #E8F5E9; color: #2E7D32; font-size: 0.7rem; font-weight: 600; padding: 2px 7px; border-radius: 4px; border: 1px solid #A5D6A7;" title="Automatically tracks and updates with Total Grand Value">
-                                    <i class="fa-solid fa-arrows-rotate fa-spin-pulse me-1"></i> Auto-Syncing
-                                </span>
-                                <button type="button" class="btn btn-link p-0 text-decoration-none" style="font-size: 0.74rem; color: #5B841E; font-weight: 700; cursor: pointer; border: none; background: none;" onclick="setPaidAmountToGrandTotal(true)" title="Auto-fill with Total Grand Value">
+                                <button type="button" class="btn btn-link p-0 text-decoration-none" style="font-size: 0.74rem; color: #5B841E; font-weight: 700; cursor: pointer; border: none; background: none;" onclick="setPaidAmountToGrandTotal()" title="Fill with Total Grand Value">
                                     <i class="fa-solid fa-bolt me-1"></i> Match Total
                                 </button>
                             </div>
                         </div>
                         <div class="erp-field-icon-wrap">
                             <i class="fa-solid fa-indian-rupee-sign erp-field-icon"></i>
-                            <input type="number" step="0.01" min="0" name="paid_amount" id="field-paid-amount" class="form-control erp-field-input-iconified erp-field-input-mono" placeholder="Enter amount paid" value="{{ old('paid_amount', $purchase->paid_amount) }}" oninput="onPaidAmountInput()">
+                            <input type="number" step="0.01" min="0" name="paid_amount" id="field-paid-amount" class="form-control erp-field-input-iconified erp-field-input-mono font-weight-700" placeholder="0.00" value="{{ old('paid_amount', $purchase->paid_amount) }}" oninput="onPaidAmountInput()">
                         </div>
-                        <span class="erp-field-hint" id="paid-amount-hint">Automatically updated from Total Grand Value (<span id="hint-grand-total">₹0.00</span>)</span>
+                        <span class="erp-field-hint" id="paid-amount-hint">Settled payment amount</span>
                     </div>
 
                     <!-- Pending Payment Collection (₹) -->
                     <div class="form-group">
                         <label class="erp-field-label">
-                            Pending Payment Collection (₹)
+                            Pending Payment Balance (₹)
                         </label>
                         <div class="erp-field-icon-wrap">
                             <i class="fa-solid fa-hourglass-half erp-field-icon" id="pending-amount-icon" style="color: #DC2626;"></i>
@@ -590,36 +646,40 @@
                 </div>
             </div>
 
-            <!-- 4. Grand Total Financial Summary & Action Toolbar -->
+            <!-- 5. Grand Total Financial Summary & Action Toolbar -->
             <div class="erp-voucher-summary-card">
                 <div class="erp-voucher-summary-metrics">
                     <div class="erp-voucher-metric">
                         <span class="erp-voucher-metric-label">Total Net Weight</span>
-                        <span class="erp-voucher-metric-val font-monospace" id="prev-net-wt">{{ number_format($purchase->items->sum('quantity'), 3) }} KG</span>
+                        <span class="erp-voucher-metric-val font-monospace" id="prev-net-wt">0.000 KG</span>
                     </div>
                     <div class="erp-voucher-metric">
-                        <span class="erp-voucher-metric-label">Official Bill Total</span>
-                        <span class="erp-voucher-metric-val font-monospace" style="color: #2563EB;" id="prev-bill-total">₹{{ number_format($purchase->bill_total, 2) }}</span>
+                        <span class="erp-voucher-metric-label">Taxable Subtotal</span>
+                        <span class="erp-voucher-metric-val font-monospace" style="color: #2563EB;" id="prev-bill-sub">₹0.00</span>
+                    </div>
+                    <div class="erp-voucher-metric">
+                        <span class="erp-voucher-metric-label">Total GST Tax</span>
+                        <span class="erp-voucher-metric-val font-monospace" style="color: #2563EB;" id="prev-tax-amt">₹0.00</span>
                     </div>
                     <div class="erp-voucher-metric">
                         <span class="erp-voucher-metric-label" style="color: #2563EB;">Freight Charges</span>
-                        <span class="erp-voucher-metric-val font-monospace" style="color: #2563EB;" id="prev-freight-amt">₹{{ number_format($purchase->freight_amount ?? 0, 2) }}</span>
+                        <span class="erp-voucher-metric-val font-monospace" style="color: #2563EB;" id="prev-freight-amt">₹0.00</span>
                     </div>
                     <div class="erp-voucher-metric">
                         <span class="erp-voucher-metric-label">Under-Billing (U-B)</span>
-                        <span class="erp-voucher-metric-val font-monospace" style="color: #D97706;" id="prev-ub-total">₹{{ number_format($purchase->under_billing_total, 2) }}</span>
+                        <span class="erp-voucher-metric-val font-monospace" style="color: #D97706;" id="prev-ub-total">₹0.00</span>
                     </div>
                     <div class="erp-voucher-metric" style="border-left: 2px solid #E2E8F0; padding-left: 1.5rem;">
                         <span class="erp-voucher-metric-label" style="color: #059669;">Grand Total Inward Value</span>
-                        <span class="erp-voucher-metric-val font-monospace" style="color: #059669; font-size: 1.65rem;" id="prev-grand-total">₹{{ number_format($purchase->grand_total, 2) }}</span>
+                        <span class="erp-voucher-metric-val font-monospace" style="color: #059669; font-size: 1.65rem;" id="prev-grand-total">₹0.00</span>
                     </div>
                     <div class="erp-voucher-metric" style="border-left: 1px solid #E2E8F0; padding-left: 1.25rem;">
                         <span class="erp-voucher-metric-label" style="color: #059669;">Paid Amount</span>
-                        <span class="erp-voucher-metric-val font-monospace" style="color: #059669; font-size: 1.25rem;" id="summary-paid-amount">₹{{ number_format($purchase->paid_amount, 2) }}</span>
+                        <span class="erp-voucher-metric-val font-monospace" style="color: #059669; font-size: 1.25rem;" id="summary-paid-amount">₹0.00</span>
                     </div>
                     <div class="erp-voucher-metric" style="border-left: 1px solid #E2E8F0; padding-left: 1.25rem;">
-                        <span class="erp-voucher-metric-label" id="summary-pending-label" style="color: #DC2626;">Pending Collection</span>
-                        <span class="erp-voucher-metric-val font-monospace" style="color: #DC2626; font-size: 1.35rem;" id="summary-pending-amount">₹{{ number_format(max(0, $purchase->grand_total - $purchase->paid_amount), 2) }}</span>
+                        <span class="erp-voucher-metric-label" id="summary-pending-label" style="color: #DC2626;">Pending Payable</span>
+                        <span class="erp-voucher-metric-val font-monospace" style="color: #DC2626; font-size: 1.35rem;" id="summary-pending-amount">₹0.00</span>
                     </div>
                 </div>
 
@@ -649,22 +709,24 @@
                 </div>
             </div>
 
-            <!-- Danger Zone -->
-            <div class="card" style="padding: 1rem 1.5rem; border-radius: 12px; border: 1px solid #FECACA; background: #FFF5F5; font-size: 0.82rem; color: #991B1B;">
-                <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem;">
+            <!-- Danger Zone: Delete Purchase Entry -->
+            <div class="card" style="margin-top: 1rem; border: 1px solid #FECACA; background: #FFF5F5; border-radius: 14px; padding: 1.25rem 1.5rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
                     <div>
-                        <strong style="color: #B91C1C;"><i class="fa-solid fa-triangle-exclamation me-1"></i> Danger Zone:</strong>
-                        <span style="color: #7F1D1D; margin-left: 0.5rem;">Deleting this voucher will revert inventory stock additions and reverse supplier ledger balance.</span>
+                        <h4 style="color: #991B1B; font-size: 0.95rem; font-weight: 700; margin: 0 0 0.25rem 0; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fa-solid fa-triangle-exclamation"></i> Danger Zone: Void Purchase Entry
+                        </h4>
+                        <p style="color: #B91C1C; font-size: 0.8rem; margin: 0;">
+                            Permanently void this purchase entry. This action will deduct the inward stock quantities and reverse vendor ledger entries.
+                        </p>
                     </div>
-                    <div>
-                        <button type="button" class="btn btn-outline" style="border-color: #F87171; color: #DC2626; font-size: 0.82rem; font-weight: 600; padding: 0.4rem 1rem;" onclick="confirmDeleteVoucher()">
-                            <i class="fa-regular fa-trash-can me-1"></i> Delete Purchase Voucher
-                        </button>
-                    </div>
+                    <button type="button" class="btn" onclick="confirmDeleteVoucher()" style="background: #DC2626; color: #FFFFFF; font-weight: 600; font-size: 0.85rem; padding: 0.55rem 1.25rem; border-radius: 8px; border: none;">
+                        <i class="fa-solid fa-trash-can me-1"></i> Void Purchase Entry
+                    </button>
                 </div>
             </div>
 
-            <!-- Optional Hidden Elements for Script Safety -->
+            <!-- Hidden Elements for Safe Reference -->
             <div style="display: none;">
                 <span id="prev-title"></span>
                 <span id="prev-vendor"></span>
@@ -674,19 +736,17 @@
                 <span id="prev-item-count"></span>
                 <span id="prev-balance-text"></span>
                 <span id="prev-inv-ref"></span>
-                <span id="prev-bill-sub"></span>
-                <span id="prev-tax-amt"></span>
+                <span id="prev-bill-total"></span>
             </div>
 
         </div>
     </form>
-</section>
 
-<!-- Delete Purchase Hidden Form -->
-<form id="delete-voucher-form" action="{{ route('admin.transactions.purchase-entry.destroy', $purchase) }}" method="POST" style="display: none;">
-    @csrf
-    @method('DELETE')
-</form>
+    <form id="delete-voucher-form" action="{{ route('admin.transactions.purchase-entry.destroy', $purchase) }}" method="POST" style="display: none;">
+        @csrf
+        @method('DELETE')
+    </form>
+</section>
 
 <!-- Item Dropdown Options Template (Hidden) -->
 <template id="item-options-template">
@@ -712,9 +772,11 @@
     @endforeach
 </template>
 
+
+
 @push('scripts')
 <script>
-    let rowIndex = {{ count($editItems ?? $purchase->items) }};
+    let rowIndex = {{ max(count($purchase->items), count($editItems ?? [])) }};
 
     function addPurchaseRow() {
         const tbody = document.getElementById('purchase-items-body');
@@ -738,7 +800,7 @@
                 <input type="text" name="items[${rowIndex}][hsn_code]" class="form-control row-hsn font-monospace" placeholder="HSN" value="">
             </td>
             <td>
-                <input type="number" step="0.01" min="0" name="items[${rowIndex}][gst_percent]" class="form-control row-gst font-monospace" value="5.00" oninput="calcRow(this)">
+                <input type="number" step="0.01" min="0" name="items[${rowIndex}][gst_percent]" class="form-control row-gst font-monospace text-center" value="5.00" oninput="calcRow(this)">
             </td>
             <td>
                 <select name="items[${rowIndex}][unit]" class="form-select row-unit" required>
@@ -746,7 +808,7 @@
                 </select>
             </td>
             <td>
-                <input type="number" step="any" min="0" name="items[${rowIndex}][quantity]" class="form-control row-qty font-monospace" style="text-align: right;" value="0" required oninput="calcRow(this)">
+                <input type="number" step="any" min="0.001" name="items[${rowIndex}][quantity]" class="form-control row-qty font-monospace" style="text-align: right;" value="0" required oninput="calcRow(this)">
             </td>
             <td>
                 <input type="number" step="0.01" min="0" name="items[${rowIndex}][bill_rate]" class="form-control row-bill-rate font-monospace" style="text-align: right;" value="0.00" required oninput="calcRow(this)">
@@ -755,10 +817,10 @@
                 <input type="number" step="0.01" min="0" name="items[${rowIndex}][ub_rate]" class="form-control row-ub-rate font-monospace" style="text-align: right;" value="0.00" oninput="calcRow(this)">
             </td>
             <td style="text-align: right;">
-                <span class="font-monospace text-dark font-weight-600 row-bill-amt">₹0.00</span>
+                <span class="font-monospace text-dark font-weight-700 row-bill-amt">₹0.00</span>
             </td>
             <td style="text-align: right;">
-                <span class="font-monospace font-weight-600 row-ub-amt" style="color: #D97706;">₹0.00</span>
+                <span class="font-monospace font-weight-700 row-ub-amt" style="color: #D97706;">₹0.00</span>
             </td>
             <td class="text-center">
                 <button type="button" class="delete-row-btn" onclick="removeRow(this)" title="Remove line item">
@@ -798,7 +860,6 @@
         const cleanTarget = targetUnit.toString().trim().toUpperCase();
         if (!cleanTarget) return;
 
-        // 1. Direct match on value, text, code, or name
         for (let i = 0; i < unitSelect.options.length; i++) {
             const opt = unitSelect.options[i];
             const optVal = (opt.value || '').trim().toUpperCase();
@@ -812,7 +873,6 @@
             }
         }
 
-        // 2. Fully dynamic match against synonyms loaded from the Unit Master
         for (let i = 0; i < unitSelect.options.length; i++) {
             const opt = unitSelect.options[i];
             const synAttr = (opt.getAttribute('data-synonyms') || '').trim().toUpperCase();
@@ -825,20 +885,6 @@
             }
         }
 
-        // 3. Dynamic partial/prefix matching on code or name
-        for (let i = 0; i < unitSelect.options.length; i++) {
-            const opt = unitSelect.options[i];
-            const optCode = (opt.getAttribute('data-code') || '').trim().toUpperCase();
-            const optName = (opt.getAttribute('data-name') || '').trim().toUpperCase();
-
-            if ((optCode && (cleanTarget.startsWith(optCode) || optCode.startsWith(cleanTarget))) ||
-                (optName && (cleanTarget.startsWith(optName) || optName.startsWith(cleanTarget)))) {
-                unitSelect.selectedIndex = i;
-                return;
-            }
-        }
-
-        // 4. Dynamic fallback: add target as an option if not found so selection never fails
         const newOpt = new Option(cleanTarget, cleanTarget, true, true);
         newOpt.setAttribute('data-code', cleanTarget);
         newOpt.setAttribute('data-name', cleanTarget);
@@ -874,20 +920,66 @@
         calcRow(selectEl);
     }
 
+    function onTaxModeToggle(cb) {
+        const isInclusive = cb.checked;
+        const badge = document.getElementById('tax-mode-badge');
+        const thRate = document.getElementById('th-bill-rate');
+        const hint = document.getElementById('tax-math-hint');
+
+        if (isInclusive) {
+            if (badge) {
+                badge.textContent = 'GST-Inclusive';
+                badge.style.background = '#ECFDF5';
+                badge.style.color = '#059669';
+            }
+            if (thRate) {
+                thRate.innerHTML = 'BILL RATE (₹) <span style="font-size:0.7rem; color:#059669;">(Inc. GST)</span> <span class="text-danger">*</span>';
+            }
+            if (hint) {
+                hint.innerHTML = '<strong>GST-Inclusive</strong>: Tax extracted from Bill Rate without double counting &bull; <strong>U-B Total</strong> = Net Wt &times; U-B Rate';
+            }
+        } else {
+            if (badge) {
+                badge.textContent = 'Exclusive';
+                badge.style.background = '#E2E8F0';
+                badge.style.color = '#475569';
+            }
+            if (thRate) {
+                thRate.innerHTML = 'BILL RATE (₹) <span class="text-danger">*</span>';
+            }
+            if (hint) {
+                hint.innerHTML = '<strong>Exclusive</strong>: Bill Rate &times; Net Wt + GST &bull; <strong>U-B Total</strong> = Net Wt &times; U-B Rate';
+            }
+        }
+
+        document.querySelectorAll('#purchase-items-body .item-row').forEach(row => {
+            calcRow(row.querySelector('.row-qty'));
+        });
+    }
+
     function calcRow(el) {
         const row = el.closest('tr');
         const qty = parseFloat(row.querySelector('.row-qty').value) || 0;
         const billRate = parseFloat(row.querySelector('.row-bill-rate').value) || 0;
         const ubRate = parseFloat(row.querySelector('.row-ub-rate').value) || 0;
         const gstPercent = parseFloat(row.querySelector('.row-gst').value) || 0;
+        const isInclusive = document.getElementById('field-is-gst-inclusive')?.checked;
 
         const actualRate = billRate + ubRate;
         row.querySelector('.row-actual').value = actualRate.toFixed(2);
 
-        const billAmt = qty * billRate;
+        let lineBillTotal = 0;
+        if (isInclusive) {
+            lineBillTotal = qty * billRate;
+        } else {
+            const lineTaxable = qty * billRate;
+            const lineTax = lineTaxable * (gstPercent / 100);
+            lineBillTotal = lineTaxable + lineTax;
+        }
+
         const ubAmt = qty * ubRate;
 
-        row.querySelector('.row-bill-amt').textContent = '₹' + billAmt.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        row.querySelector('.row-bill-amt').textContent = '₹' + lineBillTotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         row.querySelector('.row-ub-amt').textContent = '₹' + ubAmt.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
         updateLiveSummary();
@@ -901,23 +993,68 @@
 
         if (selected && selected.value) {
             const name = selected.getAttribute('data-name');
-            prevTitle.textContent = name;
-            prevVendor.textContent = name;
-            prevAvatar.textContent = name.substring(0, 2).toUpperCase();
+            if (prevTitle) prevTitle.textContent = name;
+            if (prevVendor) prevVendor.textContent = name;
+            if (prevAvatar) prevAvatar.textContent = name.substring(0, 2).toUpperCase();
+        }
+        updateLiveSummary();
+    }
+
+    function onTransporterSelect(sel) {
+        const selected = sel.selectedOptions[0];
+        const transportNameInput = document.getElementById('field-transport-name');
+        if (selected && selected.value) {
+            const name = selected.getAttribute('data-name');
+            if (transportNameInput) {
+                transportNameInput.value = name;
+            }
+        }
+        updateLiveSummary();
+    }
+
+    function onPaymentTermsChange(sel) {
+        const advGroup = document.getElementById('advance-amount-group');
+        const advInput = document.getElementById('field-advance-amount');
+        if (sel.value === 'Advance') {
+            if (advGroup) advGroup.style.display = 'block';
+            if (advInput && parseFloat(advInput.value) > 0) {
+                onAdvanceAmountInput();
+            }
         } else {
-            prevTitle.textContent = 'Purchase Voucher';
-            prevVendor.textContent = 'Select Vendor...';
-            prevAvatar.textContent = 'PE';
+            if (advGroup) advGroup.style.display = 'none';
+        }
+    }
+
+    function onAdvanceAmountInput() {
+        const advInput = document.getElementById('field-advance-amount');
+        const paidInput = document.getElementById('field-paid-amount');
+        const paymentStatus = document.getElementById('field-payment-status');
+        const advVal = parseFloat(advInput?.value) || 0;
+
+        if (paidInput) {
+            paidInput.value = advVal.toFixed(2);
+        }
+
+        const grandVal = typeof window.currentGrandTotal === 'number' ? window.currentGrandTotal : 0;
+        if (paymentStatus) {
+            if (advVal <= 0) {
+                paymentStatus.value = 'unpaid';
+            } else if (grandVal > 0 && advVal >= grandVal - 0.01) {
+                paymentStatus.value = 'paid';
+            } else {
+                paymentStatus.value = 'partial';
+            }
         }
         updateLiveSummary();
     }
 
     function updateLiveSummary() {
         let totalQty = 0;
-        let totalBillSubtotal = 0;
+        let totalTaxableSubtotal = 0;
         let totalTax = 0;
         let totalUB = 0;
         let itemCount = 0;
+        const isInclusive = document.getElementById('field-is-gst-inclusive')?.checked;
 
         document.querySelectorAll('#purchase-items-body .item-row').forEach(row => {
             const qty = parseFloat(row.querySelector('.row-qty').value) || 0;
@@ -925,26 +1062,37 @@
             const ubRate = parseFloat(row.querySelector('.row-ub-rate').value) || 0;
             const gstPercent = parseFloat(row.querySelector('.row-gst').value) || 0;
 
-            const lineBill = qty * billRate;
-            const lineTax = lineBill * (gstPercent / 100);
+            let lineTaxable = 0;
+            let lineTax = 0;
+
+            if (isInclusive) {
+                const lineTotal = qty * billRate;
+                lineTaxable = lineTotal / (1 + (gstPercent / 100));
+                lineTax = lineTotal - lineTaxable;
+            } else {
+                lineTaxable = qty * billRate;
+                lineTax = lineTaxable * (gstPercent / 100);
+            }
+
             const lineUB = qty * ubRate;
 
             totalQty += qty;
-            totalBillSubtotal += lineBill;
+            totalTaxableSubtotal += lineTaxable;
             totalTax += lineTax;
             totalUB += lineUB;
             itemCount++;
         });
 
         const freightAmount = parseFloat(document.getElementById('field-freight-amount')?.value) || 0;
-        const totalBill = totalBillSubtotal + totalTax;
-        const grandTotal = totalBill + totalUB + freightAmount;
+        const officialBillTotal = totalTaxableSubtotal + totalTax;
+        const grandTotal = officialBillTotal + totalUB + freightAmount;
         window.currentGrandTotal = grandTotal;
 
         // Footer Totals
         document.getElementById('footer-total-qty').textContent = totalQty.toFixed(3);
-        document.getElementById('footer-bill-subtotal').textContent = '₹' + totalBillSubtotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById('footer-bill-subtotal').textContent = '₹' + totalTaxableSubtotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         document.getElementById('footer-tax-total').textContent = '₹' + totalTax.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        
         const footerFreight = document.getElementById('footer-freight-total');
         if (footerFreight) {
             footerFreight.textContent = '₹' + freightAmount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -952,23 +1100,10 @@
         document.getElementById('footer-ub-total').textContent = '₹' + totalUB.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         document.getElementById('footer-grand-total').textContent = '₹' + grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-        // Auto-set Paid Amount to Total Grand Value
-        if (typeof isAutoSyncPaid === 'undefined' || isAutoSyncPaid) {
-            const paidInput = document.getElementById('field-paid-amount');
-            const paymentStatus = document.getElementById('field-payment-status');
-            if (paidInput) {
-                paidInput.value = grandTotal > 0 ? grandTotal.toFixed(2) : '0.00';
-            }
-            if (paymentStatus) {
-                paymentStatus.value = grandTotal > 0 ? 'paid' : 'unpaid';
-            }
-        }
-
-        // Calculate Paid & Pending Collection
+        // Calculate Paid & Pending Balance
         const paidVal = parseFloat(document.getElementById('field-paid-amount')?.value) || 0;
         const pendingAmount = Math.max(0, grandTotal - paidVal);
 
-        // Update Section 3 Pending Input
         const pendingInput = document.getElementById('field-pending-amount');
         const pendingIcon = document.getElementById('pending-amount-icon');
         const pendingHint = document.getElementById('pending-amount-hint');
@@ -994,19 +1129,17 @@
                     pendingIcon.style.color = '#DC2626';
                 }
                 if (pendingHint) {
-                    pendingHint.innerHTML = '<span style="color: #DC2626; font-weight: 600;"><i class="fa-solid fa-triangle-exclamation me-1"></i>Pending payable collection to vendor</span>';
+                    pendingHint.innerHTML = '<span style="color: #DC2626; font-weight: 600;"><i class="fa-solid fa-triangle-exclamation me-1"></i>Pending balance payable to vendor</span>';
                 }
             }
         }
 
-        // Update Footer Pending Total
         const footerPendingEl = document.getElementById('footer-pending-total');
         if (footerPendingEl) {
             footerPendingEl.textContent = '₹' + pendingAmount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             footerPendingEl.style.color = pendingAmount <= 0.001 ? '#059669' : '#DC2626';
         }
 
-        // Update Summary Bar Paid & Pending
         const summaryPaidEl = document.getElementById('summary-paid-amount');
         if (summaryPaidEl) {
             summaryPaidEl.textContent = '₹' + paidVal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -1017,60 +1150,20 @@
             summaryPendingEl.style.color = pendingAmount <= 0.001 ? '#059669' : '#DC2626';
         }
 
-        const hintGrandEl = document.getElementById('hint-grand-total');
-        if (hintGrandEl) {
-            hintGrandEl.textContent = '₹' + grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        }
-
-        // Sidebar Live Preview
+        // Live Preview Metrics
         document.getElementById('prev-grand-total').textContent = '₹' + grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        document.getElementById('prev-net-wt').textContent = totalQty.toFixed(3);
-        document.getElementById('prev-bill-sub').textContent = '₹' + totalBillSubtotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById('prev-net-wt').textContent = totalQty.toFixed(3) + ' KG';
+        document.getElementById('prev-bill-sub').textContent = '₹' + totalTaxableSubtotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         document.getElementById('prev-tax-amt').textContent = '₹' + totalTax.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        
         const prevFreightEl = document.getElementById('prev-freight-amt');
         if (prevFreightEl) {
             prevFreightEl.textContent = '₹' + freightAmount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         }
-        document.getElementById('prev-bill-total').textContent = '₹' + totalBill.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         document.getElementById('prev-ub-total').textContent = '₹' + totalUB.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        document.getElementById('prev-item-count').textContent = `${itemCount} Item(s)`;
-
-        const invNo = document.getElementById('field-invoice-no').value.trim();
-        document.getElementById('prev-inv-ref').textContent = invNo ? invNo : '—';
-
-        const orderTypeEl = document.getElementById('field-order-type');
-        if (orderTypeEl) {
-            document.getElementById('prev-order-type').textContent = orderTypeEl.value;
-        }
     }
 
-    let isAutoSyncPaid = {{ ($purchase->payment_status === 'paid' || abs((float)$purchase->paid_amount - (float)$purchase->grand_total) < 0.01) ? 'true' : 'false' }};
-
-    function setAutoSync(enabled) {
-        isAutoSyncPaid = enabled;
-        const badge = document.getElementById('auto-sync-status-badge');
-        const hint = document.getElementById('paid-amount-hint');
-        if (badge) {
-            if (enabled) {
-                badge.style.display = 'inline-block';
-                badge.innerHTML = '<i class="fa-solid fa-arrows-rotate fa-spin-pulse me-1"></i> Auto-Syncing';
-                badge.style.background = '#E8F5E9';
-                badge.style.color = '#2E7D32';
-                badge.style.borderColor = '#A5D6A7';
-            } else {
-                badge.style.display = 'inline-block';
-                badge.innerHTML = '<i class="fa-solid fa-pen me-1"></i> Manual Entry';
-                badge.style.background = '#FEF3C7';
-                badge.style.color = '#B45309';
-                badge.style.borderColor = '#FCD34D';
-            }
-        }
-    }
-
-    function setPaidAmountToGrandTotal(enableAuto = true) {
-        if (enableAuto) {
-            setAutoSync(true);
-        }
+    function setPaidAmountToGrandTotal() {
         const val = typeof window.currentGrandTotal === 'number' ? window.currentGrandTotal : 0;
         const paidInput = document.getElementById('field-paid-amount');
         const paymentStatus = document.getElementById('field-payment-status');
@@ -1092,7 +1185,7 @@
         }, 1200);
 
         if (window.toastr) {
-            toastr.success(`Paid Amount automatically synchronized to Total Grand Value: ₹${val.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`);
+            toastr.success(`Paid Amount set to Total Grand Value: ₹${val.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`);
         }
         updateLiveSummary();
     }
@@ -1104,13 +1197,9 @@
 
         const val = typeof window.currentGrandTotal === 'number' ? window.currentGrandTotal : 0;
         if (paymentStatus.value === 'paid') {
-            setAutoSync(true);
             paidInput.value = val > 0 ? val.toFixed(2) : '0.00';
         } else if (paymentStatus.value === 'unpaid') {
-            setAutoSync(false);
             paidInput.value = '0.00';
-        } else if (paymentStatus.value === 'partial') {
-            setAutoSync(false);
         }
         updateLiveSummary();
     }
@@ -1122,10 +1211,6 @@
 
         const paidVal = parseFloat(paidInput.value) || 0;
         const grandVal = typeof window.currentGrandTotal === 'number' ? window.currentGrandTotal : 0;
-
-        if (Math.abs(paidVal - grandVal) > 0.01) {
-            setAutoSync(false);
-        }
 
         if (paidVal <= 0) {
             paymentStatus.value = 'unpaid';
@@ -1162,8 +1247,17 @@
         }
     }
 
+
+
     document.addEventListener('DOMContentLoaded', () => {
-        setAutoSync(isAutoSyncPaid);
+        document.querySelectorAll('#purchase-items-body .item-row').forEach(row => {
+            const qty = row.querySelector('.row-qty');
+            if (qty) calcRow(qty);
+        });
+        const gstInc = document.getElementById('field-is-gst-inclusive');
+        if (gstInc && gstInc.checked) {
+            onTaxModeToggle(gstInc);
+        }
         updateLiveSummary();
     });
 </script>

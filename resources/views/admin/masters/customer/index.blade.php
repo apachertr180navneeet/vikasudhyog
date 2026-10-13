@@ -274,7 +274,15 @@
 
                             <!-- Actions -->
                             <td style="text-align: right; padding-right: 1.5rem;">
-                                <div class="erp-actions-cell" style="justify-content: flex-end;">
+                                <div class="erp-actions-cell" style="justify-content: flex-end; gap: 0.35rem;">
+                                    @if($customer->phone)
+                                        <a href="https://wa.me/91{{ preg_replace('/[^0-9]/', '', $customer->phone) }}" target="_blank" class="erp-table-action-icon text-success" title="Chat on WhatsApp">
+                                            <i class="fa-brands fa-whatsapp"></i>
+                                        </a>
+                                    @endif
+                                    <a href="{{ route('admin.transactions.sales-entry.create') }}?customer_id={{ $customer->id }}" class="erp-table-action-icon text-primary" title="Create New Sale">
+                                        <i class="fa-solid fa-cart-plus"></i>
+                                    </a>
                                     <a href="{{ route('admin.masters.customer.show', $customer->id) }}" class="erp-table-action-icon" title="View Profile">
                                         <i class="fa-regular fa-eye"></i>
                                     </a>

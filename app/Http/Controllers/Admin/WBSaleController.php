@@ -259,7 +259,7 @@ class WBSaleController extends Controller
      */
     public function show(WBSale $wbSale)
     {
-        $wbSale->load(['customer', 'broker', 'company', 'items.item.unitRelation']);
+        $wbSale->load(['customer', 'broker', 'company', 'transporter', 'items.item.unitRelation']);
         return view('admin.transactions.wb-sales.show', compact('wbSale'));
     }
 

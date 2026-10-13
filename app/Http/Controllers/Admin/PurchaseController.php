@@ -8,10 +8,13 @@ use App\Models\Company;
 use App\Models\Item;
 use App\Models\Purchase;
 use App\Models\PurchaseItem;
+use App\Models\Transporter;
 use App\Models\Unit;
 use App\Models\Vendor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class PurchaseController extends Controller
 {
@@ -115,9 +118,11 @@ class PurchaseController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'purchase_no' => 'required|string|max:30|unique:purchases,purchase_no',
+            'purchase_no' => 'required|string|max:50|unique:purchases,purchase_no',
             'bill_type' => 'nullable|string|in:with_bill,without_bill',
+            'is_gst_inclusive' => 'nullable|boolean',
             'invoice_no' => 'nullable|string|max:50',
+            'invoice_attachment' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:10240',
             'invoice_date' => 'required|date',
             'vendor_id' => 'required|exists:vendors,id',
             'broker_id' => 'nullable|exists:brokers,id',
@@ -125,10 +130,14 @@ class PurchaseController extends Controller
             'transport_name' => 'nullable|string|max:150',
             'vehicle_no' => 'nullable|string|max:50',
             'lr_no' => 'nullable|string|max:50',
+            'e_way_bill_no' => 'nullable|string|max:50',
+            'transport_date' => 'nullable|date',
+            'transport_notes' => 'nullable|string',
             'payment_terms' => 'nullable|string|max:50',
             'freight_amount' => 'nullable|numeric|min:0',
-            'payment_status' => 'nullable|string|in:unpaid,partial,paid',
+            'advance_amount' => 'nullable|numeric|min:0',
             'paid_amount' => 'nullable|numeric|min:0',
+            'payment_status' => 'nullable|string|in:unpaid,partial,paid',
             'notes' => 'nullable|string',
             'items' => 'required|array|min:1',
             'items.*.item_id' => 'required|exists:items,id',
@@ -146,6 +155,15 @@ class PurchaseController extends Controller
         try {
             $company = Company::first();
 
+            // Handle file attachment
+            $attachmentPath = null;
+            if ($request->hasFile('invoice_attachment')) {
+                $attachmentPath = $request->file('invoice_attachment')->store('attachments/invoices', 'public');
+            }
+
+            $transportName = $validated['transport_name'] ?? null;
+
+            $isGstInclusive = $request->boolean('is_gst_inclusive');
             $subtotal = 0;
             $taxAmount = 0;
             $underBillingTotal = 0;
@@ -158,11 +176,18 @@ class PurchaseController extends Controller
                 $actualRate = isset($itemRow['actual_rate']) && $itemRow['actual_rate'] !== null && $itemRow['actual_rate'] !== '' ? (float) $itemRow['actual_rate'] : ($billRate + $ubRate);
                 $gstPercent = isset($itemRow['gst_percent']) && $itemRow['gst_percent'] !== null && $itemRow['gst_percent'] !== '' ? (float) $itemRow['gst_percent'] : 5.0;
 
-                $lineSub = $qty * $billRate;
-                $lineTax = $lineSub * ($gstPercent / 100);
-                $lineUB = $qty * $ubRate;
-                $lineBillAmt = $lineSub + $lineTax;
-                $lineTotal = $lineBillAmt + $lineUB;
+                if ($isGstInclusive) {
+                    $lineBillAmt = round($qty * $billRate, 2);
+                    $lineSub = round($lineBillAmt / (1 + ($gstPercent / 100)), 2);
+                    $lineTax = round($lineBillAmt - $lineSub, 2);
+                } else {
+                    $lineSub = round($qty * $billRate, 2);
+                    $lineTax = round($lineSub * ($gstPercent / 100), 2);
+                    $lineBillAmt = round($lineSub + $lineTax, 2);
+                }
+
+                $lineUB = round($qty * $ubRate, 2);
+                $lineTotal = round($lineBillAmt + $lineUB, 2);
 
                 $subtotal += $lineSub;
                 $taxAmount += $lineTax;
@@ -189,17 +214,31 @@ class PurchaseController extends Controller
             $billTotal = $subtotal + $taxAmount;
             $grandTotal = $billTotal + $underBillingTotal + $freightAmount;
 
+            $advanceAmount = isset($validated['advance_amount']) ? (float)$validated['advance_amount'] : 0.0;
+            $paidAmount = isset($validated['paid_amount']) ? (float)$validated['paid_amount'] : 0.0;
+            if (($validated['payment_terms'] ?? '') === 'Advance' && $advanceAmount > 0) {
+                $paidAmount = $advanceAmount;
+            }
+
+            $paymentStatus = $paidAmount <= 0 ? 'unpaid' : ($paidAmount >= $grandTotal ? 'paid' : 'partial');
+
             $purchase = Purchase::create([
                 'purchase_no' => $validated['purchase_no'],
                 'bill_type' => $validated['bill_type'] ?? 'with_bill',
+                'is_gst_inclusive' => $isGstInclusive,
                 'invoice_no' => $validated['invoice_no'] ?? null,
+                'invoice_attachment' => $attachmentPath,
                 'invoice_date' => $validated['invoice_date'],
                 'vendor_id' => $validated['vendor_id'],
                 'broker_id' => $validated['broker_id'] ?? null,
                 'order_type' => $validated['order_type'] ?? 'Medium',
-                'transport_name' => $validated['transport_name'] ?? null,
+                'transporter_id' => null,
+                'transport_name' => $transportName,
                 'vehicle_no' => $validated['vehicle_no'] ?? null,
                 'lr_no' => $validated['lr_no'] ?? null,
+                'e_way_bill_no' => $validated['e_way_bill_no'] ?? null,
+                'transport_date' => $validated['transport_date'] ?? null,
+                'transport_notes' => $validated['transport_notes'] ?? null,
                 'payment_terms' => $validated['payment_terms'] ?? '30 Days',
                 'freight_amount' => $freightAmount,
                 'subtotal' => $subtotal,
@@ -208,8 +247,9 @@ class PurchaseController extends Controller
                 'under_billing_total' => $underBillingTotal,
                 'round_off' => 0.00,
                 'grand_total' => $grandTotal,
-                'paid_amount' => $validated['paid_amount'] ?? 0.00,
-                'payment_status' => $validated['payment_status'] ?? 'unpaid',
+                'paid_amount' => $paidAmount,
+                'advance_amount' => $advanceAmount,
+                'payment_status' => $paymentStatus,
                 'company_id' => $company ? $company->id : null,
                 'status' => 'received', // Auto-default to received
                 'notes' => $validated['notes'] ?? null,
@@ -247,7 +287,7 @@ class PurchaseController extends Controller
      */
     public function show(Purchase $purchase)
     {
-        $purchase->load(['vendor', 'broker', 'company', 'items.item.unitRelation']);
+        $purchase->load(['vendor', 'broker', 'company', 'transporter', 'items.item.unitRelation']);
         return view('admin.transactions.purchase.show', compact('purchase'));
     }
 
@@ -277,8 +317,12 @@ class PurchaseController extends Controller
     public function update(Request $request, Purchase $purchase)
     {
         $validated = $request->validate([
+            'purchase_no' => ['required', 'string', 'max:50', Rule::unique('purchases', 'purchase_no')->ignore($purchase->id)],
             'bill_type' => 'nullable|string|in:with_bill,without_bill',
+            'is_gst_inclusive' => 'nullable|boolean',
             'invoice_no' => 'nullable|string|max:50',
+            'invoice_attachment' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:10240',
+            'remove_attachment' => 'nullable|boolean',
             'invoice_date' => 'required|date',
             'vendor_id' => 'required|exists:vendors,id',
             'broker_id' => 'nullable|exists:brokers,id',
@@ -286,10 +330,14 @@ class PurchaseController extends Controller
             'transport_name' => 'nullable|string|max:150',
             'vehicle_no' => 'nullable|string|max:50',
             'lr_no' => 'nullable|string|max:50',
+            'e_way_bill_no' => 'nullable|string|max:50',
+            'transport_date' => 'nullable|date',
+            'transport_notes' => 'nullable|string',
             'payment_terms' => 'nullable|string|max:50',
             'freight_amount' => 'nullable|numeric|min:0',
-            'payment_status' => 'nullable|string|in:unpaid,partial,paid',
+            'advance_amount' => 'nullable|numeric|min:0',
             'paid_amount' => 'nullable|numeric|min:0',
+            'payment_status' => 'nullable|string|in:unpaid,partial,paid',
             'notes' => 'nullable|string',
             'items' => 'required|array|min:1',
             'items.*.item_id' => 'required|exists:items,id',
@@ -305,6 +353,20 @@ class PurchaseController extends Controller
 
         DB::beginTransaction();
         try {
+            // Handle file attachment
+            $attachmentPath = $purchase->invoice_attachment;
+            if ($request->hasFile('invoice_attachment')) {
+                if (!empty($purchase->invoice_attachment) && Storage::disk('public')->exists($purchase->invoice_attachment)) {
+                    Storage::disk('public')->delete($purchase->invoice_attachment);
+                }
+                $attachmentPath = $request->file('invoice_attachment')->store('attachments/invoices', 'public');
+            } elseif ($request->boolean('remove_attachment')) {
+                if (!empty($purchase->invoice_attachment) && Storage::disk('public')->exists($purchase->invoice_attachment)) {
+                    Storage::disk('public')->delete($purchase->invoice_attachment);
+                }
+                $attachmentPath = null;
+            }
+
             // Revert previous stock and vendor balance
             foreach ($purchase->items as $oldItem) {
                 $item = Item::find($oldItem->item_id);
@@ -316,6 +378,9 @@ class PurchaseController extends Controller
                 $oldVendor->decrement('current_balance', $purchase->grand_total);
             }
 
+            $transportName = $validated['transport_name'] ?? null;
+
+            $isGstInclusive = $request->boolean('is_gst_inclusive');
             $subtotal = 0;
             $taxAmount = 0;
             $underBillingTotal = 0;
@@ -328,11 +393,18 @@ class PurchaseController extends Controller
                 $actualRate = isset($itemRow['actual_rate']) && $itemRow['actual_rate'] !== null && $itemRow['actual_rate'] !== '' ? (float) $itemRow['actual_rate'] : ($billRate + $ubRate);
                 $gstPercent = isset($itemRow['gst_percent']) && $itemRow['gst_percent'] !== null && $itemRow['gst_percent'] !== '' ? (float) $itemRow['gst_percent'] : 5.0;
 
-                $lineSub = $qty * $billRate;
-                $lineTax = $lineSub * ($gstPercent / 100);
-                $lineUB = $qty * $ubRate;
-                $lineBillAmt = $lineSub + $lineTax;
-                $lineTotal = $lineBillAmt + $lineUB;
+                if ($isGstInclusive) {
+                    $lineBillAmt = round($qty * $billRate, 2);
+                    $lineSub = round($lineBillAmt / (1 + ($gstPercent / 100)), 2);
+                    $lineTax = round($lineBillAmt - $lineSub, 2);
+                } else {
+                    $lineSub = round($qty * $billRate, 2);
+                    $lineTax = round($lineSub * ($gstPercent / 100), 2);
+                    $lineBillAmt = round($lineSub + $lineTax, 2);
+                }
+
+                $lineUB = round($qty * $ubRate, 2);
+                $lineTotal = round($lineBillAmt + $lineUB, 2);
 
                 $subtotal += $lineSub;
                 $taxAmount += $lineTax;
@@ -359,16 +431,31 @@ class PurchaseController extends Controller
             $billTotal = $subtotal + $taxAmount;
             $grandTotal = $billTotal + $underBillingTotal + $freightAmount;
 
+            $advanceAmount = isset($validated['advance_amount']) ? (float)$validated['advance_amount'] : ($purchase->advance_amount ?? 0.0);
+            $paidAmount = isset($validated['paid_amount']) ? (float)$validated['paid_amount'] : $purchase->paid_amount;
+            if (($validated['payment_terms'] ?? '') === 'Advance' && isset($validated['advance_amount']) && $advanceAmount > 0) {
+                $paidAmount = $advanceAmount;
+            }
+
+            $paymentStatus = $paidAmount <= 0 ? 'unpaid' : ($paidAmount >= $grandTotal ? 'paid' : 'partial');
+
             $purchase->update([
+                'purchase_no' => $validated['purchase_no'],
                 'bill_type' => $validated['bill_type'] ?? $purchase->bill_type ?? 'with_bill',
+                'is_gst_inclusive' => $isGstInclusive,
                 'invoice_no' => $validated['invoice_no'] ?? null,
+                'invoice_attachment' => $attachmentPath,
                 'invoice_date' => $validated['invoice_date'],
                 'vendor_id' => $validated['vendor_id'],
                 'broker_id' => $validated['broker_id'] ?? null,
                 'order_type' => $validated['order_type'] ?? 'Medium',
-                'transport_name' => $validated['transport_name'] ?? null,
+                'transporter_id' => null,
+                'transport_name' => $transportName,
                 'vehicle_no' => $validated['vehicle_no'] ?? null,
                 'lr_no' => $validated['lr_no'] ?? null,
+                'e_way_bill_no' => $validated['e_way_bill_no'] ?? null,
+                'transport_date' => $validated['transport_date'] ?? null,
+                'transport_notes' => $validated['transport_notes'] ?? null,
                 'payment_terms' => $validated['payment_terms'] ?? '30 Days',
                 'freight_amount' => $freightAmount,
                 'subtotal' => $subtotal,
@@ -377,8 +464,9 @@ class PurchaseController extends Controller
                 'under_billing_total' => $underBillingTotal,
                 'round_off' => 0.00,
                 'grand_total' => $grandTotal,
-                'paid_amount' => $validated['paid_amount'] ?? $purchase->paid_amount,
-                'payment_status' => $validated['payment_status'] ?? $purchase->payment_status,
+                'paid_amount' => $paidAmount,
+                'advance_amount' => $advanceAmount,
+                'payment_status' => $paymentStatus,
                 'notes' => $validated['notes'] ?? null,
             ]);
 

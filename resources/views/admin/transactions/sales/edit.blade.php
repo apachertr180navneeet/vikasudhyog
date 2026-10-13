@@ -54,7 +54,7 @@
     @endif
 
     <!-- Form Container -->
-    <form action="{{ route('admin.transactions.sales-entry.update', $sale) }}" method="POST" id="sales-form" onsubmit="return validateStockBeforeSubmit(event)">
+    <form action="{{ route('admin.transactions.sales-entry.update', $sale) }}" method="POST" id="sales-form" enctype="multipart/form-data" onsubmit="return validateStockBeforeSubmit(event)">
         @csrf
         @method('PUT')
 
@@ -75,16 +75,16 @@
                 </div>
 
                 <div class="erp-form-section-body-4col">
-                    <!-- Invoice / Voucher No (Readonly) -->
+                    <!-- Invoice / Voucher No (Editable) -->
                     <div class="form-group">
                         <label class="erp-field-label">
                             Invoice No <span class="erp-req-star">*</span>
                         </label>
                         <div class="erp-field-icon-wrap">
                             <i class="fa-solid fa-hashtag erp-field-icon"></i>
-                            <input type="text" class="form-control erp-field-input-iconified erp-field-input-mono font-weight-bold" value="{{ $sale->sale_no }}" readonly>
+                            <input type="text" name="sale_no" id="field-sale-no" class="form-control erp-field-input-iconified erp-field-input-mono font-weight-bold" value="{{ old('sale_no', $sale->sale_no) }}" required>
                         </div>
-                        <span class="erp-field-hint">Fixed outward sales reference</span>
+                        <span class="erp-field-hint">Outward sales reference (Editable)</span>
                     </div>
 
                     <!-- Sale Date -->
@@ -111,16 +111,21 @@
                         <span class="erp-field-hint">Buyer purchase order or challan reference</span>
                     </div>
 
-                    <!-- Vehicle / Transport No -->
+                    <!-- Order Priority / Type -->
                     <div class="form-group">
                         <label class="erp-field-label">
-                            Vehicle / Transport No
+                            Order Priority / Type <span class="erp-req-star">*</span>
                         </label>
                         <div class="erp-field-icon-wrap">
-                            <i class="fa-solid fa-truck-moving erp-field-icon"></i>
-                            <input type="text" name="vehicle_no" id="field-vehicle-no" class="form-control erp-field-input-iconified erp-field-input-mono" placeholder="Enter vehicle registration number" value="{{ old('vehicle_no', $sale->vehicle_no) }}" oninput="this.value = this.value.toUpperCase(); updateLiveSummary();">
+                            <i class="fa-solid fa-tag erp-field-icon"></i>
+                            <select name="order_type" id="field-order-type" class="form-control erp-field-input-iconified" required onchange="updateLiveSummary()">
+                                <option value="Medium" {{ old('order_type', $sale->order_type) === 'Medium' ? 'selected' : '' }}>Medium (Standard Processing)</option>
+                                <option value="Urgent" {{ old('order_type', $sale->order_type) === 'Urgent' ? 'selected' : '' }}>Urgent Consignment</option>
+                                <option value="Fast" {{ old('order_type', $sale->order_type) === 'Fast' ? 'selected' : '' }}>Fast Track</option>
+                                <option value="Ready Delivery" {{ old('order_type', $sale->order_type) === 'Ready Delivery' ? 'selected' : '' }}>Ready Delivery</option>
+                            </select>
                         </div>
-                        <span class="erp-field-hint">Dispatch transport or truck registration</span>
+                        <span class="erp-field-hint">Operational dispatch priority</span>
                     </div>
 
                     <!-- Customer Firm Select (Spans 2 Columns) -->
@@ -161,31 +166,14 @@
                         <span class="erp-field-hint">Commission tracking agent</span>
                     </div>
 
-                    <!-- Order Urgency / Type -->
+                    <!-- Payment Terms -->
                     <div class="form-group">
-                        <label class="erp-field-label">
-                            Order Priority / Type <span class="erp-req-star">*</span>
-                        </label>
-                        <div class="erp-field-icon-wrap">
-                            <i class="fa-solid fa-tag erp-field-icon"></i>
-                            <select name="order_type" id="field-order-type" class="form-control erp-field-input-iconified" required onchange="updateLiveSummary()">
-                                <option value="Medium" {{ old('order_type', $sale->order_type) === 'Medium' ? 'selected' : '' }}>Medium (Standard Processing)</option>
-                                <option value="Urgent" {{ old('order_type', $sale->order_type) === 'Urgent' ? 'selected' : '' }}>Urgent Consignment</option>
-                                <option value="Fast" {{ old('order_type', $sale->order_type) === 'Fast' ? 'selected' : '' }}>Fast Track</option>
-                                <option value="Ready Delivery" {{ old('order_type', $sale->order_type) === 'Ready Delivery' ? 'selected' : '' }}>Ready Delivery</option>
-                            </select>
-                        </div>
-                        <span class="erp-field-hint">Operational dispatch priority</span>
-                    </div>
-
-                    <!-- Payment Terms (Spans 2 Columns) -->
-                    <div class="form-group erp-col-span-2">
                         <label class="erp-field-label">
                             Payment Terms
                         </label>
                         <div class="erp-field-icon-wrap">
                             <i class="fa-solid fa-clock erp-field-icon"></i>
-                            <select name="payment_terms" class="form-control erp-field-input-iconified">
+                            <select name="payment_terms" id="field-payment-terms" class="form-control erp-field-input-iconified" onchange="onPaymentTermsChange(this)">
                                 <option value="Advance" {{ old('payment_terms', $sale->payment_terms) === 'Advance' ? 'selected' : '' }}>Advance (Advance Payment)</option>
                                 <option value="Cash" {{ old('payment_terms', $sale->payment_terms) === 'Cash' ? 'selected' : '' }}>Cash on Delivery (Immediate)</option>
                                 <option value="15 Days" {{ old('payment_terms', $sale->payment_terms) === '15 Days' ? 'selected' : '' }}>Credit 15 Days</option>
@@ -195,6 +183,42 @@
                             </select>
                         </div>
                         <span class="erp-field-hint">Agreed credit collection terms</span>
+                    </div>
+
+                    <!-- Advance Amount (Shown when Payment Terms == 'Advance') -->
+                    <div class="form-group" id="advance-amount-group" style="{{ old('payment_terms', $sale->payment_terms) === 'Advance' ? '' : 'display: none;' }}">
+                        <label class="erp-field-label">
+                            Advance Received (₹) <span class="erp-req-star">*</span>
+                        </label>
+                        <div class="erp-field-icon-wrap">
+                            <i class="fa-solid fa-money-bill-wave erp-field-icon" style="color: #5B841E;"></i>
+                            <input type="number" step="0.01" min="0" name="advance_amount" id="field-advance-amount" class="form-control erp-field-input-iconified erp-field-input-mono font-weight-700" placeholder="Enter advance received" value="{{ old('advance_amount', $sale->advance_amount ?? '0.00') }}" oninput="onAdvanceAmountInput()">
+                        </div>
+                        <span class="erp-field-hint">Advance payment collected upon booking/order</span>
+                    </div>
+
+                    <!-- Invoice Attachment Upload / Preview -->
+                    <div class="form-group {{ old('payment_terms', $sale->payment_terms) === 'Advance' ? 'erp-col-span-3' : 'erp-col-span-4' }}">
+                        <label class="erp-field-label">
+                            Sales Invoice / PO Attachment <span class="text-muted">(PDF, JPG, JPEG, PNG - Max 10MB)</span>
+                        </label>
+                        @if($sale->invoice_attachment)
+                            <div class="mb-2 p-2 rounded" style="background: #F8FAFC; border: 1px solid #E2E8F0; display: flex; align-items: center; justify-content: space-between;">
+                                <div style="font-size: 0.82rem; display: flex; align-items: center; gap: 0.5rem; color: #334155;">
+                                    <i class="fa-solid fa-file-lines text-primary"></i>
+                                    <span class="font-weight-600">Current File:</span>
+                                    <span class="text-truncate font-monospace" style="max-width: 260px;">{{ basename($sale->invoice_attachment) }}</span>
+                                </div>
+                                <a href="{{ asset('storage/' . $sale->invoice_attachment) }}" target="_blank" class="btn btn-sm btn-outline" style="padding: 2px 10px; font-size: 0.75rem;">
+                                    <i class="fa-solid fa-arrow-up-right-from-square me-1"></i> View / Download
+                                </a>
+                            </div>
+                        @endif
+                        <div class="erp-field-icon-wrap">
+                            <i class="fa-solid fa-paperclip erp-field-icon"></i>
+                            <input type="file" name="invoice_attachment" id="field-invoice-attachment" class="form-control erp-field-input-iconified" accept=".pdf,.jpg,.jpeg,.png">
+                        </div>
+                        <span class="erp-field-hint">{{ $sale->invoice_attachment ? 'Select new file to replace existing attachment' : 'Upload sales order scan / buyer PO document' }}</span>
                     </div>
                 </div>
             </div>
@@ -208,22 +232,22 @@
                         </div>
                         <div>
                             <h3 class="erp-form-section-title">2. Transport &amp; Logistics Details</h3>
-                            <p class="erp-form-section-desc">Transporter name, vehicle registration number, bilty / LR number &amp; freight cartage charges</p>
+                            <p class="erp-form-section-desc">Transporter master, vehicle registration, bilty / LR number &amp; E-Way Bill</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="erp-form-section-body-4col">
-                    <!-- Transporter Name -->
+                    <!-- Transport Name Input -->
                     <div class="form-group">
                         <label class="erp-field-label">
-                            Transport / Transporter Name
+                            Transport Name / Carrier
                         </label>
                         <div class="erp-field-icon-wrap">
                             <i class="fa-solid fa-truck-fast erp-field-icon"></i>
-                            <input type="text" name="transport_name" id="field-transport-name" class="form-control erp-field-input-iconified" placeholder="Enter transport name" value="{{ old('transport_name', $sale->transport_name) }}" oninput="updateLiveSummary()">
+                            <input type="text" name="transport_name" id="field-transport-name" class="form-control erp-field-input-iconified" placeholder="Enter Transport Name" value="{{ old('transport_name', $sale->transport_name ?? $sale->transporter->name ?? '') }}" oninput="updateLiveSummary()">
                         </div>
-                        <span class="erp-field-hint">e.g. VRL Logistics, TCI Freight, Local Carrier</span>
+                        <span class="erp-field-hint">Transporter or logistics carrier company name</span>
                     </div>
 
                     <!-- Vehicle / Truck Number -->
@@ -261,10 +285,46 @@
                         </div>
                         <span class="erp-field-hint">Freight charges billed to Customer Grand Total</span>
                     </div>
+
+                    <!-- E-Way Bill Number -->
+                    <div class="form-group">
+                        <label class="erp-field-label">
+                            E-Way Bill Number
+                        </label>
+                        <div class="erp-field-icon-wrap">
+                            <i class="fa-solid fa-road erp-field-icon"></i>
+                            <input type="text" name="e_way_bill_no" id="field-e-way-bill-no" class="form-control erp-field-input-iconified erp-field-input-mono" placeholder="Enter 12-digit E-Way bill number" value="{{ old('e_way_bill_no', $sale->e_way_bill_no) }}">
+                        </div>
+                        <span class="erp-field-hint">Govt GST E-Way Bill portal number</span>
+                    </div>
+
+                    <!-- Transport / Dispatch Date -->
+                    <div class="form-group">
+                        <label class="erp-field-label">
+                            Transport / Dispatch Date
+                        </label>
+                        <div class="erp-field-icon-wrap">
+                            <i class="fa-solid fa-calendar-day erp-field-icon"></i>
+                            <input type="date" name="transport_date" id="field-transport-date" class="form-control erp-field-input-iconified" value="{{ old('transport_date', $sale->transport_date ? \Carbon\Carbon::parse($sale->transport_date)->format('Y-m-d') : date('Y-m-d')) }}">
+                        </div>
+                        <span class="erp-field-hint">Consignment dispatch / bilty date</span>
+                    </div>
+
+                    <!-- Transport Remarks / Notes (Spans 2 columns) -->
+                    <div class="form-group erp-col-span-2">
+                        <label class="erp-field-label">
+                            Transport Remarks / Logistics Notes
+                        </label>
+                        <div class="erp-field-icon-wrap">
+                            <i class="fa-solid fa-comment-dots erp-field-icon"></i>
+                            <input type="text" name="transport_notes" id="field-transport-notes" class="form-control erp-field-input-iconified" placeholder="Enter driver contact, route, notes" value="{{ old('transport_notes', $sale->transport_notes) }}">
+                        </div>
+                        <span class="erp-field-hint">Driver contact, destination details or delivery instructions</span>
+                    </div>
                 </div>
             </div>
 
-            <!-- 3. Outward Product Line Items (With Live Stock Check) -->
+            <!-- 3. Outward Product Line Items (With Live Stock Check & GST Mode) -->
             <div class="card erp-form-section-card">
                 <div class="erp-form-section-header">
                     <div class="erp-form-section-header-left">
@@ -276,9 +336,18 @@
                             <p class="erp-form-section-desc">Select outward items with live available stock checking, dual-rate official &amp; under-billing calculation</p>
                         </div>
                     </div>
-                    <button type="button" class="btn btn-outline erp-btn-add-row" style="font-size: 0.8rem; padding: 0.4rem 0.85rem;" onclick="addSalesRow()">
-                        <i class="fa-solid fa-plus me-1"></i> Add Line Item
-                    </button>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <label class="erp-tax-mode-toggle" style="display: inline-flex; align-items: center; gap: 0.45rem; cursor: pointer; font-size: 0.82rem; font-weight: 600; color: #334155; margin-bottom: 0; background: #F8FAFC; border: 1px solid #CBD5E1; padding: 5px 12px; border-radius: 8px;">
+                            <input type="checkbox" name="is_gst_inclusive" id="field-is-gst-inclusive" value="1" {{ old('is_gst_inclusive', $sale->is_gst_inclusive) ? 'checked' : '' }} onchange="onTaxModeToggle(this)" style="width: 16px; height: 16px; accent-color: #5B841E; cursor: pointer;">
+                            <span>GST-Inclusive Pricing</span>
+                            <span class="badge" id="tax-mode-badge" style="background: {{ old('is_gst_inclusive', $sale->is_gst_inclusive) ? '#ECFDF5' : '#E2E8F0' }}; color: {{ old('is_gst_inclusive', $sale->is_gst_inclusive) ? '#059669' : '#475569' }}; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px;">
+                                {{ old('is_gst_inclusive', $sale->is_gst_inclusive) ? 'GST-Inclusive' : 'Exclusive' }}
+                            </span>
+                        </label>
+                        <button type="button" class="btn btn-outline erp-btn-add-row" style="font-size: 0.8rem; padding: 0.4rem 0.85rem;" onclick="addSalesRow()">
+                            <i class="fa-solid fa-plus me-1"></i> Add Line Item
+                        </button>
+                    </div>
                 </div>
 
                 <div class="erp-form-section-body p-0 erp-form-section-body-table" style="display: block !important; padding: 0 !important; width: 100%;">
@@ -293,10 +362,10 @@
                                     <th style="width: 75px; text-align: center;">GST %</th>
                                     <th style="width: 105px;">UNIT TYPE <span class="text-danger">*</span></th>
                                     <th style="width: 115px; text-align: right;">DISPATCH QTY <span class="text-danger">*</span></th>
-                                    <th style="width: 125px; text-align: right;">BILL RATE (₹) <span class="text-danger">*</span></th>
+                                    <th style="width: 125px; text-align: right;" id="th-bill-rate">BILL RATE (₹) <span class="text-danger">*</span></th>
                                     <th style="width: 115px; text-align: right;">U-B RATE (₹)</th>
-                                    <th style="width: 125px; text-align: right;">BILL ARNT (₹)</th>
-                                    <th style="width: 125px; text-align: right;">U-B ARNT (₹)</th>
+                                    <th style="width: 125px; text-align: right;" id="th-bill-amt">BILL TOTAL (₹)</th>
+                                    <th style="width: 125px; text-align: right;">U-B TOTAL (₹)</th>
                                     <th style="width: 45px; text-align: center;"></th>
                                 </tr>
                             </thead>
@@ -368,8 +437,8 @@
                                                 @foreach($units as $u)
                                                     @php
                                                         $uVal = $u->code ?: $u->name;
-                                                         $isSelected = $u->matchesValue($rU);
-@endphp
+                                                        $isSelected = $u->matchesValue($rU);
+                                                    @endphp
                                                     <option value="{{ $uVal }}"
                                                             data-code="{{ $u->code }}"
                                                             data-name="{{ $u->name }}"
@@ -401,15 +470,10 @@
                                             <input type="number" step="0.01" min="0" name="items[{{ $idx }}][ub_rate]" class="form-control row-ub-rate font-monospace" style="text-align: right;" value="{{ number_format((float)($row['ub_rate'] ?? 0), 2, '.', '') }}" oninput="calcRow(this)">
                                         </td>
                                         <td style="text-align: right;">
-                                            @php
-                                                $rQty = (float)($row['quantity'] ?? 0);
-                                                $rBill = (float)($row['bill_rate'] ?? 0);
-                                                $rUb = (float)($row['ub_rate'] ?? 0);
-                                            @endphp
-                                            <span class="font-monospace text-dark font-weight-700 row-bill-amt">₹{{ number_format($rQty * $rBill, 2) }}</span>
+                                            <span class="font-monospace text-dark font-weight-700 row-bill-amt">₹0.00</span>
                                         </td>
                                         <td style="text-align: right;">
-                                            <span class="font-monospace font-weight-700 row-ub-amt" style="color: #D97706;">₹{{ number_format($rQty * $rUb, 2) }}</span>
+                                            <span class="font-monospace font-weight-700 row-ub-amt" style="color: #D97706;">₹0.00</span>
                                         </td>
                                         <td class="text-center">
                                             <button type="button" class="delete-row-btn" onclick="removeRow(this)" title="Remove line item">
@@ -422,15 +486,17 @@
                         </table>
                     </div>
 
-                    <!-- Unified Compact Action & Totals Toolbar -->
+                    <!-- Unified Action & Totals Toolbar -->
                     <div class="erp-table-action-bar">
                         <div style="display: flex; align-items: center; gap: 0.85rem; flex-wrap: wrap;">
                             <button type="button" class="btn btn-outline erp-btn-add-row" onclick="addSalesRow()">
                                 <i class="fa-solid fa-plus me-1"></i> Add Another Item Row
                             </button>
                             <span class="erp-table-action-hint">
-                                <i class="fa-solid fa-shield-halved me-1" style="color: #5B841E;"></i>
-                                <span><strong>Stock Check:</strong> Outward quantity is actively validated against available inward purchase stock.</span>
+                                <i class="fa-solid fa-calculator me-1" style="color: #5B841E;"></i>
+                                <span id="tax-math-hint">
+                                    {{ old('is_gst_inclusive', $sale->is_gst_inclusive) ? 'GST-Inclusive: Tax extracted from Bill Rate without double counting' : 'Exclusive: Bill Rate × Net Wt + GST' }} &bull; <strong>U-B Total</strong> = Net Wt &times; U-B Rate
+                                </span>
                             </span>
                         </div>
 
@@ -440,7 +506,7 @@
                                 <span class="erp-table-total-val font-monospace" id="footer-total-qty">0.000</span>
                             </div>
                             <div class="erp-table-total-item">
-                                <span class="erp-table-total-label">Bill Subtotal</span>
+                                <span class="erp-table-total-label">Taxable Subtotal</span>
                                 <span class="erp-table-total-val font-monospace" id="footer-bill-subtotal">₹0.00</span>
                             </div>
                             <div class="erp-table-total-item">
@@ -448,12 +514,12 @@
                                 <span class="erp-table-total-val font-monospace text-muted" id="footer-tax-total">₹0.00</span>
                             </div>
                             <div class="erp-table-total-item">
-                                <span class="erp-table-total-label" style="color: #D97706;">U-B Amount</span>
-                                <span class="erp-table-total-val font-monospace" style="color: #D97706;" id="footer-ub-total">₹0.00</span>
+                                <span class="erp-table-total-label" style="color: #2563EB;">Freight / Cartage</span>
+                                <span class="erp-table-total-val font-monospace" style="color: #2563EB;" id="footer-freight-total">₹0.00</span>
                             </div>
                             <div class="erp-table-total-item">
-                                <span class="erp-table-total-label">Freight / Cartage</span>
-                                <span class="erp-table-total-val font-monospace text-muted" id="footer-freight-total">₹0.00</span>
+                                <span class="erp-table-total-label" style="color: #D97706;">U-B Amount</span>
+                                <span class="erp-table-total-val font-monospace" style="color: #D97706;" id="footer-ub-total">₹0.00</span>
                             </div>
                             <div class="erp-table-total-item erp-table-total-grand" onclick="setPaidAmountToGrandTotal()" style="cursor: pointer;" title="Click to copy into Received Amount (₹)">
                                 <span class="erp-table-total-label" style="color: #059669; display: flex; align-items: center; justify-content: space-between; gap: 0.35rem;">
@@ -493,16 +559,16 @@
                                 Received Amount (₹)
                             </label>
                             <div style="display: flex; align-items: center; gap: 0.4rem;">
-                                <button type="button" class="btn btn-link p-0 text-decoration-none" style="font-size: 0.74rem; color: #5B841E; font-weight: 700; cursor: pointer; border: none; background: none;" onclick="setPaidAmountToGrandTotal(true)" title="Auto-fill with Total Grand Value">
+                                <button type="button" class="btn btn-link p-0 text-decoration-none" style="font-size: 0.74rem; color: #5B841E; font-weight: 700; cursor: pointer; border: none; background: none;" onclick="setPaidAmountToGrandTotal()" title="Fill with Total Grand Value">
                                     <i class="fa-solid fa-bolt me-1"></i> Match Total
                                 </button>
                             </div>
                         </div>
                         <div class="erp-field-icon-wrap">
                             <i class="fa-solid fa-indian-rupee-sign erp-field-icon"></i>
-                            <input type="number" step="0.01" min="0" name="paid_amount" id="field-paid-amount" class="form-control erp-field-input-iconified erp-field-input-mono" placeholder="Enter amount received" value="{{ old('paid_amount', $sale->paid_amount) }}" oninput="onPaidAmountInput()">
+                            <input type="number" step="0.01" min="0" name="paid_amount" id="field-paid-amount" class="form-control erp-field-input-iconified erp-field-input-mono font-weight-700" placeholder="0.00" value="{{ old('paid_amount', $sale->paid_amount) }}" oninput="onPaidAmountInput()">
                         </div>
-                        <span class="erp-field-hint" id="paid-amount-hint">Customer payment received</span>
+                        <span class="erp-field-hint" id="paid-amount-hint">Payment received from buyer</span>
                     </div>
 
                     <!-- Pending Customer Receivable (₹) -->
@@ -555,16 +621,20 @@
                         <span class="erp-voucher-metric-val font-monospace" id="prev-net-wt">0.000 KG</span>
                     </div>
                     <div class="erp-voucher-metric">
-                        <span class="erp-voucher-metric-label">Official Bill Total</span>
-                        <span class="erp-voucher-metric-val font-monospace" style="color: #2563EB;" id="prev-bill-total">₹0.00</span>
+                        <span class="erp-voucher-metric-label">Taxable Subtotal</span>
+                        <span class="erp-voucher-metric-val font-monospace" style="color: #2563EB;" id="prev-bill-sub">₹0.00</span>
+                    </div>
+                    <div class="erp-voucher-metric">
+                        <span class="erp-voucher-metric-label">Total GST Tax</span>
+                        <span class="erp-voucher-metric-val font-monospace" style="color: #2563EB;" id="prev-tax-amt">₹0.00</span>
+                    </div>
+                    <div class="erp-voucher-metric">
+                        <span class="erp-voucher-metric-label" style="color: #2563EB;">Freight Charges</span>
+                        <span class="erp-voucher-metric-val font-monospace" style="color: #2563EB;" id="prev-freight-amt">₹0.00</span>
                     </div>
                     <div class="erp-voucher-metric">
                         <span class="erp-voucher-metric-label">Under-Billing (U-B)</span>
                         <span class="erp-voucher-metric-val font-monospace" style="color: #D97706;" id="prev-ub-total">₹0.00</span>
-                    </div>
-                    <div class="erp-voucher-metric">
-                        <span class="erp-voucher-metric-label">Freight / Cartage</span>
-                        <span class="erp-voucher-metric-val font-monospace" style="color: #64748B;" id="prev-freight-amt">₹0.00</span>
                     </div>
                     <div class="erp-voucher-metric" style="border-left: 2px solid #E2E8F0; padding-left: 1.5rem;">
                         <span class="erp-voucher-metric-label" style="color: #059669;">Grand Total Outward Value</span>
@@ -582,15 +652,58 @@
 
                 <div class="erp-voucher-actions">
                     <a href="{{ route('admin.transactions.sales-entry') }}" class="btn btn-outline" style="padding: 0.65rem 1.4rem; font-weight: 600; border-radius: 8px;">
-                        <i class="fa-solid fa-xmark me-1"></i> Cancel
+                        <i class="fa-solid fa-xmark me-1"></i> Cancel Changes
                     </a>
-                    <button type="submit" id="btn-submit-sales" class="btn btn-primary" style="padding: 0.65rem 1.75rem; font-weight: 700; border-radius: 8px; box-shadow: 0 4px 12px rgba(91, 132, 30, 0.35);">
-                        <i class="fa-solid fa-check me-1"></i> Update Sales Entry &amp; Adjust Stock
+                    <button type="submit" id="btn-submit-sales" class="btn btn-primary" style="padding: 0.65rem 1.85rem; font-weight: 700; font-size: 0.95rem; border-radius: 8px; box-shadow: 0 4px 14px rgba(91, 132, 30, 0.25);">
+                        <i class="fa-solid fa-floppy-disk me-1"></i> Update Sales Invoice
                     </button>
                 </div>
             </div>
 
+            <!-- Voucher Audit Trail -->
+            <div class="card" style="padding: 1rem 1.5rem; border-radius: 12px; border: 1px solid #E2E8F0; background: #FFFFFF; font-size: 0.82rem; color: #64748B;">
+                <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem;">
+                    <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: center;">
+                        <span><i class="fa-solid fa-clock-rotate-left text-primary me-1"></i> <strong>Voucher Audit Trail</strong> (#{{ $sale->id }} - {{ $sale->sale_no }})</span>
+                        <span>Registered: <strong>{{ $sale->created_at->format('d M Y, h:i A') }}</strong></span>
+                        <span>Last Modified: <strong>{{ $sale->updated_at->format('d M Y, h:i A') }}</strong></span>
+                    </div>
+                    <div>
+                        <span class="badge" style="background: rgba(91, 132, 30, 0.1); color: #5B841E; font-weight: 600; padding: 5px 12px; border-radius: 9999px;">
+                            <i class="fa-solid fa-circle-check me-1"></i> {{ ucfirst($sale->status) }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Danger Zone: Delete / Void Sales Entry -->
+            <div class="card" style="margin-top: 1rem; border: 1px solid #FECACA; background: #FFF5F5; border-radius: 14px; padding: 1.25rem 1.5rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                    <div>
+                        <h4 style="color: #991B1B; font-size: 0.95rem; font-weight: 700; margin: 0 0 0.25rem 0; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fa-solid fa-triangle-exclamation"></i> Danger Zone: Void Sales Invoice
+                        </h4>
+                        <p style="color: #B91C1C; font-size: 0.8rem; margin: 0;">
+                            Permanently void this sales invoice. This action will restore product physical stock and reverse customer ledger debits.
+                        </p>
+                    </div>
+                    <button type="button" class="btn" onclick="confirmDeleteVoucher()" style="background: #DC2626; color: #FFFFFF; font-weight: 600; font-size: 0.85rem; padding: 0.55rem 1.25rem; border-radius: 8px; border: none;">
+                        <i class="fa-solid fa-trash-can me-1"></i> Void Sales Invoice
+                    </button>
+                </div>
+            </div>
+
+            <!-- Optional Hidden Elements for Script Safety -->
+            <div style="display: none;">
+                <span id="prev-bill-total"></span>
+            </div>
+
         </div>
+    </form>
+
+    <form id="delete-voucher-form" action="{{ route('admin.transactions.sales-entry.destroy', $sale) }}" method="POST" style="display: none;">
+        @csrf
+        @method('DELETE')
     </form>
 </section>
 
@@ -606,13 +719,12 @@
 @push('scripts')
 <script>
     let rowIndex = {{ count($existingItems) }};
-
     const availableItems = [
         @foreach($items as $itm)
             {
                 id: {{ $itm->id }},
-                name: "{{ addslashes($itm->name) }}",
                 code: "{{ $itm->code }}",
+                name: "{{ addslashes($itm->name) }}",
                 hsn: "{{ $itm->hsn_code ?? '' }}",
                 unit: "{{ $itm->unit ?? 'KG' }}",
                 gst: {{ (float)($itm->gst_rate ?? 5) }},
@@ -628,7 +740,6 @@
         const cleanTarget = targetUnit.toString().trim().toUpperCase();
         if (!cleanTarget) return;
 
-        // 1. Direct match on value, text, code, or name
         for (let i = 0; i < unitSelect.options.length; i++) {
             const opt = unitSelect.options[i];
             const optVal = (opt.value || '').trim().toUpperCase();
@@ -642,7 +753,6 @@
             }
         }
 
-        // 2. Fully dynamic match against synonyms loaded from the Unit Master
         for (let i = 0; i < unitSelect.options.length; i++) {
             const opt = unitSelect.options[i];
             const synAttr = (opt.getAttribute('data-synonyms') || '').trim().toUpperCase();
@@ -655,20 +765,6 @@
             }
         }
 
-        // 3. Dynamic partial/prefix matching on code or name
-        for (let i = 0; i < unitSelect.options.length; i++) {
-            const opt = unitSelect.options[i];
-            const optCode = (opt.getAttribute('data-code') || '').trim().toUpperCase();
-            const optName = (opt.getAttribute('data-name') || '').trim().toUpperCase();
-
-            if ((optCode && (cleanTarget.startsWith(optCode) || optCode.startsWith(cleanTarget))) ||
-                (optName && (cleanTarget.startsWith(optName) || optName.startsWith(cleanTarget)))) {
-                unitSelect.selectedIndex = i;
-                return;
-            }
-        }
-
-        // 4. Dynamic fallback: add target as an option if not found so selection never fails
         const newOpt = new Option(cleanTarget, cleanTarget, true, true);
         newOpt.setAttribute('data-code', cleanTarget);
         newOpt.setAttribute('data-name', cleanTarget);
@@ -687,8 +783,6 @@
         const billRateInput = row.querySelector('.row-bill-rate');
         const batchInput = row.querySelector('.row-batch');
         const stockBadge = row.querySelector('.row-stock-badge');
-        const origQtyInput = row.querySelector('.row-original-qty');
-        const originalQty = parseFloat(origQtyInput ? origQtyInput.value : 0) || 0;
 
         if (item) {
             if (hsnInput) hsnInput.value = item.hsn;
@@ -699,8 +793,9 @@
             }
             if (batchInput) batchInput.value = item.batch;
 
-            const effectiveStock = item.stock + originalQty;
             if (stockBadge) {
+                const origQty = parseFloat(row.querySelector('.row-original-qty')?.value || 0) || 0;
+                const effectiveStock = item.stock + origQty;
                 stockBadge.textContent = effectiveStock.toFixed(2) + ' ' + item.unit;
                 if (effectiveStock > 0) {
                     stockBadge.style.background = '#ECFDF5';
@@ -712,9 +807,53 @@
                     stockBadge.style.borderColor = '#FECACA';
                 }
             }
+        } else {
+            if (stockBadge) {
+                stockBadge.textContent = '--';
+                stockBadge.style.background = '#F1F5F9';
+                stockBadge.style.color = '#64748B';
+                stockBadge.style.borderColor = '#E2E8F0';
+            }
         }
 
         calcRow(selectEl);
+    }
+
+    function onTaxModeToggle(cb) {
+        const isInclusive = cb.checked;
+        const badge = document.getElementById('tax-mode-badge');
+        const thRate = document.getElementById('th-bill-rate');
+        const hint = document.getElementById('tax-math-hint');
+
+        if (isInclusive) {
+            if (badge) {
+                badge.textContent = 'GST-Inclusive';
+                badge.style.background = '#ECFDF5';
+                badge.style.color = '#059669';
+            }
+            if (thRate) {
+                thRate.innerHTML = 'BILL RATE (₹) <span style="font-size:0.7rem; color:#059669;">(Inc. GST)</span> <span class="text-danger">*</span>';
+            }
+            if (hint) {
+                hint.innerHTML = '<strong>GST-Inclusive</strong>: Tax extracted from Bill Rate without double counting &bull; <strong>U-B Total</strong> = Net Wt &times; U-B Rate';
+            }
+        } else {
+            if (badge) {
+                badge.textContent = 'Exclusive';
+                badge.style.background = '#E2E8F0';
+                badge.style.color = '#475569';
+            }
+            if (thRate) {
+                thRate.innerHTML = 'BILL RATE (₹) <span class="text-danger">*</span>';
+            }
+            if (hint) {
+                hint.innerHTML = '<strong>Exclusive</strong>: Bill Rate &times; Net Wt + GST &bull; <strong>U-B Total</strong> = Net Wt &times; U-B Rate';
+            }
+        }
+
+        document.querySelectorAll('#sales-items-body .item-row').forEach(row => {
+            calcRow(row.querySelector('.row-qty'));
+        });
     }
 
     function calcRow(el) {
@@ -730,44 +869,90 @@
         const billAmtSpan = row.querySelector('.row-bill-amt');
         const ubAmtSpan = row.querySelector('.row-ub-amt');
         const stockErr = row.querySelector('.row-stock-error');
-        const origQtyInput = row.querySelector('.row-original-qty');
-        const originalQty = parseFloat(origQtyInput ? origQtyInput.value : 0) || 0;
+        const isInclusive = document.getElementById('field-is-gst-inclusive')?.checked;
 
         const qty = parseFloat(qtyInput ? qtyInput.value : 0) || 0;
         const billRate = parseFloat(billRateInput ? billRateInput.value : 0) || 0;
         const ubRate = parseFloat(ubRateInput ? ubRateInput.value : 0) || 0;
         const gstPercent = parseFloat(gstInput ? gstInput.value : 0) || 0;
+        const origQty = parseFloat(row.querySelector('.row-original-qty')?.value || 0) || 0;
 
-        if (item) {
-            const effectiveStock = item.stock + originalQty;
-            if (qty > effectiveStock) {
-                qtyInput.style.borderColor = '#DC2626';
-                qtyInput.style.backgroundColor = '#FEF2F2';
-                if (stockErr) {
-                    stockErr.style.display = 'block';
-                    stockErr.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Exceeds stock (${effectiveStock.toFixed(2)} ${item.unit})`;
-                }
-            } else {
+        // Stock check with original quantity added back
+        const effectiveStock = item ? (item.stock + origQty) : 0;
+        if (item && qty > effectiveStock) {
+            qtyInput.style.borderColor = '#DC2626';
+            qtyInput.style.backgroundColor = '#FEF2F2';
+            if (stockErr) {
+                stockErr.style.display = 'block';
+                stockErr.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Exceeds available stock (${effectiveStock.toFixed(2)} ${item.unit})`;
+            }
+        } else {
+            if (qtyInput) {
                 qtyInput.style.borderColor = '';
                 qtyInput.style.backgroundColor = '';
-                if (stockErr) stockErr.style.display = 'none';
             }
+            if (stockErr) stockErr.style.display = 'none';
         }
 
-        const billAmt = qty * billRate;
+        let lineBillTotal = 0;
+        if (isInclusive) {
+            lineBillTotal = qty * billRate;
+        } else {
+            const lineTaxable = qty * billRate;
+            const lineTax = lineTaxable * (gstPercent / 100);
+            lineBillTotal = lineTaxable + lineTax;
+        }
+
         const ubAmt = qty * ubRate;
 
-        if (billAmtSpan) billAmtSpan.textContent = '₹' + billAmt.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        if (billAmtSpan) billAmtSpan.textContent = '₹' + lineBillTotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         if (ubAmtSpan) ubAmtSpan.textContent = '₹' + ubAmt.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
         updateLiveSummary();
     }
 
+    function onPaymentTermsChange(sel) {
+        const advGroup = document.getElementById('advance-amount-group');
+        const advInput = document.getElementById('field-advance-amount');
+        if (sel.value === 'Advance') {
+            if (advGroup) advGroup.style.display = 'block';
+            if (advInput && parseFloat(advInput.value) > 0) {
+                onAdvanceAmountInput();
+            }
+        } else {
+            if (advGroup) advGroup.style.display = 'none';
+        }
+    }
+
+    function onAdvanceAmountInput() {
+        const advInput = document.getElementById('field-advance-amount');
+        const paidInput = document.getElementById('field-paid-amount');
+        const paymentStatus = document.getElementById('field-payment-status');
+        const advVal = parseFloat(advInput?.value) || 0;
+
+        if (paidInput) {
+            paidInput.value = advVal.toFixed(2);
+        }
+
+        const grandVal = typeof window.currentGrandTotal === 'number' ? window.currentGrandTotal : 0;
+        if (paymentStatus) {
+            if (advVal <= 0) {
+                paymentStatus.value = 'unpaid';
+            } else if (grandVal > 0 && advVal >= grandVal - 0.01) {
+                paymentStatus.value = 'paid';
+            } else {
+                paymentStatus.value = 'partial';
+            }
+        }
+        updateLiveSummary();
+    }
+
     function updateLiveSummary() {
         let totalQty = 0;
-        let subtotal = 0;
-        let taxTotal = 0;
-        let ubTotal = 0;
+        let totalTaxableSubtotal = 0;
+        let totalTax = 0;
+        let totalUB = 0;
+        const isInclusive = document.getElementById('field-is-gst-inclusive')?.checked;
 
         document.querySelectorAll('#sales-items-body .item-row').forEach(row => {
             const qty = parseFloat(row.querySelector('.row-qty')?.value || 0) || 0;
@@ -775,77 +960,163 @@
             const ubRate = parseFloat(row.querySelector('.row-ub-rate')?.value || 0) || 0;
             const gst = parseFloat(row.querySelector('.row-gst')?.value || 0) || 0;
 
-            const lineSub = qty * billRate;
-            const lineTax = lineSub * (gst / 100);
+            let lineTaxable = 0;
+            let lineTax = 0;
+
+            if (isInclusive) {
+                const lineTotal = qty * billRate;
+                lineTaxable = lineTotal / (1 + (gst / 100));
+                lineTax = lineTotal - lineTaxable;
+            } else {
+                lineTaxable = qty * billRate;
+                lineTax = lineTaxable * (gst / 100);
+            }
+
             const lineUB = qty * ubRate;
 
             totalQty += qty;
-            subtotal += lineSub;
-            taxTotal += lineTax;
-            ubTotal += lineUB;
+            totalTaxableSubtotal += lineTaxable;
+            totalTax += lineTax;
+            totalUB += lineUB;
         });
 
-        const freightVal = parseFloat(document.getElementById('field-freight-amount')?.value || 0) || 0;
-        const billTotal = subtotal + taxTotal;
-        const grandTotal = billTotal + ubTotal + freightVal;
+        const freightAmount = parseFloat(document.getElementById('field-freight-amount')?.value || 0) || 0;
+        const officialBillTotal = totalTaxableSubtotal + totalTax;
+        const grandTotal = officialBillTotal + totalUB + freightAmount;
+        window.currentGrandTotal = grandTotal;
 
+        // Update footer totals
         document.getElementById('footer-total-qty').textContent = totalQty.toFixed(3);
-        document.getElementById('footer-bill-subtotal').textContent = '₹' + subtotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        document.getElementById('footer-tax-total').textContent = '₹' + taxTotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        document.getElementById('footer-ub-total').textContent = '₹' + ubTotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        document.getElementById('footer-freight-total').textContent = '₹' + freightVal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById('footer-bill-subtotal').textContent = '₹' + totalTaxableSubtotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById('footer-tax-total').textContent = '₹' + totalTax.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        
+        const footerFreight = document.getElementById('footer-freight-total');
+        if (footerFreight) {
+            footerFreight.textContent = '₹' + freightAmount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+        document.getElementById('footer-ub-total').textContent = '₹' + totalUB.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         document.getElementById('footer-grand-total').textContent = '₹' + grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-        document.getElementById('prev-net-wt').textContent = totalQty.toFixed(3) + ' KG';
-        document.getElementById('prev-bill-total').textContent = '₹' + billTotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        document.getElementById('prev-ub-total').textContent = '₹' + ubTotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        document.getElementById('prev-freight-amt').textContent = '₹' + freightVal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        document.getElementById('prev-grand-total').textContent = '₹' + grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
-        recalcPendingCollection();
-    }
-
-    function onPaidAmountInput() {
-        recalcPendingCollection();
-    }
-
-    function setPaidAmountToGrandTotal(force = false) {
-        const grandText = document.getElementById('footer-grand-total').textContent.replace(/[₹,]/g, '');
-        const grandTotal = parseFloat(grandText) || 0;
+        // Calculate Paid & Pending Receivable
         const paidInput = document.getElementById('field-paid-amount');
-        if (paidInput) {
-            paidInput.value = grandTotal.toFixed(2);
-        }
-        recalcPendingCollection();
-    }
-
-    function recalcPendingCollection() {
-        const grandText = document.getElementById('footer-grand-total').textContent.replace(/[₹,]/g, '');
-        const grandTotal = parseFloat(grandText) || 0;
-        const paidInput = document.getElementById('field-paid-amount');
-        const paidVal = parseFloat(paidInput ? paidInput.value : 0) || 0;
-        const pending = Math.max(0, grandTotal - paidVal);
+        const paidVal = parseFloat(paidInput?.value) || 0;
+        const pendingAmount = Math.max(0, grandTotal - paidVal);
 
         const pendingField = document.getElementById('field-pending-amount');
-        const summaryPaid = document.getElementById('summary-paid-amount');
-        const summaryPending = document.getElementById('summary-pending-amount');
-        const footerPending = document.getElementById('footer-pending-total');
+        const pendingIcon = document.getElementById('pending-amount-icon');
+        const pendingHint = document.getElementById('pending-amount-hint');
+        if (pendingField) {
+            pendingField.value = '₹' + pendingAmount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            if (pendingAmount <= 0.001) {
+                pendingField.style.color = '#059669';
+                pendingField.style.background = '#ECFDF5';
+                pendingField.style.borderColor = '#A7F3D0';
+                if (pendingIcon) {
+                    pendingIcon.className = 'fa-solid fa-circle-check erp-field-icon';
+                    pendingIcon.style.color = '#059669';
+                }
+                if (pendingHint) {
+                    pendingHint.innerHTML = '<span style="color: #059669; font-weight: 600;"><i class="fa-solid fa-check me-1"></i>No pending balance (Fully Cleared)</span>';
+                }
+            } else {
+                pendingField.style.color = '#DC2626';
+                pendingField.style.background = '#FEF2F2';
+                pendingField.style.borderColor = '#FECACA';
+                if (pendingIcon) {
+                    pendingIcon.className = 'fa-solid fa-hourglass-half erp-field-icon';
+                    pendingIcon.style.color = '#DC2626';
+                }
+                if (pendingHint) {
+                    pendingHint.innerHTML = '<span style="color: #DC2626; font-weight: 600;"><i class="fa-solid fa-triangle-exclamation me-1"></i>Outstanding balance receivable from buyer</span>';
+                }
+            }
+        }
 
-        if (pendingField) pendingField.value = '₹' + pending.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        if (summaryPaid) summaryPaid.textContent = '₹' + paidVal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        if (summaryPending) summaryPending.textContent = '₹' + pending.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        if (footerPending) footerPending.textContent = '₹' + pending.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        const footerPending = document.getElementById('footer-pending-total');
+        if (footerPending) {
+            footerPending.textContent = '₹' + pendingAmount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            footerPending.style.color = pendingAmount <= 0.001 ? '#059669' : '#DC2626';
+        }
+
+        const summaryPaid = document.getElementById('summary-paid-amount');
+        if (summaryPaid) {
+            summaryPaid.textContent = '₹' + paidVal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+        const summaryPending = document.getElementById('summary-pending-amount');
+        if (summaryPending) {
+            summaryPending.textContent = '₹' + pendingAmount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            summaryPending.style.color = pendingAmount <= 0.001 ? '#059669' : '#DC2626';
+        }
+
+        // Live preview metrics
+        document.getElementById('prev-grand-total').textContent = '₹' + grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById('prev-net-wt').textContent = totalQty.toFixed(3) + ' KG';
+        document.getElementById('prev-bill-sub').textContent = '₹' + totalTaxableSubtotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById('prev-tax-amt').textContent = '₹' + totalTax.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        
+        const prevFreightEl = document.getElementById('prev-freight-amt');
+        if (prevFreightEl) {
+            prevFreightEl.textContent = '₹' + freightAmount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+        document.getElementById('prev-ub-total').textContent = '₹' + totalUB.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function setPaidAmountToGrandTotal() {
+        const val = typeof window.currentGrandTotal === 'number' ? window.currentGrandTotal : 0;
+        const paidInput = document.getElementById('field-paid-amount');
+        const paymentStatus = document.getElementById('field-payment-status');
+        if (!paidInput) return;
+
+        paidInput.value = val > 0 ? val.toFixed(2) : '0.00';
+        if (paymentStatus) {
+            paymentStatus.value = val > 0 ? 'paid' : 'unpaid';
+        }
+
+        paidInput.style.transition = 'all 0.3s ease';
+        paidInput.style.backgroundColor = '#ECFDF5';
+        paidInput.style.borderColor = '#10B981';
+        paidInput.style.boxShadow = '0 0 0 4px rgba(16, 185, 129, 0.2)';
+        setTimeout(() => {
+            paidInput.style.backgroundColor = '';
+            paidInput.style.borderColor = '';
+            paidInput.style.boxShadow = '';
+        }, 1200);
+
+        if (window.toastr) {
+            toastr.success(`Received Amount set to Total Grand Value: ₹${val.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`);
+        }
+        updateLiveSummary();
     }
 
     function onPaymentStatusChange() {
         const status = document.getElementById('field-payment-status').value;
-        if (status === 'paid') {
-            setPaidAmountToGrandTotal(true);
-        } else if (status === 'unpaid') {
-            const paidInput = document.getElementById('field-paid-amount');
-            if (paidInput) paidInput.value = '0.00';
-            recalcPendingCollection();
+        const paidInput = document.getElementById('field-paid-amount');
+        const val = typeof window.currentGrandTotal === 'number' ? window.currentGrandTotal : 0;
+
+        if (status === 'paid' && paidInput) {
+            paidInput.value = val > 0 ? val.toFixed(2) : '0.00';
+        } else if (status === 'unpaid' && paidInput) {
+            paidInput.value = '0.00';
         }
+        updateLiveSummary();
+    }
+
+    function onPaidAmountInput() {
+        const paidInput = document.getElementById('field-paid-amount');
+        const paymentStatus = document.getElementById('field-payment-status');
+        if (!paymentStatus || !paidInput) return;
+
+        const paidVal = parseFloat(paidInput.value) || 0;
+        const grandVal = typeof window.currentGrandTotal === 'number' ? window.currentGrandTotal : 0;
+
+        if (paidVal <= 0) {
+            paymentStatus.value = 'unpaid';
+        } else if (grandVal > 0 && paidVal >= grandVal - 0.01) {
+            paymentStatus.value = 'paid';
+        } else {
+            paymentStatus.value = 'partial';
+        }
+        updateLiveSummary();
     }
 
     function addSalesRow() {
@@ -948,17 +1219,16 @@
         document.querySelectorAll('#sales-items-body .item-row').forEach(row => {
             const selectEl = row.querySelector('.erp-item-select');
             const qtyInput = row.querySelector('.row-qty');
-            const origQtyInput = row.querySelector('.row-original-qty');
             if (!selectEl || !selectEl.value) return;
 
             const itemId = selectEl.value;
             const qty = parseFloat(qtyInput ? qtyInput.value : 0) || 0;
-            const originalQty = parseFloat(origQtyInput ? origQtyInput.value : 0) || 0;
             const item = availableItems.find(i => i.id == itemId);
+            const origQty = parseFloat(row.querySelector('.row-original-qty')?.value || 0) || 0;
 
             if (item) {
                 itemTotals[itemId] = (itemTotals[itemId] || 0) + qty;
-                const effectiveStock = item.stock + originalQty;
+                const effectiveStock = item.stock + origQty;
                 if (itemTotals[itemId] > effectiveStock) {
                     stockViolation = {
                         item: item,
@@ -971,7 +1241,7 @@
 
         if (stockViolation) {
             event.preventDefault();
-            const msg = `Insufficient inward stock for '${stockViolation.item.name}' (${stockViolation.item.code})!\n\nAvailable stock: ${stockViolation.available.toFixed(2)} ${stockViolation.item.unit}\nRequested outward: ${stockViolation.req.toFixed(2)} ${stockViolation.item.unit}`;
+            const msg = `Insufficient inward stock for '${stockViolation.item.name}' (${stockViolation.item.code})!\n\nAvailable stock: ${stockViolation.available.toFixed(2)} ${stockViolation.item.unit}\nRequested outward: ${stockViolation.req.toFixed(2)} ${stockViolation.item.unit}\n\nYou cannot dispatch more than available inward stock!`;
             if (typeof Swal !== 'undefined') {
                 Swal.fire({
                     icon: 'error',
@@ -992,6 +1262,31 @@
         updateLiveSummary();
     }
 
+    function confirmDeleteVoucher() {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: 'Void Sales Invoice?',
+                html: 'Are you sure you want to permanently void sales invoice <strong>#{{ $sale->sale_no }}</strong>?<br><span style="font-size: 0.85rem; color: #64748B;">Outward inventory stock will be restored and customer balance reversed.</span>',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#EF4444',
+                cancelButtonColor: '#64748B',
+                confirmButtonText: '<i class="fa-solid fa-trash-can"></i> Yes, Void Invoice',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true,
+                focusCancel: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('delete-voucher-form').submit();
+                }
+            });
+        } else {
+            if (confirm('Are you sure you want to void sales invoice #{{ $sale->sale_no }}? Stock will be restored.')) {
+                document.getElementById('delete-voucher-form').submit();
+            }
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('#sales-items-body .item-row').forEach(row => {
             const sel = row.querySelector('.erp-item-select');
@@ -999,6 +1294,10 @@
                 onItemSelect(sel);
             }
         });
+        const gstInc = document.getElementById('field-is-gst-inclusive');
+        if (gstInc && gstInc.checked) {
+            onTaxModeToggle(gstInc);
+        }
         updateLiveSummary();
     });
 </script>

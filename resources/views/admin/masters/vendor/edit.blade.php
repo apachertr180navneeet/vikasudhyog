@@ -157,14 +157,18 @@
                     <div class="erp-form-section-body">
                         <!-- GSTIN -->
                         <div class="form-group">
-                            <label class="erp-field-label">
-                                GSTIN Number
-                            </label>
-                            <div class="erp-field-icon-wrap">
-                                <i class="fa-solid fa-stamp erp-field-icon"></i>
-                                <input type="text" name="gstin" id="field-gstin" class="form-control erp-field-input-iconified erp-field-input-mono" placeholder="Enter GSTIN number" value="{{ old('gstin', $vendor->gstin) }}" maxlength="15" oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, ''); handleGstinInput(this.value); updateLivePreview();">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <label class="erp-field-label mb-0">GSTIN Number</label>
+                                <span id="gstin-feedback-badge"></span>
                             </div>
-                            <span class="erp-field-hint">15-digit alphanumeric GST registration code</span>
+                            <div class="erp-field-icon-wrap position-relative">
+                                <i class="fa-solid fa-stamp erp-field-icon"></i>
+                                <input type="text" name="gstin" id="field-gstin" class="form-control erp-field-input-iconified erp-field-input-mono pe-5" placeholder="Enter GSTIN number" value="{{ old('gstin', $vendor->gstin) }}" maxlength="15" oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, ''); handleGstinInput(this.value); updateLivePreview();">
+                                <span id="gstin-status-icon" class="position-absolute end-0 top-50 translate-middle-y me-3 d-none">
+                                    <i class="fa-solid fa-circle-check text-success fs-5"></i>
+                                </span>
+                            </div>
+                            <div id="gstin-helper-text" class="erp-field-hint">15-digit alphanumeric GST registration code (e.g. 08ABCDE1234F1Z5)</div>
                         </div>
 
                         <!-- PAN -->
@@ -523,16 +527,58 @@ const GST_STATE_CODES = {
     '10': 'Bihar'
 };
 
+const GSTIN_REGEX = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/;
+
 function handleGstinInput(gstin) {
+    const icon = document.getElementById('gstin-status-icon');
+    const badge = document.getElementById('gstin-feedback-badge');
+    const helper = document.getElementById('gstin-helper-text');
+
+    if (!gstin) {
+        if (icon) icon.className = 'position-absolute end-0 top-50 translate-middle-y me-3 d-none';
+        if (badge) badge.innerHTML = '';
+        if (helper) helper.innerHTML = '15-digit alphanumeric GST registration code (e.g. 08ABCDE1234F1Z5)';
+        return;
+    }
+
     if (gstin.length >= 2) {
         const stateCode = gstin.substring(0, 2);
         if (GST_STATE_CODES[stateCode]) {
-            document.getElementById('field-state').value = GST_STATE_CODES[stateCode];
+            const stateField = document.getElementById('field-state');
+            if (stateField) stateField.value = GST_STATE_CODES[stateCode];
         }
     }
+    // Auto-extract PAN from GSTIN characters 3 to 12
     if (gstin.length >= 12) {
         const extractedPan = gstin.substring(2, 12);
-        document.getElementById('field-pan').value = extractedPan;
+        const panField = document.getElementById('field-pan');
+        if (panField) panField.value = extractedPan;
+    }
+
+    if (gstin.length < 15) {
+        if (icon) icon.className = 'position-absolute end-0 top-50 translate-middle-y me-3 d-none';
+        if (badge) badge.innerHTML = `<span class="badge bg-secondary-subtle text-secondary small">${gstin.length}/15 digits</span>`;
+        if (helper) helper.innerHTML = '<span class="text-muted">Entering GSTIN... Must be exactly 15 characters</span>';
+    } else {
+        const isValid = GSTIN_REGEX.test(gstin);
+        const stateCode = gstin.substring(0, 2);
+        const stateName = GST_STATE_CODES[stateCode] || 'State ' + stateCode;
+
+        if (isValid) {
+            if (icon) {
+                icon.className = 'position-absolute end-0 top-50 translate-middle-y me-3';
+                icon.innerHTML = '<i class="fa-solid fa-circle-check text-success fs-5"></i>';
+            }
+            if (badge) badge.innerHTML = `<span class="badge bg-success text-white small"><i class="fa-solid fa-check me-1"></i> Valid GSTIN</span>`;
+            if (helper) helper.innerHTML = `<span class="text-success fw-semibold"><i class="fa-solid fa-circle-check me-1"></i> Valid GSTIN verified for ${stateName}</span>`;
+        } else {
+            if (icon) {
+                icon.className = 'position-absolute end-0 top-50 translate-middle-y me-3';
+                icon.innerHTML = '<i class="fa-solid fa-circle-xmark text-danger fs-5"></i>';
+            }
+            if (badge) badge.innerHTML = `<span class="badge bg-danger text-white small"><i class="fa-solid fa-xmark me-1"></i> Invalid GSTIN</span>`;
+            if (helper) helper.innerHTML = `<span class="text-danger small"><i class="fa-solid fa-triangle-exclamation me-1"></i> Invalid GSTIN format. Check structure: 2 state digits + 10 PAN chars + entity code + Z + checksum</span>`;
+        }
     }
 }
 
@@ -611,6 +657,12 @@ function updateLivePreview() {
         document.getElementById('preview-company').innerText = 'All Plants / Global';
     }
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    updateLivePreview();
+    const gVal = document.getElementById('field-gstin')?.value;
+    if (gVal) handleGstinInput(gVal);
+});
 
 function confirmDeleteVendor(vendorId, vendorName, vendorCode) {
     Swal.fire({

@@ -26,6 +26,11 @@
         </div>
 
         <div class="erp-header-actions">
+            @if($purchase->invoice_attachment)
+                <a href="{{ asset('storage/' . $purchase->invoice_attachment) }}" target="_blank" class="btn btn-outline" title="View Supplier Invoice">
+                    <i class="fa-solid fa-paperclip text-primary"></i> View Attached Invoice
+                </a>
+            @endif
             <button type="button" class="btn btn-outline" onclick="window.print()" title="Print Voucher">
                 <i class="fa-solid fa-print"></i> Print Voucher
             </button>
@@ -83,10 +88,17 @@
                             </span>
                         @endif
 
+                        <!-- GST Mode Pill -->
+                        @if($purchase->is_gst_inclusive)
+                            <span class="badge" style="background: #ECFDF5; color: #059669; font-size: 0.74rem; padding: 4px 9px; border-radius: 9999px; font-weight: 600; border: 1px solid #A7F3D0;" title="GST Inclusive Pricing Mode">
+                                <i class="fa-solid fa-percent me-1"></i> GST-Inclusive
+                            </span>
+                        @endif
+
                         <!-- Transport Name Pill -->
-                        @if($purchase->transport_name)
-                            <span class="erp-profile-role-pill" title="Transport Agency">
-                                <i class="fa-solid fa-truck-fast me-1"></i>{{ $purchase->transport_name }}
+                        @if($purchase->transporter || $purchase->transport_name)
+                            <span class="erp-profile-role-pill" title="Transport Carrier">
+                                <i class="fa-solid fa-truck-fast me-1"></i>{{ $purchase->transporter->name ?? $purchase->transport_name }}
                             </span>
                         @endif
 
@@ -101,6 +113,13 @@
                         @if($purchase->lr_no)
                             <span class="erp-profile-username-pill font-monospace" title="LR / Bilty Number">
                                 <i class="fa-solid fa-file-lines me-1"></i>LR #{{ $purchase->lr_no }}
+                            </span>
+                        @endif
+
+                        <!-- E-Way Bill Pill -->
+                        @if($purchase->e_way_bill_no)
+                            <span class="erp-profile-username-pill font-monospace" title="E-Way Bill Number" style="background: #EFF6FF; color: #1D4ED8; border-color: #BFDBFE;">
+                                <i class="fa-solid fa-road me-1"></i>EWB #{{ $purchase->e_way_bill_no }}
                             </span>
                         @endif
                     </div>
@@ -164,7 +183,7 @@
             </div>
             <div>
                 <div class="erp-kpi-label">Total Inward Weight</div>
-                <div class="erp-kpi-val font-monospace">{{ number_format($purchase->items->sum('quantity'), 3) }}</div>
+                <div class="erp-kpi-val font-monospace">{{ number_format($purchase->items->sum('quantity'), 3) }} KG</div>
             </div>
         </div>
     </div>
@@ -186,6 +205,11 @@
                             <p class="erp-form-section-desc">{{ count($purchase->items) }} verified item consignment(s) received into inventory</p>
                         </div>
                     </div>
+                    @if($purchase->is_gst_inclusive)
+                        <span class="badge" style="background: #ECFDF5; color: #059669; font-size: 0.75rem; padding: 4px 10px; border-radius: 6px; border: 1px solid #A7F3D0;">
+                            <i class="fa-solid fa-check me-1"></i> Bill Rates Inclusive of GST
+                        </span>
+                    @endif
                 </div>
 
                 <div class="erp-form-section-body p-0" style="padding: 0 !important;">
@@ -201,8 +225,8 @@
                                     <th style="text-align: right;">NET WT</th>
                                     <th style="text-align: right;">BILL RATE (₹)</th>
                                     <th style="text-align: right;">U-B RATE (₹)</th>
-                                    <th style="text-align: right;">BILL ARNT (₹)</th>
-                                    <th style="text-align: right;">U-B ARNT (₹)</th>
+                                    <th style="text-align: right;">BILL TOTAL (₹)</th>
+                                    <th style="text-align: right;">U-B TOTAL (₹)</th>
                                     <th style="text-align: right; padding-right: 1.25rem;">TOTAL VALUE (₹)</th>
                                 </tr>
                             </thead>
@@ -239,64 +263,44 @@
                                         <td style="text-align: right;" class="font-monospace font-weight-600 text-dark">
                                             {{ number_format($line->quantity, 3) }}
                                         </td>
-                                        <td style="text-align: right;" class="font-monospace">
+                                        <td style="text-align: right;" class="font-monospace font-weight-600 text-dark">
                                             ₹{{ number_format($line->bill_rate, 2) }}
                                         </td>
                                         <td style="text-align: right;" class="font-monospace" style="color: #D97706;">
                                             ₹{{ number_format($line->ub_rate, 2) }}
                                         </td>
-                                        <td style="text-align: right;" class="font-monospace font-weight-600 text-dark">
+                                        <td style="text-align: right;" class="font-monospace font-weight-600" style="color: #2563EB;">
                                             ₹{{ number_format($line->quantity * $line->bill_rate, 2) }}
                                         </td>
-                                        <td style="text-align: right;" class="font-monospace font-weight-600" style="color: #D97706;">
+                                        <td style="text-align: right;" class="font-monospace" style="color: #D97706;">
                                             ₹{{ number_format($line->under_amount, 2) }}
                                         </td>
-                                        <td style="text-align: right; padding-right: 1.25rem;" class="font-monospace font-weight-700 text-dark">
-                                            ₹{{ number_format($line->total_amount, 2) }}
+                                        <td style="text-align: right; padding-right: 1.25rem;" class="font-monospace font-weight-700" style="color: #059669;">
+                                            ₹{{ number_format(($line->quantity * $line->bill_rate) + $line->under_amount, 2) }}
                                         </td>
                                     </tr>
                                 @endforeach
                             </tbody>
-                            <tfoot style="background: #F8FAFC; border-top: 2px solid #E2E8F0;">
-                                <tr>
-                                    <td colspan="5" style="padding-left: 1.25rem; font-weight: 700; color: #334155; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em;">
-                                        Total Consignment Inward Summary
-                                    </td>
-                                    <td style="text-align: right;" class="font-monospace font-weight-700 text-dark">
-                                        {{ number_format($purchase->items->sum('quantity'), 3) }}
-                                    </td>
-                                    <td colspan="2"></td>
-                                    <td style="text-align: right;" class="font-monospace font-weight-700 text-dark">
-                                        ₹{{ number_format($purchase->subtotal, 2) }}
-                                    </td>
-                                    <td style="text-align: right;" class="font-monospace font-weight-700" style="color: #D97706;">
-                                        ₹{{ number_format($purchase->under_billing_total, 2) }}
-                                    </td>
-                                    <td style="text-align: right; padding-right: 1.25rem;" class="font-monospace font-weight-800" style="color: #059669; font-size: 1.05rem;">
-                                        ₹{{ number_format($purchase->grand_total, 2) }}
-                                    </td>
-                                </tr>
-                            </tfoot>
                         </table>
                     </div>
                 </div>
             </div>
 
-            <!-- Consignment Remarks / Gate Observations -->
+            <!-- Consignment Notes Card -->
             @if($purchase->notes)
                 <div class="card erp-form-section-card">
                     <div class="erp-form-section-header">
                         <div class="erp-form-section-header-left">
-                            <div class="erp-form-section-icon-box erp-form-icon-purple">
-                                <i class="fa-solid fa-clipboard-list"></i>
+                            <div class="erp-form-section-icon-box erp-form-icon-primary">
+                                <i class="fa-solid fa-note-sticky"></i>
                             </div>
                             <div>
-                                <h3 class="erp-form-section-title">Consignment Inward Notes</h3>
-                                <p class="erp-form-section-desc">Warehouse inspection &amp; procurement observations</p>
+                                <h3 class="erp-form-section-title">Consignment Notes &amp; Remarks</h3>
+                                <p class="erp-form-section-desc">Warehouse observation and inward quality instructions</p>
                             </div>
                         </div>
                     </div>
-                    <div class="erp-form-section-body">
+                    <div class="erp-form-section-body" style="padding: 1.25rem 1.5rem;">
                         <p style="margin: 0; color: #334155; font-size: 0.9rem; line-height: 1.6; white-space: pre-wrap;">{{ $purchase->notes }}</p>
                     </div>
                 </div>
@@ -306,6 +310,37 @@
 
         <!-- Right Sidebar Column -->
         <div class="erp-form-sidebar-col">
+
+            <!-- Attached Invoice Document Card -->
+            @if($purchase->invoice_attachment)
+                <div class="card" style="padding: 1.25rem; border-radius: 14px; border: 1px solid #E2E8F0; background: #FFFFFF;">
+                    <div style="font-weight: 700; color: #1E293B; margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: space-between;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fa-solid fa-paperclip" style="color: #5B841E;"></i> Attached Supplier Invoice
+                        </div>
+                        <span class="badge" style="background: #F1F5F9; color: #475569; font-size: 0.7rem;">Verified</span>
+                    </div>
+                    <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 0.85rem; display: flex; align-items: center; justify-content: space-between;">
+                        <div style="display: flex; align-items: center; gap: 0.6rem; min-width: 0;">
+                            <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(91, 132, 30, 0.12); color: #5B841E; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0;">
+                                <i class="fa-solid fa-file-invoice"></i>
+                            </div>
+                            <div style="min-width: 0;">
+                                <div class="font-weight-600 text-dark text-truncate" style="font-size: 0.82rem;">{{ basename($purchase->invoice_attachment) }}</div>
+                                <div class="text-muted font-monospace" style="font-size: 0.7rem;">Vendor Bill Document</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 0.4rem; flex-shrink: 0;">
+                            <a href="{{ asset('storage/' . $purchase->invoice_attachment) }}" target="_blank" class="btn btn-sm btn-primary" style="padding: 4px 10px; font-size: 0.76rem;" title="View in new tab">
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                            </a>
+                            <a href="{{ asset('storage/' . $purchase->invoice_attachment) }}" download class="btn btn-sm btn-outline" style="padding: 4px 10px; font-size: 0.76rem;" title="Download file">
+                                <i class="fa-solid fa-download"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            @endif
 
             <!-- Supplier Commercial Coordinates Card -->
             <div class="card" style="padding: 1.25rem; border-radius: 14px; border: 1px solid #E2E8F0; background: #FFFFFF;">
@@ -370,21 +405,39 @@
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 0.65rem; font-size: 0.84rem;">
                     <div style="display: flex; justify-content: space-between;">
-                        <span class="text-muted">Transport Name:</span>
-                        <strong class="text-dark">{{ $purchase->transport_name ?: 'Self / Direct Inward' }}</strong>
+                        <span class="text-muted">Transporter / Carrier:</span>
+                        <strong class="text-dark">{{ $purchase->transport_name ?: ($purchase->transporter->name ?? 'Self / Direct Inward') }}</strong>
                     </div>
                     <div style="display: flex; justify-content: space-between;">
-                        <span class="text-muted">Vehicle / Truck:</span>
-                        <span class="font-monospace text-dark">{{ $purchase->vehicle_no ?: '—' }}</span>
+                        <span class="text-muted">Vehicle / Truck No:</span>
+                        <span class="font-monospace text-dark font-weight-600">{{ $purchase->vehicle_no ?: '—' }}</span>
                     </div>
                     <div style="display: flex; justify-content: space-between;">
                         <span class="text-muted">LR / Bilty No:</span>
                         <span class="font-monospace text-dark">{{ $purchase->lr_no ?: '—' }}</span>
                     </div>
+                    @if($purchase->e_way_bill_no)
+                        <div style="display: flex; justify-content: space-between;">
+                            <span class="text-muted">E-Way Bill No:</span>
+                            <span class="font-monospace text-primary font-weight-600">{{ $purchase->e_way_bill_no }}</span>
+                        </div>
+                    @endif
+                    @if($purchase->transport_date)
+                        <div style="display: flex; justify-content: space-between;">
+                            <span class="text-muted">Bilty / Transport Date:</span>
+                            <span>{{ \Carbon\Carbon::parse($purchase->transport_date)->format('d M Y') }}</span>
+                        </div>
+                    @endif
                     <div style="display: flex; justify-content: space-between; border-top: 1px solid #F1F5F9; padding-top: 0.5rem;">
                         <span class="text-muted">Inward Freight Charges:</span>
                         <strong class="font-monospace" style="color: #2563EB;">₹{{ number_format($purchase->freight_amount ?? 0, 2) }}</strong>
                     </div>
+                    @if($purchase->transport_notes)
+                        <div style="border-top: 1px solid #F1F5F9; padding-top: 0.5rem;">
+                            <span class="text-muted" style="display: block; font-size: 0.75rem; margin-bottom: 2px;">Logistics Remarks:</span>
+                            <span style="color: #334155; font-size: 0.82rem;">{{ $purchase->transport_notes }}</span>
+                        </div>
+                    @endif
                 </div>
             </div>
 
@@ -418,15 +471,21 @@
                         <strong class="text-dark">Grand Total Inward:</strong>
                         <strong class="font-monospace" style="color: #059669; font-size: 1.15rem;">₹{{ number_format($purchase->grand_total, 2) }}</strong>
                     </div>
+                    @if($purchase->advance_amount > 0)
+                        <div style="display: flex; justify-content: space-between; border-top: 1px dashed #CBD5E1; padding-top: 0.5rem;">
+                            <span class="text-muted">Advance Paid:</span>
+                            <span class="font-monospace font-weight-600" style="color: #5B841E;">₹{{ number_format($purchase->advance_amount, 2) }}</span>
+                        </div>
+                    @endif
                     <div style="display: flex; justify-content: space-between; border-top: 1px dashed #CBD5E1; padding-top: 0.65rem; margin-top: 0.2rem;">
-                        <span class="text-muted">Paid / Settled:</span>
+                        <span class="text-muted">Total Paid / Settled:</span>
                         <span class="font-monospace font-weight-600 text-dark">₹{{ number_format($purchase->paid_amount, 2) }}</span>
                     </div>
                     @php
                         $pendingCollection = max(0, (float)$purchase->grand_total - (float)$purchase->paid_amount);
                     @endphp
                     <div style="display: flex; justify-content: space-between;">
-                        <span class="font-weight-600" style="color: {{ $pendingCollection > 0.01 ? '#DC2626' : '#059669' }};">Pending Collection / Due:</span>
+                        <span class="font-weight-600" style="color: {{ $pendingCollection > 0.01 ? '#DC2626' : '#059669' }};">Pending Payable / Due:</span>
                         <strong class="font-monospace" style="color: {{ $pendingCollection > 0.01 ? '#DC2626' : '#059669' }}; font-size: 1.05rem;">
                             ₹{{ number_format($pendingCollection, 2) }}
                         </strong>

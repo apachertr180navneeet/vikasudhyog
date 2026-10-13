@@ -18,11 +18,17 @@ class Sale extends Model
         'customer_id',
         'broker_id',
         'order_type',
+        'transporter_id',
         'transport_name',
         'vehicle_no',
         'lr_no',
+        'e_way_bill_no',
+        'transport_date',
+        'transport_notes',
         'payment_terms',
         'freight_amount',
+        'is_gst_inclusive',
+        'invoice_attachment',
         'subtotal',
         'tax_amount',
         'bill_total',
@@ -30,6 +36,7 @@ class Sale extends Model
         'round_off',
         'grand_total',
         'paid_amount',
+        'advance_amount',
         'payment_status',
         'company_id',
         'status',
@@ -38,6 +45,8 @@ class Sale extends Model
 
     protected $casts = [
         'sale_date' => 'date',
+        'transport_date' => 'date',
+        'is_gst_inclusive' => 'boolean',
         'freight_amount' => 'decimal:2',
         'subtotal' => 'decimal:2',
         'tax_amount' => 'decimal:2',
@@ -46,11 +55,17 @@ class Sale extends Model
         'round_off' => 'decimal:2',
         'grand_total' => 'decimal:2',
         'paid_amount' => 'decimal:2',
+        'advance_amount' => 'decimal:2',
     ];
 
     public function customer()
     {
         return $this->belongsTo(Customer::class);
+    }
+
+    public function transporter()
+    {
+        return $this->belongsTo(Transporter::class);
     }
 
     public function broker()
